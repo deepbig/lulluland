@@ -20,17 +20,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    steps:
       - uses: actions/checkout@v2
-      - name: Set up Node.js ${{ matrix.node }}
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      # Runs a single command using the runners shell
-      - name: npm install, build
-        run: |
-          npm install
-          npm run build --if-present
+      - run: npm install
+      - run: npm run build --if-present
       - name: Deploy Firebase
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
