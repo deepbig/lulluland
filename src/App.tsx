@@ -1,10 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, useMediaQuery } from '@mui/material';
-import { Navigate, useRoutes } from 'react-router-dom';
+import { CssBaseline, useMediaQuery, Grid, Container } from '@mui/material';
+import { Routes, Route } from 'react-router-dom';
 import BlogPage from 'pages/BlogPage';
+import Header from 'components/header/Header';
+import MainFeaturedPost from 'components/posts/mainFeaturedPost/MainFeaturedPost';
+import FeaturedPost from 'components/posts/featuredPost/FeaturedPost';
+import testPost from 'components/posts/testPost.md';
+
+const sections = [{ title: 'test', url: 'blog' }];
+
+const mainFeaturedPost = {
+  title: 'Test title',
+  description: 'this is testing description.',
+  image: '',
+  imageText: 'testing title image',
+  linkText: 'Continue reading..',
+};
+
+const featuredPosts = [
+  {
+    title: 'Feature Post test',
+    date: 'Nov 12 2021',
+    description: 'This is testing feature post describtion',
+    image: '',
+    imageLabel: 'Image Text',
+  },
+];
+
+const posts = [testPost];
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -19,17 +44,21 @@ function App() {
     [prefersDarkMode]
   );
 
-  const routes = [
-    { path: '/', element: <Navigate to="/blog" /> },
-    { path: '/blog', element: <BlogPage /> },
-  ];
-  
-  const routing = useRoutes(routes);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {routing}
+      <Container maxWidth="lg">
+        <Header title="Blog" sections={sections} />
+        <main>
+          <MainFeaturedPost post={mainFeaturedPost} />
+          <Grid container spacing={4}>
+            {featuredPosts.map((post) => (
+              <FeaturedPost key={post.title} post={post} />
+            ))}
+            
+          </Grid>
+        </main>
+      </Container>
     </ThemeProvider>
   );
 }

@@ -18,9 +18,7 @@ const sections = [
 export default function BlogPage() {
   return (
     <React.Fragment>
-      <Container maxWidth="lg">
-        <Header title="Blog" sections={sections} />
-      </Container>
+      <Container maxWidth="lg">Test Is So Fun!</Container>
     </React.Fragment>
   );
 }
