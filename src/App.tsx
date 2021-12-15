@@ -2,8 +2,6 @@ import React from 'react';
 import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, useMediaQuery, Grid, Container } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
-import BlogPage from 'pages/BlogPage';
 import Header from 'components/header/Header';
 import MainFeaturedPost from 'components/posts/mainFeaturedPost/MainFeaturedPost';
 import FeaturedPost from 'components/posts/featuredPost/FeaturedPost';
@@ -29,7 +27,7 @@ const featuredPosts = [
   },
 ];
 
-const posts = [testPost];
+// const posts = [testPost];
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -55,7 +53,6 @@ function App() {
             {featuredPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
             ))}
-            
           </Grid>
         </main>
       </Container>
