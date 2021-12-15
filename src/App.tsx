@@ -5,7 +5,7 @@ import { CssBaseline, useMediaQuery, Grid, Container } from '@mui/material';
 import Header from 'components/header/Header';
 import MainFeaturedPost from 'components/posts/mainFeaturedPost/MainFeaturedPost';
 import FeaturedPost from 'components/posts/featuredPost/FeaturedPost';
-import testPost from 'components/posts/testPost.md';
+// import testPost from 'components/posts/testPost.md';
 
 const sections = [{ title: 'test', url: 'blog' }];
 
