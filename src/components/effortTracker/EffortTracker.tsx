@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleSpreadsheet, GoogleSpreadsheetRow } from 'google-spreadsheet';
+import React, { useEffect, useState } from "react";
+import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
+
+import styles from "./EffortTracker.module.css";
 
 interface SheetInfo {
   spreadsheet_id: string;
@@ -10,13 +12,13 @@ interface SheetInfo {
 const sheetInfo: SheetInfo = {
   spreadsheet_id: process.env.REACT_APP_SPREADSHEET_ID
     ? process.env.REACT_APP_SPREADSHEET_ID
-    : '',
+    : "",
   client_email: process.env.REACT_APP_GOOGLE_CLIENT_EMAIL
     ? process.env.REACT_APP_GOOGLE_CLIENT_EMAIL
-    : '',
+    : "",
   private_key: process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY
-    ? process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    : '',
+    ? process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY.replace(/\\n/g, "\n")
+    : "",
 };
 
 export default function EffortTracker() {
@@ -36,12 +38,11 @@ export default function EffortTracker() {
       setState(rows);
     }
     getSheetData();
-    console.log('TESTSETSET');
   }, []);
 
   return (
-    <div className="graph">
-      <ul className="months">
+    <div className={styles.graph}>
+      <ul className={styles.months}>
         <li>Jan</li>
         <li>Feb</li>
         <li>Mar</li>
@@ -55,7 +56,7 @@ export default function EffortTracker() {
         <li>Nov</li>
         <li>Dec</li>
       </ul>
-      <ul className="days">
+      <ul className={styles.days}>
         <li>Sun</li>
         <li>Mon</li>
         <li>Tue</li>
@@ -64,7 +65,19 @@ export default function EffortTracker() {
         <li>Fri</li>
         <li>Sat</li>
       </ul>
-      <ul className="squares"></ul>
+
+      <ul className={styles.squares}>
+        {state?.map((data, i) => (
+          <li
+            key={i}
+            data-toggle="tooltip"
+            data-placement="bottom"
+            data-animation="false"
+            title={data.date}
+            data-level={data.level}
+          ></li>
+        ))}
+      </ul>
     </div>
   );
 }
