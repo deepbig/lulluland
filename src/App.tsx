@@ -11,6 +11,7 @@ import Sidebar from 'components/sidebar/Sidebar';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import EffortTracker from 'components/effortTracker/EffortTracker';
 
 const sections = [{ title: 'test', url: 'blog' }];
 
@@ -67,7 +68,6 @@ function App() {
       <Container maxWidth="lg">
         <Header title="Blog" sections={sections} />
         <main>
-          {console.log(posts)}
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
             {featuredPosts.map((post) => (
@@ -76,12 +76,14 @@ function App() {
           </Grid>
           <Grid container spacing={5} sx={{ mt: 3 }}>
             <Main title="Test Main Title" posts={posts} />
+
             <Sidebar
               title={sidebar.title}
               description={sidebar.description}
               archives={sidebar.archives}
               social={sidebar.social}
             />
+            <EffortTracker />
           </Grid>
         </main>
       </Container>
