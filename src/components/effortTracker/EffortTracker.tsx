@@ -24,6 +24,7 @@ const sheetInfo: SheetInfo = {
 export default function EffortTracker() {
   const [state, setState] = useState<GoogleSpreadsheetRow[]>();
   useEffect(() => {
+    console.log(sheetInfo);
     const doc = new GoogleSpreadsheet(sheetInfo.spreadsheet_id);
     async function getSheetData() {
       await doc.useServiceAccountAuth({
