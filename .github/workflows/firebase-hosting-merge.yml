@@ -6,6 +6,11 @@ on:
   push:
     branches:
       - master
+env:
+  REACT_APP_GOOGLE_CLIENT_EMAIL: '${{ secrets.REACT_APP_GOOGLE_CLIENT_EMAIL }}'
+  REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY: '${{ secrets.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY }}'
+  REACT_APP_SPREADSHEET_ID: '${{ secrets.REACT_APP_SPREADSHEET_ID }}'
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
