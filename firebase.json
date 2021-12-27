@@ -5,7 +5,11 @@
     "appAssociation": "AUTO",
     "rewrites": [
       {
-        "source": "/**",
+        "source": "/dashboard/**",
+        "dynamicLinks": true
+      },
+      {
+        "source": "/blog/**",
         "dynamicLinks": true
       }
     ]
