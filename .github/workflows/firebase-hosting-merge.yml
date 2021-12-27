@@ -6,17 +6,17 @@ on:
   push:
     branches:
       - master
-env:
-  REACT_APP_GOOGLE_CLIENT_EMAIL: '${{ secrets.REACT_APP_GOOGLE_CLIENT_EMAIL }}'
-  REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY: '${{ secrets.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY }}'
-  REACT_APP_SPREADSHEET_ID: '${{ secrets.REACT_APP_SPREADSHEET_ID }}'
-  REACT_APP_APIKEY: '${{ secrets.REACT_APP_APIKEY }}'
-  REACT_APP_AUTHDOMAIN: '${{ secrets.REACT_APP_AUTHDOMAIN }}'
-  REACT_APP_PID: '${{ secrets.REACT_APP_PID }}'
-  REACT_APP_SB: '${{ secrets.REACT_APP_SB }}'
-  REACT_APP_SID: '${{ secrets.REACT_APP_SID }}'
-  REACT_APP_APPID: '${{ secrets.REACT_APP_APPID }}'
-  REACT_APP_MID: '${{ secrets.REACT_APP_MID }}'
+# env:
+#   REACT_APP_GOOGLE_CLIENT_EMAIL: '${{ secrets.REACT_APP_GOOGLE_CLIENT_EMAIL }}'
+#   REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY: '${{ secrets.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY }}'
+#   REACT_APP_SPREADSHEET_ID: '${{ secrets.REACT_APP_SPREADSHEET_ID }}'
+#   REACT_APP_APIKEY: '${{ secrets.REACT_APP_APIKEY }}'
+#   REACT_APP_AUTHDOMAIN: '${{ secrets.REACT_APP_AUTHDOMAIN }}'
+#   REACT_APP_PID: '${{ secrets.REACT_APP_PID }}'
+#   REACT_APP_SB: '${{ secrets.REACT_APP_SB }}'
+#   REACT_APP_SID: '${{ secrets.REACT_APP_SID }}'
+#   REACT_APP_APPID: '${{ secrets.REACT_APP_APPID }}'
+#   REACT_APP_MID: '${{ secrets.REACT_APP_MID }}'
 
 jobs:
   build_and_deploy:
@@ -30,6 +30,17 @@ jobs:
         run: npm run build
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
+        env:
+          REACT_APP_GOOGLE_CLIENT_EMAIL: '${{ secrets.REACT_APP_GOOGLE_CLIENT_EMAIL }}'
+          REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY: '${{ secrets.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY }}'
+          REACT_APP_SPREADSHEET_ID: '${{ secrets.REACT_APP_SPREADSHEET_ID }}'
+          REACT_APP_APIKEY: '${{ secrets.REACT_APP_APIKEY }}'
+          REACT_APP_AUTHDOMAIN: '${{ secrets.REACT_APP_AUTHDOMAIN }}'
+          REACT_APP_PID: '${{ secrets.REACT_APP_PID }}'
+          REACT_APP_SB: '${{ secrets.REACT_APP_SB }}'
+          REACT_APP_SID: '${{ secrets.REACT_APP_SID }}'
+          REACT_APP_APPID: '${{ secrets.REACT_APP_APPID }}'
+          REACT_APP_MID: '${{ secrets.REACT_APP_MID }}'
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LULLULAND_2CE97 }}'
