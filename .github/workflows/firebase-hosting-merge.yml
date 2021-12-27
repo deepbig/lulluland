@@ -7,7 +7,6 @@ on:
     branches:
       - master
 env:
-  REACT_APP_SPREADSHEET_ID: '${{ secrets.REACT_APP_SPREADSHEET_ID }}'
   REACT_APP_APIKEY: '${{ secrets.REACT_APP_APIKEY }}'
   REACT_APP_AUTHDOMAIN: '${{ secrets.REACT_APP_AUTHDOMAIN }}'
   REACT_APP_PID: '${{ secrets.REACT_APP_PID }}'
