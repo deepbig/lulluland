@@ -27,6 +27,11 @@ export default function EffortTracker() {
 
   useEffect(() => {
     fetchActivities(selectedYear);
+    console.log(
+      process.env.REACT_APP_GOOGLE_CLIENT_EMAIL,
+      process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY,
+      process.env.REACT_APP_SPREADSHEET_ID
+    );
   }, [selectedYear]);
 
   const fetchActivities = async (selectedYear: number) => {
