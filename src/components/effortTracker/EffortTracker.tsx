@@ -8,8 +8,6 @@ import { ActivityData } from 'types/types';
 const Item = (props: BoxProps) => {
   const { sx, ...other } = props;
 
-  // const bgColor = ;
-
   return (
     <Box
       sx={{
