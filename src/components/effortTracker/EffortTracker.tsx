@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as activity from 'db/repositories/activity';
 import Box, { BoxProps } from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 
 import styles from './EffortTracker.module.css';
 import { ActivityData } from 'types/types';
@@ -24,7 +23,7 @@ const Item = (props: BoxProps) => {
 
 export default function EffortTracker() {
   const [activities, setActivities] = useState<Array<ActivityData>>([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear] = useState(new Date().getFullYear()); // setSelectedYear는 filter 기능 추가 후 적용.
 
   useEffect(() => {
     fetchActivities(selectedYear);

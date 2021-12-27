@@ -13,7 +13,7 @@ export const all = async (currentYear: number): Promise<Array<ActivityData>> => 
     const activitiesSnapshot = await getDocs(q);
     const data: Array<any> = [];
 
-    activitiesSnapshot.docs.map((_data) => {
+    activitiesSnapshot.docs.forEach((_data) => {
         data.push({
             id: _data.id, // because id field in separate function in firestore
             ..._data.data(), // the remaining fields
