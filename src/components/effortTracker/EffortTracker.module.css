@@ -6,9 +6,12 @@
 
 .months {
   grid-area: months;
+  font-size: 8px;
+  padding-left: 30px;
 }
 .days {
   grid-area: days;
+  font-size: 8px;
 }
 .squares {
   grid-area: squares;
@@ -17,8 +20,8 @@
 .graph {
   display: inline-grid;
   grid-template-areas:
-    "empty months"
-    "days squares";
+    'empty months'
+    'days squares';
   grid-template-columns: auto 1fr;
   grid-gap: 10px;
 }
@@ -52,6 +55,16 @@
   grid-auto-columns: var(--square-size);
 }
 
+.explain {
+  display: grid;
+  /* grid-template-columns: auto 1fr; */
+  grid-template-rows: repeat(1, var(--square-size));
+  grid-gap: var(--square-gap);
+  grid-auto-columns: var(--square-size);
+  grid-auto-flow: column;
+  padding: 0 5px;
+}
+
 /* Other styling */
 
 body {
@@ -60,46 +73,57 @@ body {
 }
 
 .title {
-  font-family: "Share Tech Mono", monospace, Arial !important;
+  font-family: 'Share Tech Mono', monospace, Arial !important;
 }
 
 ul {
   list-style-type: none;
+  margin: 0px;
+  padding-left: 10px;
 }
 
 .graph {
-  padding-top: 25px;
-  padding-right: 20px;
-  padding-left: 0px;
-  padding-bottom: 15px;
-  border: 1px #c9d5ff solid;
-  margin-top: 20px;
-  margin-right: 5%;
-  margin-left: 10%;
+  margin-right: 3%;
 }
 
 .days li:nth-child(odd) {
   visibility: hidden;
 }
 
-.squares li {
-  background-color: #d7ddf2;
+.squares div[data-level='0'] {
+  background-color: #333333;
 }
 
-.squares li[data-level="1"] {
-  background-color: #577af9;
+.squares div[data-level='1'] {
+  background-color: #006310;
 }
 
-.squares li[data-level="2"] {
-  background-color: #3960ef;
+.squares div[data-level='2'] {
+  background-color: #04a11f;
 }
 
-.squares li[data-level="3"] {
-  background-color: #1b3699;
+.squares div[data-level='3'] {
+  background-color: #00c00a;
+}
+
+.explain div[data-level='0'] {
+  background-color: #333333;
+}
+
+.explain div[data-level='1'] {
+  background-color: #006310;
+}
+
+.explain div[data-level='2'] {
+  background-color: #04a11f;
+}
+
+.explain div[data-level='3'] {
+  background-color: #00c00a;
 }
 
 .bg-blue {
-  background-color: #3960ef;
+  background-color: #1dfa00;
 }
 
 /* Tooltip */
@@ -124,7 +148,7 @@ ul {
   opacity: 1;
 }
 
-.bs-tooltip-auto[x-placement^="bottom"] .arrow::before,
+.bs-tooltip-auto[x-placement^='bottom'] .arrow::before,
 .bs-tooltip-bottom .arrow::before {
   border-bottom-color: transparent;
 }
