@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import * as activity from 'db/repositories/activity';
 import Box, { BoxProps } from '@mui/material/Box';
-
+import Tooltip from '@mui/material/Tooltip';
 import styles from './EffortTracker.module.css';
 import { ActivityData } from 'types/types';
 
-const Item = (props: BoxProps) => {
+const Item = forwardRef((props: BoxProps, ref) => {
   const { sx, ...other } = props;
 
   return (
@@ -14,28 +14,33 @@ const Item = (props: BoxProps) => {
         borderRadius: 0.7,
         ...sx,
       }}
+      ref={ref}
       {...other}
     />
   );
-};
+});
 
 export default function EffortTracker() {
   const [activities, setActivities] = useState<Array<ActivityData>>([]);
-  const [selectedYear] = useState(new Date().getFullYear()); // setSelectedYear는 filter 기능 추가 후 적용.
+  const [selectedYear] = useState(null); // setSelectedYear는 filter 기능 추가 후 적용.
 
   useEffect(() => {
     fetchActivities(selectedYear);
   }, [selectedYear]);
 
-  const fetchActivities = async (selectedYear: number) => {
-    const _activities = await activity.all(selectedYear);
+  const fetchActivities = async (selectedYear: number | null) => {
+    const _activities = selectedYear
+      ? await activity.selected(selectedYear)
+      : await activity.current();
     setActivities(_activities);
   };
 
   const drawBoxes = (activities: ActivityData[]) => {
     let rows = [];
-    const start = new Date(selectedYear, 0, 1);
-    const end = new Date(selectedYear + 1, 0, 1);
+    const end = selectedYear ? new Date(selectedYear + 1, 0, 1) : new Date();
+    const start = selectedYear
+      ? new Date(selectedYear, 0, 1)
+      : new Date(end.getFullYear() - 1, end.getMonth(), end.getDate());
     for (let day = 0; day < start.getDay(); day++) {
       rows.push(<Item key={day - 7}></Item>);
     }
@@ -45,32 +50,39 @@ export default function EffortTracker() {
       activities[count]?.date?.toDate().getTime() >= d.getTime() &&
       activities[count]?.date?.toDate().getTime() < d.getTime() + 86400000
         ? rows.push(
-            <Item
-              key={++index}
-              data-toggle='tooltip'
-              data-placement='bottom'
-              data-animation='false'
+            <Tooltip
+              key={`tooltip-${++index}`}
               title={
-                activities[count].date.toDate().toDateString() +
-                (activities[count]?.note
-                  ? `\nNote: ${activities[count].note}`
-                  : '') +
-                (activities[count]?.values
-                  ? `\nDuration: ${activities[count].values}`
-                  : '')
+                <span style={{ whiteSpace: 'pre-line' }}>
+                  {activities[count].date.toDate().toDateString() +
+                    (activities[count]?.note
+                      ? `\nNote: ${activities[count].note}`
+                      : '') +
+                    (activities[count]?.values
+                      ? `\nDuration: ${activities[count].values}`
+                      : '')}
+                </span>
               }
-              data-level={activities[count++].level}
-            ></Item>
+            >
+              <Item
+                key={++index}
+                data-toggle='tooltip'
+                data-placement='bottom'
+                data-animation='false'
+                data-level={activities[count++].level}
+              />
+            </Tooltip>
           )
         : rows.push(
-            <Item
-              key={++index}
-              data-toggle='tooltip'
-              data-placement='bottom'
-              data-animation='false'
-              title={d.toDateString()}
-              data-level={0}
-            ></Item>
+            <Tooltip key={`tooltip-${++index}`} title={d.toDateString()}>
+              <Item
+                key={++index}
+                data-toggle='tooltip'
+                data-placement='bottom'
+                data-animation='false'
+                data-level={0}
+              />
+            </Tooltip>
           );
     }
     return rows;
@@ -108,10 +120,10 @@ export default function EffortTracker() {
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse', pt: 2, pr: 1 }}>
         More
         <ul className={styles.explain}>
-          <Item key={1000} data-level={0}></Item>
-          <Item key={1001} data-level={1}></Item>
-          <Item key={1002} data-level={2}></Item>
-          <Item key={1003} data-level={3}></Item>
+          <Item key={1000} data-level={0} />
+          <Item key={1001} data-level={1} />
+          <Item key={1002} data-level={2} />
+          <Item key={1003} data-level={3} />
         </ul>
         Less
       </Box>
