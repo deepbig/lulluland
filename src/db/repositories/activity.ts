@@ -3,12 +3,13 @@ import { collection, getDocs, query, orderBy, addDoc, updateDoc, deleteDoc, doc,
 import { ActivityData } from 'types/types';
 const COLLECTION_NAME = "activities";
 
-// retrieve all activities
-export const all = async (currentYear: number): Promise<Array<ActivityData>> => {
+// retrieve selected year activities
+export const selected = async (currentYear: number): Promise<Array<ActivityData>> => {
     const start = new Date(currentYear, 0, 1);
     const end = new Date(currentYear + 1, 0, 1);
 
-    const q = query(collection(db, COLLECTION_NAME), where("date", ">=", start), where("date", "<", end), orderBy("date"));
+    const q = query(collection(db, COLLECTION_NAME), where("category", "==", "Workout"),
+        where("date", ">=", start), where("date", "<", end), orderBy("date"));
 
     const activitiesSnapshot = await getDocs(q);
     const data: Array<any> = [];
@@ -23,6 +24,29 @@ export const all = async (currentYear: number): Promise<Array<ActivityData>> => 
     // return and convert back it array of activity
     return data as Array<ActivityData>;
 }
+
+// retrieve current (1 year) activities
+export const current = async (): Promise<Array<ActivityData>> => {
+    const end = new Date();
+    const start = new Date(end.getFullYear() - 1, end.getMonth(), end.getDate());
+
+    const q = query(collection(db, COLLECTION_NAME), where("date", ">=", start),
+        where("date", "<", end), orderBy("date"));
+
+    const activitiesSnapshot = await getDocs(q);
+    const data: Array<any> = [];
+
+    activitiesSnapshot.docs.forEach((_data) => {
+        data.push({
+            id: _data.id, // because id field in separate function in firestore
+            ..._data.data(), // the remaining fields
+        });
+    });
+
+    // return and convert back it array of activity
+    return data as Array<ActivityData>;
+}
+
 
 // create an activity
 export const create = async (activity: ActivityData): Promise<ActivityData> => {

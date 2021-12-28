@@ -2,30 +2,30 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import {
+  Tooltip,
+  ListItemText,
+  ListItem,
+  Paper,
+  Grid,
+  Container,
+  IconButton,
+  Divider,
+  Typography,
+  Toolbar,
+  Box,
+  Avatar,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BookIcon from '@mui/icons-material/Book';
 import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-// import Chart from './Chart';
-// import Deposits from './Deposits';
-// import Orders from './Orders';
+import InfoIcon from '@mui/icons-material/Info';
 import EffortTracker from 'components/effortTracker/EffortTracker';
+import PerformanceChart from 'components/performanceChart/PerformanceChart';
 
 function Copyright(props: any) {
   return (
@@ -99,7 +99,7 @@ function MenuListItems() {
       </ListItem>
       <ListItem button onClick={() => navigate(`/blog`)}>
         <ListItemIcon>
-          <ShoppingCartIcon />
+          <BookIcon />
         </ListItemIcon>
         <ListItemText primary='Blog' />
       </ListItem>
@@ -111,7 +111,7 @@ function MenuListItems() {
       </ListItem>
       <ListItem button>
         <ListItemIcon>
-          <BarChartIcon />
+          <InfoIcon />
         </ListItemIcon>
         <ListItemText primary='About' />
       </ListItem>
@@ -155,11 +155,11 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
-            <IconButton color='inherit'>
-              <Badge badgeContent={4} color='secondary'>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Tooltip title='Hongsuk Ryu'>
+              <IconButton sx={{ p: 0 }}>
+                <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
         <Drawer variant='permanent' open={open}>
@@ -199,28 +199,30 @@ function DashboardContent() {
                   sx={{
                     p: 2,
                     display: 'flex',
-                    flexDirection: 'row-reverse',
-                    overflow: 'hidden',
+                    flexDirection: 'column',
                   }}
                 >
-                  <EffortTracker />
+                  <Typography component='h2' variant='h6' gutterBottom>
+                    Workout Tracker
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* TODO - year selection: current, 2022, 2021 */}
+                    <EffortTracker />
+                  </Box>
                 </Paper>
               </Grid>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  {/* <Chart /> */}
-                </Paper>
+              {/* Performance Chart */}
+              <Grid item xs={12} sm={6} lg={4}>
+                <PerformanceChart />
               </Grid>
               {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
+              <Grid item xs={12} md={6} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
