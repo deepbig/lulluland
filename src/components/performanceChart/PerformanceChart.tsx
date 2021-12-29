@@ -1,6 +1,16 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  Tooltip,
+  ResponsiveContainer,
+  TooltipProps,
+} from 'recharts';
+import {
+  ValueType,
+  NameType,
+} from 'recharts/types/component/DefaultTooltipContent';
 
 function createData(time: string, amount?: number) {
   return { time, amount };
@@ -18,6 +28,23 @@ const data = [
   createData('24:00', undefined),
 ];
 
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) => {
+  if (active) {
+    return (
+      <div className='custom-tooltip'>
+        <p className='label'>{`${label} : ${
+          payload && payload[0] ? payload[0].value : 'N/A'
+        }`}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 function PerformanceChart() {
   const theme = useTheme();
 
@@ -33,7 +60,15 @@ function PerformanceChart() {
             left: 24,
           }}
         >
-          <Tooltip cursor={{ fill: 'transparent' }} />
+          <Tooltip
+            content={<CustomTooltip />}
+            contentStyle={{
+              backgroundColor: 'rgba(0,0,0,0.9)',
+              fontSize: 12,
+              borderRadius: 10,
+            }}
+            labelStyle={{ color: 'white' }}
+          />
           <Line
             isAnimationActive={false}
             type='monotone'
