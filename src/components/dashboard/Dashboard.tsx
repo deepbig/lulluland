@@ -24,10 +24,12 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import BookIcon from '@mui/icons-material/Book';
-import PeopleIcon from '@mui/icons-material/People';
+import WebIcon from '@mui/icons-material/Web';
 import InfoIcon from '@mui/icons-material/Info';
 import EffortTracker from 'components/effortTracker/EffortTracker';
 import Title from 'components/title/Title';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 
 function Copyright(props: any) {
@@ -95,6 +97,15 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -16,
+    top: 10,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
+
 function MenuListItems(props: any) {
   let navigate = useNavigate();
   return (
@@ -105,24 +116,58 @@ function MenuListItems(props: any) {
             <TrackChangesIcon />
           </Badge>
         </ListItemIcon>
-        <ListItemText primary='Effort Tracker' />
+        <StyledBadge badgeContent={'new'} color='secondary'>
+          <ListItemText primary='Effort Tracker' />
+        </StyledBadge>
       </ListItem>
       <Divider />
       <ListSubheader component='div' id='nav-subheader'>
         {props.open ? 'External Links' : '\xa0'}
       </ListSubheader>
 
-      <ListItem button onClick={() => navigate(`/blog`)}>
+      <ListItem
+        button
+        onClick={() => window.open('https://roolog.notion.site', '_blank')}
+      >
         <ListItemIcon>
           <BookIcon />
         </ListItemIcon>
-        <ListItemText primary='Blog' />
+        <StyledBadge badgeContent={'blog'} color='secondary'>
+          <ListItemText primary='Roolog' />
+        </StyledBadge>
       </ListItem>
-      <ListItem button>
+      <ListItem
+        button
+        onClick={() =>
+          window.open('https://deepbig.github.io/portfolio/', '_blank')
+        }
+      >
         <ListItemIcon>
-          <PeopleIcon />
+          <WebIcon />
         </ListItemIcon>
-        <ListItemText primary='Social' />
+        <StyledBadge badgeContent={'old'} color='secondary'>
+          <ListItemText primary='Portfolio' />
+        </StyledBadge>
+      </ListItem>
+      <ListItem
+        button
+        onClick={() =>
+          window.open('https://www.linkedin.com/in/hongsuk/', '_blank')
+        }
+      >
+        <ListItemIcon>
+          <LinkedInIcon />
+        </ListItemIcon>
+        <ListItemText primary='LinkedIn' />
+      </ListItem>
+      <ListItem
+        button
+        onClick={() => window.open('https://github.com/deepbig', '_blank')}
+      >
+        <ListItemIcon>
+          <GitHubIcon />
+        </ListItemIcon>
+        <ListItemText primary='GitHub' />
       </ListItem>
       <ListItem button>
         <ListItemIcon>
