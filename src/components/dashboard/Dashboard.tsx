@@ -5,6 +5,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Tooltip,
+  ListSubheader,
   ListItemText,
   ListItem,
   Paper,
@@ -16,11 +17,12 @@ import {
   Toolbar,
   Box,
   Avatar,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import BookIcon from '@mui/icons-material/Book';
 import PeopleIcon from '@mui/icons-material/People';
 import InfoIcon from '@mui/icons-material/Info';
@@ -87,22 +89,29 @@ const Drawer = styled(MuiDrawer, {
         width: theme.spacing(0),
       },
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(8),
+        width: theme.spacing(7.5),
       },
     }),
   },
 }));
 
-function MenuListItems() {
+function MenuListItems(props: any) {
   let navigate = useNavigate();
   return (
     <div>
       <ListItem button onClick={() => navigate(`/dashboard`)}>
         <ListItemIcon>
-          <DashboardIcon />
+          <Badge badgeContent={'✨'}>
+            <TrackChangesIcon />
+          </Badge>
         </ListItemIcon>
-        <ListItemText primary='Dashboard' />
+        <ListItemText primary='Effort Tracker' />
       </ListItem>
+      <Divider />
+      <ListSubheader component='div' id='nav-subheader'>
+        {props.open ? 'External Links' : '\xa0'}
+      </ListSubheader>
+
       <ListItem button onClick={() => navigate(`/blog`)}>
         <ListItemIcon>
           <BookIcon />
@@ -160,7 +169,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Effort Tracker
             </Typography>
             <Tooltip title='Hongsuk Ryu'>
               <IconButton sx={{ p: 0 }}>
@@ -183,7 +192,7 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <MenuListItems />
+          <MenuListItems open={open} />
         </Drawer>
         <Box
           component='main'
