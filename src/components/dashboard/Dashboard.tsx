@@ -25,7 +25,8 @@ import BookIcon from '@mui/icons-material/Book';
 import PeopleIcon from '@mui/icons-material/People';
 import InfoIcon from '@mui/icons-material/Info';
 import EffortTracker from 'components/effortTracker/EffortTracker';
-import PerformanceChart from 'components/performanceChart/PerformanceChart';
+import Title from 'components/title/Title';
+import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 
 function Copyright(props: any) {
   return (
@@ -82,7 +83,12 @@ const Drawer = styled(MuiDrawer, {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      width: theme.spacing(8),
+      [theme.breakpoints.down('sm')]: {
+        width: theme.spacing(0),
+      },
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing(8),
+      },
     }),
   },
 }));
@@ -121,6 +127,7 @@ function MenuListItems() {
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(false);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -202,9 +209,7 @@ function DashboardContent() {
                     flexDirection: 'column',
                   }}
                 >
-                  <Typography component='h2' variant='h6' gutterBottom>
-                    Workout Tracker
-                  </Typography>
+                  <Title>Workout Tracker</Title>
                   <Box
                     sx={{
                       display: 'flex',
@@ -219,7 +224,16 @@ function DashboardContent() {
               </Grid>
               {/* Performance Chart */}
               <Grid item xs={12} sm={6} lg={4}>
-                <PerformanceChart />
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                  <PerformanceTrends />
+                </Paper>
               </Grid>
               {/* Recent Deposits */}
               <Grid item xs={12} md={6} lg={4}>
