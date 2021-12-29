@@ -5,6 +5,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Tooltip,
+  ListSubheader,
   ListItemText,
   ListItem,
   Paper,
@@ -16,16 +17,19 @@ import {
   Toolbar,
   Box,
   Avatar,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import BookIcon from '@mui/icons-material/Book';
-import PeopleIcon from '@mui/icons-material/People';
+import WebIcon from '@mui/icons-material/Web';
 import InfoIcon from '@mui/icons-material/Info';
 import EffortTracker from 'components/effortTracker/EffortTracker';
 import Title from 'components/title/Title';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 
 function Copyright(props: any) {
@@ -87,33 +91,83 @@ const Drawer = styled(MuiDrawer, {
         width: theme.spacing(0),
       },
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(8),
+        width: theme.spacing(7.5),
       },
     }),
   },
 }));
 
-function MenuListItems() {
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -16,
+    top: 10,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
+
+function MenuListItems(props: any) {
   let navigate = useNavigate();
   return (
     <div>
       <ListItem button onClick={() => navigate(`/dashboard`)}>
         <ListItemIcon>
-          <DashboardIcon />
+          <Badge badgeContent={'✨'}>
+            <TrackChangesIcon />
+          </Badge>
         </ListItemIcon>
-        <ListItemText primary='Dashboard' />
+        <StyledBadge badgeContent={'new'} color='secondary'>
+          <ListItemText primary='Effort Tracker' />
+        </StyledBadge>
       </ListItem>
-      <ListItem button onClick={() => navigate(`/blog`)}>
+      <Divider />
+      <ListSubheader component='div' id='nav-subheader'>
+        {props.open ? 'External Links' : '\xa0'}
+      </ListSubheader>
+
+      <ListItem
+        button
+        onClick={() => window.open('https://roolog.notion.site', '_blank')}
+      >
         <ListItemIcon>
           <BookIcon />
         </ListItemIcon>
-        <ListItemText primary='Blog' />
+        <StyledBadge badgeContent={'blog'} color='secondary'>
+          <ListItemText primary='Roolog' />
+        </StyledBadge>
       </ListItem>
-      <ListItem button>
+      <ListItem
+        button
+        onClick={() =>
+          window.open('https://deepbig.github.io/portfolio/', '_blank')
+        }
+      >
         <ListItemIcon>
-          <PeopleIcon />
+          <WebIcon />
         </ListItemIcon>
-        <ListItemText primary='Social' />
+        <StyledBadge badgeContent={'old'} color='secondary'>
+          <ListItemText primary='Portfolio' />
+        </StyledBadge>
+      </ListItem>
+      <ListItem
+        button
+        onClick={() =>
+          window.open('https://www.linkedin.com/in/hongsuk/', '_blank')
+        }
+      >
+        <ListItemIcon>
+          <LinkedInIcon />
+        </ListItemIcon>
+        <ListItemText primary='LinkedIn' />
+      </ListItem>
+      <ListItem
+        button
+        onClick={() => window.open('https://github.com/deepbig', '_blank')}
+      >
+        <ListItemIcon>
+          <GitHubIcon />
+        </ListItemIcon>
+        <ListItemText primary='GitHub' />
       </ListItem>
       <ListItem button>
         <ListItemIcon>
@@ -160,7 +214,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Effort Tracker
             </Typography>
             <Tooltip title='Hongsuk Ryu'>
               <IconButton sx={{ p: 0 }}>
@@ -183,7 +237,7 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <MenuListItems />
+          <MenuListItems open={open} />
         </Drawer>
         <Box
           component='main'

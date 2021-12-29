@@ -63,6 +63,9 @@ export default function EffortTracker() {
                       : '')}
                 </span>
               }
+              placement='top'
+              followCursor
+              arrow
             >
               <Item
                 key={++index}
@@ -74,7 +77,13 @@ export default function EffortTracker() {
             </Tooltip>
           )
         : rows.push(
-            <Tooltip key={`tooltip-${++index}`} title={d.toDateString()}>
+            <Tooltip
+              key={`tooltip-${++index}`}
+              title={d.toDateString()}
+              placement='top'
+              followCursor
+              arrow
+            >
               <Item
                 key={++index}
                 data-toggle='tooltip'
