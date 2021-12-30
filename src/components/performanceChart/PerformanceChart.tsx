@@ -1,5 +1,3 @@
-import React from 'react';
-import { useTheme } from '@mui/material/styles';
 import {
   LineChart,
   Line,
@@ -46,8 +44,6 @@ const CustomTooltip = ({
 };
 
 function PerformanceChart() {
-  const theme = useTheme();
-
   return (
     <>
       <ResponsiveContainer>
