@@ -49,28 +49,29 @@ const CardWrapper = styled(CustomCard, {
   },
 }));
 
-const colorList = [
-  {
-    bgColor: blue[500],
-    baColor: blue[800],
-  },
-  {
-    bgColor: purple[500],
-    baColor: purple[800],
-  },
-  {
-    bgColor: teal[500],
-    baColor: teal[800],
-  },
-  {
-    bgColor: orange[500],
-    baColor: orange[800],
-  },
-  {
-    bgColor: brown[500],
-    baColor: brown[800],
-  },
-];
+// // This will be used after firestore api created.
+// const colorList = [
+//   {
+//     bgColor: blue[500],
+//     baColor: blue[800],
+//   },
+//   {
+//     bgColor: purple[500],
+//     baColor: purple[800],
+//   },
+//   {
+//     bgColor: teal[500],
+//     baColor: teal[800],
+//   },
+//   {
+//     bgColor: orange[500],
+//     baColor: orange[800],
+//   },
+//   {
+//     bgColor: brown[500],
+//     baColor: brown[800],
+//   },
+// ];
 
 function PerformanceTrends() {
   return (
