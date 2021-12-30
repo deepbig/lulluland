@@ -1,13 +1,9 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Tooltip,
-  ListSubheader,
-  ListItemText,
-  ListItem,
   Paper,
   Grid,
   Container,
@@ -17,20 +13,13 @@ import {
   Toolbar,
   Box,
   Avatar,
-  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import TrackChangesIcon from '@mui/icons-material/TrackChanges';
-import BookIcon from '@mui/icons-material/Book';
-import WebIcon from '@mui/icons-material/Web';
-import InfoIcon from '@mui/icons-material/Info';
 import EffortTracker from 'components/effortTracker/EffortTracker';
 import Title from 'components/title/Title';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import GitHubIcon from '@mui/icons-material/GitHub';
 import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
+import MenuListItems from 'components/nav/MenuListItems';
 
 function Copyright(props: any) {
   return (
@@ -96,88 +85,6 @@ const Drawer = styled(MuiDrawer, {
     }),
   },
 }));
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    right: -16,
-    top: 10,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: '0 4px',
-  },
-}));
-
-function MenuListItems(props: any) {
-  let navigate = useNavigate();
-  return (
-    <div>
-      <ListItem button onClick={() => navigate(`/dashboard`)}>
-        <ListItemIcon>
-          <Badge badgeContent={'✨'}>
-            <TrackChangesIcon />
-          </Badge>
-        </ListItemIcon>
-        <StyledBadge badgeContent={'new'} color='secondary'>
-          <ListItemText primary='Effort Tracker' />
-        </StyledBadge>
-      </ListItem>
-      <Divider />
-      <ListSubheader component='div' id='nav-subheader'>
-        {props.open ? 'External Links' : '\xa0'}
-      </ListSubheader>
-
-      <ListItem
-        button
-        onClick={() => window.open('https://roolog.notion.site', '_blank')}
-      >
-        <ListItemIcon>
-          <BookIcon />
-        </ListItemIcon>
-        <StyledBadge badgeContent={'blog'} color='secondary'>
-          <ListItemText primary='Roolog' />
-        </StyledBadge>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() =>
-          window.open('https://deepbig.github.io/portfolio/', '_blank')
-        }
-      >
-        <ListItemIcon>
-          <WebIcon />
-        </ListItemIcon>
-        <StyledBadge badgeContent={'old'} color='secondary'>
-          <ListItemText primary='Portfolio' />
-        </StyledBadge>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() =>
-          window.open('https://www.linkedin.com/in/hongsuk/', '_blank')
-        }
-      >
-        <ListItemIcon>
-          <LinkedInIcon />
-        </ListItemIcon>
-        <ListItemText primary='LinkedIn' />
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => window.open('https://github.com/deepbig', '_blank')}
-      >
-        <ListItemIcon>
-          <GitHubIcon />
-        </ListItemIcon>
-        <ListItemText primary='GitHub' />
-      </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <InfoIcon />
-        </ListItemIcon>
-        <ListItemText primary='About' />
-      </ListItem>
-    </div>
-  );
-}
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(false);
@@ -262,6 +169,7 @@ function DashboardContent() {
                     display: 'flex',
                     flexDirection: 'column',
                   }}
+                  elevation={4}
                 >
                   <Title>Workout Tracker</Title>
                   <Box
@@ -277,15 +185,16 @@ function DashboardContent() {
                 </Paper>
               </Grid>
               {/* Performance Chart */}
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid item xs={12}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
                   }}
+                  elevation={4}
                 >
+                  <Title>Performance Trends</Title>
                   <PerformanceTrends />
                 </Paper>
               </Grid>
@@ -298,6 +207,7 @@ function DashboardContent() {
                     flexDirection: 'column',
                     height: 240,
                   }}
+                  elevation={4}
                 >
                   {/* <Deposits /> */}
                 </Paper>
