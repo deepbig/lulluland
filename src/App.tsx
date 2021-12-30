@@ -3,7 +3,6 @@ import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, useMediaQuery } from '@mui/material';
 import { Navigate, Routes, Route } from 'react-router-dom';
-
 import DashboardPage from 'pages/DashboardPage';
 import BlogPage from 'pages/BlogPage';
 

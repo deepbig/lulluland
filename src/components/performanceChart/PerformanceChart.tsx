@@ -73,7 +73,8 @@ function PerformanceChart() {
             isAnimationActive={false}
             type='monotone'
             dataKey='amount'
-            stroke={theme.palette.primary.main}
+            stroke='white'
+            strokeWidth={3}
             dot={false}
           />
         </LineChart>
