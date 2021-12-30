@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/performanceChart/PerformanceChart';
 import CustomCard from './CustomCard';
 import { styled } from '@mui/material/styles';
-import { blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { blue, purple, teal } from '@mui/material/colors';
 
 const CardWrapper = styled(CustomCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
