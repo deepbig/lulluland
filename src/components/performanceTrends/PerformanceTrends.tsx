@@ -1,9 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/performanceChart/PerformanceChart';
 import CustomCard from './CustomCard';
 import { styled } from '@mui/material/styles';
-import { blue, purple, teal } from '@mui/material/colors';
+import { blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { PerformanceData, PerformanceChartData } from 'types/types';
+import * as performance from 'db/repositories/performance';
+import * as category from 'db/repositories/category';
 
 const CardWrapper = styled(CustomCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
@@ -49,228 +53,171 @@ const CardWrapper = styled(CustomCard, {
   },
 }));
 
-// // This will be used after firestore api created.
-// const colorList = [
-//   {
-//     bgColor: blue[500],
-//     baColor: blue[800],
-//   },
-//   {
-//     bgColor: purple[500],
-//     baColor: purple[800],
-//   },
-//   {
-//     bgColor: teal[500],
-//     baColor: teal[800],
-//   },
-//   {
-//     bgColor: orange[500],
-//     baColor: orange[800],
-//   },
-//   {
-//     bgColor: brown[500],
-//     baColor: brown[800],
-//   },
-// ];
+// This will be used after firestore api created.
+const colorList = [
+  {
+    bgColor: blue[500],
+    baColor: blue[800],
+    avColor: blue[200],
+  },
+  {
+    bgColor: purple[500],
+    baColor: purple[800],
+    avColor: purple[200],
+  },
+  {
+    bgColor: teal[500],
+    baColor: teal[800],
+    avColor: teal[200],
+  },
+  {
+    bgColor: orange[500],
+    baColor: orange[800],
+    avColor: orange[200],
+  },
+  {
+    bgColor: brown[500],
+    baColor: brown[800],
+    avColor: brown[200],
+  },
+];
 
 function PerformanceTrends() {
+  const [subcategories, setSubcategories] = useState<Array<string>>([]);
+  const [performances, setPerformances] = useState<Array<PerformanceData[]>>(
+    []
+  );
+
+  useEffect(() => {
+    fetchSubcategories('Workout');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (subcategories && subcategories.length > 0) {
+      fetchPerformances(subcategories);
+    }
+  }, [subcategories]);
+
+  const fetchSubcategories = async (_category: string) => {
+    const _subcategories = await category.selectedSubcategories(_category);
+    if (JSON.stringify(subcategories) !== JSON.stringify(_subcategories)) {
+      setSubcategories(_subcategories);
+    }
+  };
+
+  const fetchPerformances = async (subcategory: string[]) => {
+    const _performances = await performance.selectedCurrentFive(subcategory);
+    setPerformances(_performances);
+  };
+
+  const createChartData = (performances: PerformanceData[]) => {
+    let chartData: PerformanceChartData[] = [];
+    performances?.forEach((data) =>
+      chartData.unshift({
+        time: data.date?.toDate().toDateString(),
+        count: data.values,
+      })
+    );
+    return chartData;
+  };
+
   return (
     <>
       <Grid container direction='row' spacing={2}>
         {/* need loop start */}
-        <Grid item xs={12} md={6} lg={4}>
-          <CardWrapper bgColor={blue[500]} baColor={blue[800]}>
-            <Grid container alignItems='center'>
-              <Grid item xs={6}>
+        {performances?.map((performance, index) =>
+          performance.length > 1 ? (
+            <Grid item xs={12} md={6} lg={4} key={index}>
+              <CardWrapper
+                bgColor={colorList[index % 5]?.bgColor}
+                baColor={colorList[index % 5]?.baColor}
+              >
                 <Grid container alignItems='center'>
-                  <Grid item xs={12}>
-                    <Typography
+                  <Grid item xs={6}>
+                    <Grid container alignItems='center'>
+                      <Grid item xs={12}>
+                        <Typography component='h3' variant='h6'>
+                          💪{performance[0]?.subcategory}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            fontSize: '2rem',
+                            fontWeight: 500,
+                            mr: 1,
+                          }}
+                        >
+                          {performance[0]?.values} reps
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography
+                          sx={{
+                            fontSize: '1.5rem',
+                            fontWeight: 500,
+                            mr: 1,
+                            mt: 0.75,
+                            mb: 0.75,
+                          }}
+                        >
+                          {(
+                            (performance[0]?.values /
+                              performance[performance.length - 1]?.values -
+                              1) *
+                            100
+                          ).toFixed(1)}
+                          %
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            backgroundColor: colorList[index % 5]?.avColor,
+                            color: colorList[index % 5]?.bgColor,
+                          }}
+                        >
+                          <ArrowForwardIcon
+                            fontSize='inherit'
+                            sx={{
+                              transform: `rotate(${
+                                performance[0]?.values >
+                                performance[performance.length - 1]?.values
+                                  ? '-45deg'
+                                  : '45deg'
+                              })`,
+                            }}
+                          />
+                        </Avatar>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography>
+                          from{' '}
+                          {performance[performance.length - 1].date
+                            ?.toDate()
+                            .toDateString()}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
                       sx={{
-                        fontSize: '2.125rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
+                        display: 'flex',
+                        height: 150,
                       }}
                     >
-                      12 reps
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography
-                      sx={{
-                        fontSize: '1.5rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
-                      }}
-                    >
-                      10%
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        backgroundColor: blue[200],
-                        color: blue[500],
-                      }}
-                    >
-                      <ArrowForwardIcon
-                        fontSize='inherit'
-                        sx={{ transform: 'rotate(-45deg)' }}
-                      />
-                    </Avatar>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>from the previous record.</Typography>
+                      <PerformanceChart data={createChartData(performance)} />
+                    </Box>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    height: 150,
-                  }}
-                >
-                  <PerformanceChart />
-                </Box>
-              </Grid>
+              </CardWrapper>
             </Grid>
-          </CardWrapper>
-        </Grid>
-        {/* need loop end */}
-        <Grid item xs={12} md={6} lg={4}>
-          <CardWrapper bgColor={purple[500]} baColor={purple[800]}>
-            <Grid container alignItems='center'>
-              <Grid item xs={6}>
-                <Grid container alignItems='center'>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        fontSize: '2.125rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
-                      }}
-                    >
-                      12 reps
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography
-                      sx={{
-                        fontSize: '1.5rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
-                      }}
-                    >
-                      10%
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        backgroundColor: purple[200],
-                        color: purple[500],
-                      }}
-                    >
-                      <ArrowForwardIcon
-                        fontSize='inherit'
-                        sx={{ transform: 'rotate(-45deg)' }}
-                      />
-                    </Avatar>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>from the previous record.</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    height: 150,
-                  }}
-                >
-                  <PerformanceChart />
-                </Box>
-              </Grid>
-            </Grid>
-          </CardWrapper>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <CardWrapper bgColor={teal[500]} baColor={teal[800]}>
-            <Grid container alignItems='center'>
-              <Grid item xs={6}>
-                <Grid container alignItems='center'>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        fontSize: '2.125rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
-                      }}
-                    >
-                      12 reps
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography
-                      sx={{
-                        fontSize: '1.5rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 0.75,
-                        mb: 0.75,
-                      }}
-                    >
-                      10%
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        backgroundColor: teal[200],
-                        color: teal[500],
-                      }}
-                    >
-                      <ArrowForwardIcon
-                        fontSize='inherit'
-                        sx={{ transform: 'rotate(-45deg)' }}
-                      />
-                    </Avatar>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>from the previous record.</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    height: 150,
-                  }}
-                >
-                  <PerformanceChart />
-                </Box>
-              </Grid>
-            </Grid>
-          </CardWrapper>
-        </Grid>
+          ) : null
+        )}
       </Grid>
     </>
   );
