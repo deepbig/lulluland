@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, useMediaQuery } from '@mui/material';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import DashboardPage from 'pages/DashboardPage';
-import BlogPage from 'pages/BlogPage';
+import LoadingLogo from 'components/loading/LoadingLogo';
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -22,10 +22,10 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <LoadingLogo />
       <Routes>
         <Route path='/' element={<Navigate to='/dashboard' />} />
         <Route path='/dashboard' element={<DashboardPage />} />
-        <Route path='/blog' element={<BlogPage />} />
       </Routes>
     </ThemeProvider>
   );
