@@ -28,6 +28,49 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <style type="text/css">
+      .full-screen {
+        width: 100vw;
+        height: 100vh;
+        z-index: 1202;
+        background-color: white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .full-screen {
+          background-color: #212121;
+        }
+      }
+
+      .dim-screen {
+        position: absolute;
+        max-width: 400px;
+        max-height: 45%;
+        top: 50%;
+        left: 50%;
+        overflow: visible;
+      }
+
+      .center {
+        position: relative;
+        max-width: 100%;
+        max-height: 100%;
+        margin-top: -50%;
+        margin-left: -50%;
+
+        animation: logo-spin normal 22s infinite linear;
+        /* Opera and prob css3 final iteration */
+      }
+
+      @keyframes logo-spin {
+        from {
+          transform: rotate(-40deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
     <div id="root"></div>
     <!--
       This HTML file is a template.
