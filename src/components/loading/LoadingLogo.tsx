@@ -14,7 +14,7 @@ function LoadingLogo() {
   return start === true ? (
     <div className='full-screen'>
       <div className='dim-screen'>
-        <img src='/lulluland.png' alt='Logo' className='center' />
+        <img src='/Lulluland.png' alt='Logo' className='center' />
       </div>
     </div>
   ) : null;
