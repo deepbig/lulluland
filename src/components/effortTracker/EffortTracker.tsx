@@ -1,4 +1,6 @@
 import { useEffect, useState, forwardRef } from 'react';
+import { useAppSelector, useAppDispatch } from 'hooks';
+import { getActivities, setActivityList } from 'modules/activity';
 import * as activity from 'db/repositories/activity';
 import Box, { BoxProps } from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -21,18 +23,20 @@ const Item = forwardRef((props: BoxProps, ref) => {
 });
 
 export default function EffortTracker() {
-  const [activities, setActivities] = useState<Array<ActivityData>>([]);
+  const activities = useAppSelector(getActivities);
+  const dispatch = useAppDispatch();
   const [selectedYear] = useState(null); // setSelectedYear는 filter 기능 추가 후 적용.
 
   useEffect(() => {
     fetchActivities(selectedYear);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear]);
 
   const fetchActivities = async (selectedYear: number | null) => {
     const _activities = selectedYear
       ? await activity.selected(selectedYear)
       : await activity.current();
-    setActivities(_activities);
+    dispatch(setActivityList(_activities));
   };
 
   const drawBoxes = (activities: ActivityData[]) => {
