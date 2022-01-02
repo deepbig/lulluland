@@ -6,7 +6,7 @@ function LoadingLogo() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setStart(false);
-    }, 3000);
+    }, 2500);
     return () => {
       clearTimeout(timer);
     };
