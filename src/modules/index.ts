@@ -1,9 +1,13 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import activityReducer from './activity';
+import categoryReducer from './category';
+import performanceReducer from './performance';
 
 export const store = configureStore({
     reducer: {
-        activity: activityReducer
+        activity: activityReducer,
+        category: categoryReducer,
+        performance: performanceReducer,
     },
     middleware: [
         ...getDefaultMiddleware({

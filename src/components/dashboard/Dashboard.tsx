@@ -12,6 +12,7 @@ import Title from 'components/title/Title';
 import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 import NavBar from 'components/navBar/NavBar';
 import YearlySummary from 'components/yearlySummary/YearlySummary';
+import Achievements from 'components/achievements/Achievements';
 
 function Copyright(props: any) {
   return (
@@ -93,7 +94,7 @@ function DashboardContent() {
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    // height: 240,
+                    height: 311,
                     overflow: 'hidden',
                     overflowY: 'auto',
                   }}
@@ -101,6 +102,23 @@ function DashboardContent() {
                 >
                   <Title>Summary of Year</Title>
                   <YearlySummary />
+                </Paper>
+              </Grid>
+              {/* Achievements */}
+              <Grid item xs={12} md={6} lg={4}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 311,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
+                  }}
+                  elevation={4}
+                >
+                  <Title>Achievements</Title>
+                  <Achievements />
                 </Paper>
               </Grid>
             </Grid>

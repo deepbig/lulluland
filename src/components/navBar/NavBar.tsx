@@ -166,7 +166,7 @@ export default function NavBar() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setStart(true);
-    }, 2400);
+    }, 2900);
     return () => {
       clearTimeout(timer);
     };
