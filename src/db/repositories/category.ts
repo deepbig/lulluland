@@ -1,16 +1,18 @@
 import db from "..";
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { CategoryData } from "types/types";
+
 const COLLECTION_NAME = "categories";
 
 // retrieve current (5 recent records) performances
-export const selectedSubcategories = async (category: string): Promise<Array<string>> => {
+export const selectedSubcategories = async (category: string): Promise<CategoryData> => {
     const q = query(collection(db, COLLECTION_NAME), where("category", "==", category));
     const querySnapshot = await getDocs(q);
-    let data: Array<string> = [];
+    let data: CategoryData = null;
 
     querySnapshot.forEach((_data) => {
-        data = _data.data().subcategories
+        data = _data.data();
     })
     // return and convert back it array of activity
-    return data as Array<string>;
+    return data as CategoryData;
 }

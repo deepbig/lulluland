@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useAppSelector, useAppDispatch } from 'hooks';
+import { getPerformances, setPerformanceList } from 'modules/performance';
+import { getCategory, setCategory } from 'modules/category';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/performanceChart/PerformanceChart';
@@ -6,8 +9,8 @@ import CustomCard from './CustomCard';
 import { styled } from '@mui/material/styles';
 import { blue, purple, teal, orange, brown } from '@mui/material/colors';
 import { PerformanceData, PerformanceChartData } from 'types/types';
-import * as performance from 'db/repositories/performance';
-import * as category from 'db/repositories/category';
+import * as dbPerformance from 'db/repositories/performance';
+import * as dbCategory from 'db/repositories/category';
 
 const CardWrapper = styled(CustomCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
@@ -83,10 +86,9 @@ const colorList = [
 ];
 
 function PerformanceTrends() {
-  const [subcategories, setSubcategories] = useState<Array<string>>([]);
-  const [performances, setPerformances] = useState<Array<PerformanceData[]>>(
-    []
-  );
+  const performances = useAppSelector(getPerformances);
+  const category = useAppSelector(getCategory);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     fetchSubcategories('Workout');
@@ -94,21 +96,25 @@ function PerformanceTrends() {
   }, []);
 
   useEffect(() => {
-    if (subcategories && subcategories.length > 0) {
-      fetchPerformances(subcategories);
+    if (category?.subcategories?.length && category.subcategories?.length > 0) {
+      fetchPerformances(category.subcategories);
     }
-  }, [subcategories]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
 
-  const fetchSubcategories = async (_category: string) => {
-    const _subcategories = await category.selectedSubcategories(_category);
-    if (JSON.stringify(subcategories) !== JSON.stringify(_subcategories)) {
-      setSubcategories(_subcategories);
+  const fetchSubcategories = async (categoryName: string) => {
+    const _category = await dbCategory.selectedSubcategories(categoryName);
+    if (
+      JSON.stringify(category?.subcategories) !==
+      JSON.stringify(_category?.subcategories)
+    ) {
+      dispatch(setCategory(_category));
     }
   };
 
   const fetchPerformances = async (subcategory: string[]) => {
-    const _performances = await performance.selectedCurrentFive(subcategory);
-    setPerformances(_performances);
+    const _performances = await dbPerformance.selectedCurrentFive(subcategory);
+    dispatch(setPerformanceList(_performances));
   };
 
   const createChartData = (performances: PerformanceData[]) => {

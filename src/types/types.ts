@@ -7,6 +7,11 @@ export interface ActivityData {
   values: number;
 };
 
+export type CategoryData = {
+  category?: string;
+  subcategories?: string[];
+} | null;
+
 export interface PerformanceData {
   id?: string;
   category: string;
