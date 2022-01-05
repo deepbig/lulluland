@@ -11,6 +11,7 @@ import EffortTracker from 'components/effortTracker/EffortTracker';
 import Title from 'components/title/Title';
 import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 import NavBar from 'components/navBar/NavBar';
+import YearlySummary from 'components/yearlySummary/YearlySummary';
 
 function Copyright(props: any) {
   return (
@@ -85,18 +86,21 @@ function DashboardContent() {
                   <PerformanceTrends />
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
+              {/* Summary of Year */}
               <Grid item xs={12} md={6} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
+                    // height: 240,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
                   }}
                   elevation={4}
                 >
-                  {/* <Deposits /> */}
+                  <Title>Summary of Year</Title>
+                  <YearlySummary />
                 </Paper>
               </Grid>
             </Grid>

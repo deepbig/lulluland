@@ -10,6 +10,7 @@ export const store = configureStore({
             serializableCheck: false
         }),
     ],
+    devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;
