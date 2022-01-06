@@ -98,7 +98,7 @@ function YearlySummary() {
                   <StarIcon />
                 </Avatar>
               </ListItemAvatar>
-              <Tooltip title={bestPractice.note}>
+              <Tooltip title={bestPractice.note} arrow>
                 <ListItemText
                   primary={
                     bestPractice.values +

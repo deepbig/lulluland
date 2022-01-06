@@ -1,19 +1,26 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   ListSubheader,
   ListItemText,
   ListItem,
   Badge,
-  Tooltip,
   IconButton,
   Divider,
   Typography,
   Toolbar,
   Avatar,
+  Popover,
+  Paper,
+  Box,
+  Stack,
+  CardContent,
+  Card,
+  Grid,
+  Switch,
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
@@ -24,6 +31,8 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import NavCard from '../customCards/NavCard';
+import MainCard from '../customCards/MainCard';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -35,7 +44,19 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function MenuListItems(props: any) {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
   return (
     <div>
       <ListItem button onClick={() => navigate(`/dashboard`)}>
@@ -97,11 +118,35 @@ function MenuListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary='GitHub' />
       </ListItem>
-      <ListItem button>
+      <ListItem
+        aria-owns={open ? 'mouse-over-popover-info' : undefined}
+        aria-haspopup='true'
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
         <ListItemIcon>
           <InfoIcon />
         </ListItemIcon>
         <ListItemText primary='About' />
+        <Popover
+          id='mouse-over-popover-info'
+          sx={{ pointerEvents: 'none' }}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handlePopoverClose}
+          anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'center',
+            horizontal: 'left',
+          }}
+        >
+          <Paper>
+            <NavCard />
+          </Paper>
+        </Popover>
       </ListItem>
     </div>
   );
@@ -160,8 +205,10 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function NavBar() {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [start, setStart] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -175,6 +222,17 @@ export default function NavBar() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleClickProfile = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseProfile = () => {
+    setAnchorEl(null);
+  };
+
+  const openProfile = Boolean(anchorEl);
+  const id = open ? 'popover-profile' : undefined;
 
   return start ? (
     <>
@@ -205,11 +263,62 @@ export default function NavBar() {
           >
             Effort Tracker
           </Typography>
-          <Tooltip title='Hongsuk Ryu'>
-            <IconButton sx={{ p: 0 }}>
-              <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
-            </IconButton>
-          </Tooltip>
+
+          <IconButton
+            sx={{ p: 0 }}
+            aria-describedby={id}
+            onClick={handleClickProfile}
+          >
+            <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
+          </IconButton>
+          <Popover
+            id={id}
+            open={openProfile}
+            anchorEl={anchorEl}
+            onClose={handleCloseProfile}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <Paper>
+              <MainCard>
+                <Box>
+                  <Stack>
+                    <Stack direction='row' spacing={0.5} alignItems='center'>
+                      <Typography variant='h5'>Hongsuk Ryu</Typography>
+                    </Stack>
+                    <Typography variant='subtitle2'>
+                      Full-Stack Web Developer
+                    </Typography>
+                  </Stack>
+
+                  <Card
+                    sx={{ backgroundColor: theme.palette.primary.dark, my: 2 }}
+                  >
+                    <CardContent>
+                      <Grid container spacing={3} direction='column'>
+                        <Grid item>
+                          <Grid
+                            item
+                            container
+                            alignItems='center'
+                            justifyContent='space-between'
+                          >
+                            <Grid item>
+                              <Typography variant='subtitle1'>
+                                Theme Mode
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              {/* need to create switch component */}
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Box>
+              </MainCard>
+            </Paper>
+          </Popover>
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>

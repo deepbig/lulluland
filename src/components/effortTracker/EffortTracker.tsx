@@ -137,6 +137,7 @@ export default function EffortTracker() {
           <Item key={1001} data-level={1} />
           <Item key={1002} data-level={2} />
           <Item key={1003} data-level={3} />
+          <Item key={1004} data-level={4} />
         </ul>
         Less
       </Box>

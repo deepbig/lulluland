@@ -5,14 +5,14 @@ import { getCategory, setCategory } from 'modules/category';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/performanceChart/PerformanceChart';
-import CustomCard from './CustomCard';
+import MainCard from 'components/customCards/MainCard';
 import { styled } from '@mui/material/styles';
 import { blue, purple, teal, orange, brown } from '@mui/material/colors';
 import { PerformanceData, PerformanceChartData } from 'types/types';
 import * as dbPerformance from 'db/repositories/performance';
 import * as dbCategory from 'db/repositories/category';
 
-const CardWrapper = styled(CustomCard, {
+const CardWrapper = styled(MainCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
 })<{ bgColor: string; baColor: string }>(({ theme, bgColor, baColor }) => ({
   backgroundColor: bgColor,
