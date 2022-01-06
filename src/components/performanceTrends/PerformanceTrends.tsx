@@ -134,7 +134,7 @@ function PerformanceTrends() {
         {/* need loop start */}
         {performances?.map((performance, index) =>
           performance.length > 1 ? (
-            <Grid item xs={12} md={6} lg={4} key={index}>
+            <Grid item xs={12} md={6} lg={12} key={index}>
               <CardWrapper
                 bgColor={colorList[index % 5]?.bgColor}
                 baColor={colorList[index % 5]?.baColor}

@@ -48,33 +48,75 @@ function DashboardContent() {
           }}
         >
           <Toolbar />
-          <Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Effort Tracker */}
-              <Grid item xs={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                  elevation={4}
-                >
-                  <Title>Workout Tracker</Title>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row-reverse',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {/* TODO - year selection: current, 2022, 2021 */}
-                    <EffortTracker />
-                  </Box>
-                </Paper>
+          <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+            <Grid container direction='row' spacing={3}>
+              <Grid item xs={12} lg={8}>
+                <Grid container spacing={3}>
+                  {/* Effort Tracker */}
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      elevation={4}
+                    >
+                      <Title>Workout Tracker</Title>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row-reverse',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {/* TODO - year selection: current, 2022, 2021 */}
+                        <EffortTracker />
+                      </Box>
+                    </Paper>
+                  </Grid>
+                  {/* Summary of Year */}
+                  <Grid item xs={12}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={6}>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: 311,
+                            overflow: 'hidden',
+                            overflowY: 'auto',
+                          }}
+                          elevation={4}
+                        >
+                          <Title>Summary of Year</Title>
+                          <YearlySummary />
+                        </Paper>
+                      </Grid>
+                      {/* Achievements */}
+                      <Grid item xs={12} md={6}>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: 311,
+                            overflow: 'hidden',
+                            overflowY: 'auto',
+                          }}
+                          elevation={4}
+                        >
+                          <Title>Achievements</Title>
+                          <Achievements />
+                        </Paper>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
               </Grid>
               {/* Performance Chart */}
-              <Grid item xs={12}>
+              <Grid item xs={12} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
@@ -85,40 +127,6 @@ function DashboardContent() {
                 >
                   <Title>Performance Trends</Title>
                   <PerformanceTrends />
-                </Paper>
-              </Grid>
-              {/* Summary of Year */}
-              <Grid item xs={12} md={6} lg={4}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 311,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                  elevation={4}
-                >
-                  <Title>Summary of Year</Title>
-                  <YearlySummary />
-                </Paper>
-              </Grid>
-              {/* Achievements */}
-              <Grid item xs={12} md={6} lg={4}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 311,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                  elevation={4}
-                >
-                  <Title>Achievements</Title>
-                  <Achievements />
                 </Paper>
               </Grid>
             </Grid>
