@@ -9,7 +9,7 @@ function LoadingLogo() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setStart(false);
-    }, 1000);
+    }, 2500);
     return () => {
       clearTimeout(timer);
     };
