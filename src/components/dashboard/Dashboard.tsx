@@ -13,6 +13,7 @@ import PerformanceTrends from 'components/performanceTrends/PerformanceTrends';
 import NavBar from 'components/navBar/NavBar';
 import YearlySummary from 'components/yearlySummary/YearlySummary';
 import Achievements from 'components/achievements/Achievements';
+import { useTheme } from '@mui/material/styles';
 
 function Copyright(props: any) {
   return (
@@ -28,13 +29,11 @@ function Copyright(props: any) {
 }
 
 function DashboardContent() {
+  const theme = useTheme();
   return (
     <>
       <Box sx={{ display: 'flex' }}>
-        {/* start */}
         <NavBar />
-
-        {/* end */}
         <Box
           component='main'
           sx={{
@@ -84,7 +83,7 @@ function DashboardContent() {
                             p: 2,
                             display: 'flex',
                             flexDirection: 'column',
-                            height: 311,
+                            height: 330,
                             overflow: 'hidden',
                             overflowY: 'auto',
                           }}
@@ -101,7 +100,7 @@ function DashboardContent() {
                             p: 2,
                             display: 'flex',
                             flexDirection: 'column',
-                            height: 311,
+                            height: 330,
                             overflow: 'hidden',
                             overflowY: 'auto',
                           }}
@@ -122,6 +121,11 @@ function DashboardContent() {
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
+                    [theme.breakpoints.up('lg')]: {
+                      maxHeight: 632,
+                    },
+                    overflow: 'hidden',
+                    overflowY: 'auto',
                   }}
                   elevation={4}
                 >

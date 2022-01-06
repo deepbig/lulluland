@@ -54,7 +54,7 @@ function YearlySummary() {
     return durations;
   };
   return (
-    <Grid container direction='row' spacing={2}>
+    <Grid container direction='row' spacing={3}>
       <Grid item xs={12}>
         <List>
           <ListItem>
