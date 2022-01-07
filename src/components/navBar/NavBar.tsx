@@ -20,8 +20,8 @@ import {
   CardContent,
   Card,
   Grid,
-  Switch,
 } from '@mui/material';
+import { orange } from '@mui/material/colors';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import BookIcon from '@mui/icons-material/Book';
@@ -118,36 +118,50 @@ function MenuListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary='GitHub' />
       </ListItem>
-      <ListItem
-        aria-owns={open ? 'mouse-over-popover-info' : undefined}
-        aria-haspopup='true'
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-      >
-        <ListItemIcon>
-          <InfoIcon />
-        </ListItemIcon>
-        <ListItemText primary='About' />
-        <Popover
-          id='mouse-over-popover-info'
-          sx={{ pointerEvents: 'none' }}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handlePopoverClose}
-          anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'center',
-            horizontal: 'left',
-          }}
+
+      {props.open ? (
+        <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
+          <Typography variant='body2'>
+            Lulluland is a tracker app for<b>calcuating your daily efforts</b>{' '}
+            and <b>evaluating your improvements</b>. <br />{' '}
+          </Typography>
+        </NavCard>
+      ) : (
+        <ListItem
+          aria-owns={open ? 'mouse-over-popover-info' : undefined}
+          aria-haspopup='true'
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
         >
-          <Paper>
-            <NavCard />
-          </Paper>
-        </Popover>
-      </ListItem>
+          <ListItemIcon>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText primary='About' />
+          <Popover
+            id='mouse-over-popover-info'
+            sx={{ pointerEvents: 'none' }}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: 'center',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'center',
+              horizontal: 'left',
+            }}
+          >
+            <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
+              <Typography variant='body2'>
+                Lulluland is a tracker app for{' '}
+                <b>calcuating your daily efforts</b> and{' '}
+                <b>evaluating your improvements</b>. <br />{' '}
+              </Typography>
+            </NavCard>
+          </Popover>
+        </ListItem>
+      )}
     </div>
   );
 }
@@ -181,7 +195,7 @@ const Drawer = styled(MuiDrawer, {
 })(({ theme, open }) => ({
   '& .MuiDrawer-paper': {
     position: 'relative',
-    whiteSpace: 'nowrap',
+    // whiteSpace: 'nowrap',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -280,7 +294,7 @@ export default function NavBar() {
           >
             <Paper>
               <MainCard>
-                <Box>
+                <Box sx={{ width: 300 }}>
                   <Stack>
                     <Stack direction='row' spacing={0.5} alignItems='center'>
                       <Typography variant='h5'>Hongsuk Ryu</Typography>
@@ -294,6 +308,9 @@ export default function NavBar() {
                     sx={{ backgroundColor: theme.palette.primary.dark, my: 2 }}
                   >
                     <CardContent>
+                      <Typography variant='body1' gutterBottom>
+                        <b>Who is Hongsuk?</b>
+                      </Typography>
                       <Grid container spacing={3} direction='column'>
                         <Grid item>
                           <Grid
@@ -303,8 +320,22 @@ export default function NavBar() {
                             justifyContent='space-between'
                           >
                             <Grid item>
-                              <Typography variant='subtitle1'>
-                                Theme Mode
+                              <Typography variant='subtitle2'>
+                                주어진 시간을 계획하고 의미있게 사용하는 것을
+                                즐기는 2년차 웹 (Frontend & Backend) 개발자
+                                류홍석입니다. 현 직장인 실크로드소프트에서 React
+                                기반 Frontend와 Java Spring Boot 기반 Backend를
+                                전담하여 개발하고 있습니다. Backend와 연동되는
+                                Netty 기반 Server Manager Tool 개발에도 참여하고
+                                있습니다. 전 직장인 Logitech에서 System
+                                Administrator 업무를 담당하였고, RPA를 사용하여
+                                Process Automation 및 Data Analysis 작업을
+                                수행하였습니다. 3년간 Bryant University에서
+                                Information Systems and Analytics Tutor & Lab
+                                Assistant로서 학우들의 학업을 도와주는 역할을
+                                수행하였습니다. Bryant University에서
+                                Information Systems 전공 수석으로
+                                졸업하였습니다.
                               </Typography>
                             </Grid>
                             <Grid item>
