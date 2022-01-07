@@ -5,7 +5,7 @@ const headerSX = {
   '& .MuiCardHeader-action': { mr: 0 },
 };
 
-const CustomCard = forwardRef((props: any, ref) => {
+const MainCard = forwardRef((props: any, ref) => {
   const { children, title, ...others } = props;
   return (
     <Card
@@ -28,4 +28,4 @@ const CustomCard = forwardRef((props: any, ref) => {
   );
 });
 
-export default CustomCard;
+export default MainCard;

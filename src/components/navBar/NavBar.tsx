@@ -1,20 +1,27 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   ListSubheader,
   ListItemText,
   ListItem,
   Badge,
-  Tooltip,
   IconButton,
   Divider,
   Typography,
   Toolbar,
   Avatar,
+  Popover,
+  Paper,
+  Box,
+  Stack,
+  CardContent,
+  Card,
+  Grid,
 } from '@mui/material';
+import { orange } from '@mui/material/colors';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import BookIcon from '@mui/icons-material/Book';
@@ -24,6 +31,8 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import NavCard from '../customCards/NavCard';
+import MainCard from '../customCards/MainCard';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -35,7 +44,19 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function MenuListItems(props: any) {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
   return (
     <div>
       <ListItem button onClick={() => navigate(`/dashboard`)}>
@@ -97,12 +118,50 @@ function MenuListItems(props: any) {
         </ListItemIcon>
         <ListItemText primary='GitHub' />
       </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <InfoIcon />
-        </ListItemIcon>
-        <ListItemText primary='About' />
-      </ListItem>
+
+      {props.open ? (
+        <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
+          <Typography variant='body2'>
+            Lulluland is a tracker app for<b>calcuating your daily efforts</b>{' '}
+            and <b>evaluating your improvements</b>. <br />{' '}
+          </Typography>
+        </NavCard>
+      ) : (
+        <ListItem
+          aria-owns={open ? 'mouse-over-popover-info' : undefined}
+          aria-haspopup='true'
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
+        >
+          <ListItemIcon>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText primary='About' />
+          <Popover
+            id='mouse-over-popover-info'
+            sx={{ pointerEvents: 'none' }}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: 'center',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'center',
+              horizontal: 'left',
+            }}
+          >
+            <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
+              <Typography variant='body2'>
+                Lulluland is a tracker app for{' '}
+                <b>calcuating your daily efforts</b> and{' '}
+                <b>evaluating your improvements</b>. <br />{' '}
+              </Typography>
+            </NavCard>
+          </Popover>
+        </ListItem>
+      )}
     </div>
   );
 }
@@ -136,7 +195,7 @@ const Drawer = styled(MuiDrawer, {
 })(({ theme, open }) => ({
   '& .MuiDrawer-paper': {
     position: 'relative',
-    whiteSpace: 'nowrap',
+    // whiteSpace: 'nowrap',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -160,8 +219,10 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function NavBar() {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [start, setStart] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -175,6 +236,17 @@ export default function NavBar() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleClickProfile = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseProfile = () => {
+    setAnchorEl(null);
+  };
+
+  const openProfile = Boolean(anchorEl);
+  const id = open ? 'popover-profile' : undefined;
 
   return start ? (
     <>
@@ -205,11 +277,79 @@ export default function NavBar() {
           >
             Effort Tracker
           </Typography>
-          <Tooltip title='Hongsuk Ryu'>
-            <IconButton sx={{ p: 0 }}>
-              <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
-            </IconButton>
-          </Tooltip>
+
+          <IconButton
+            sx={{ p: 0 }}
+            aria-describedby={id}
+            onClick={handleClickProfile}
+          >
+            <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
+          </IconButton>
+          <Popover
+            id={id}
+            open={openProfile}
+            anchorEl={anchorEl}
+            onClose={handleCloseProfile}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <Paper>
+              <MainCard>
+                <Box sx={{ width: 300 }}>
+                  <Stack>
+                    <Stack direction='row' spacing={0.5} alignItems='center'>
+                      <Typography variant='h5'>Hongsuk Ryu</Typography>
+                    </Stack>
+                    <Typography variant='subtitle2'>
+                      Full-Stack Web Developer
+                    </Typography>
+                  </Stack>
+
+                  <Card
+                    sx={{ backgroundColor: theme.palette.primary.dark, my: 2 }}
+                  >
+                    <CardContent>
+                      <Typography variant='body1' gutterBottom>
+                        <b>Who is Hongsuk?</b>
+                      </Typography>
+                      <Grid container spacing={3} direction='column'>
+                        <Grid item>
+                          <Grid
+                            item
+                            container
+                            alignItems='center'
+                            justifyContent='space-between'
+                          >
+                            <Grid item>
+                              <Typography variant='subtitle2'>
+                                주어진 시간을 계획하고 의미있게 사용하는 것을
+                                즐기는 2년차 웹 (Frontend & Backend) 개발자
+                                류홍석입니다. 현 직장인 실크로드소프트에서 React
+                                기반 Frontend와 Java Spring Boot 기반 Backend를
+                                전담하여 개발하고 있습니다. Backend와 연동되는
+                                Netty 기반 Server Manager Tool 개발에도 참여하고
+                                있습니다. 전 직장인 Logitech에서 System
+                                Administrator 업무를 담당하였고, RPA를 사용하여
+                                Process Automation 및 Data Analysis 작업을
+                                수행하였습니다. 3년간 Bryant University에서
+                                Information Systems and Analytics Tutor & Lab
+                                Assistant로서 학우들의 학업을 도와주는 역할을
+                                수행하였습니다. Bryant University에서
+                                Information Systems 전공 수석으로
+                                졸업하였습니다.
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              {/* need to create switch component */}
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Box>
+              </MainCard>
+            </Paper>
+          </Popover>
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>

@@ -92,64 +92,41 @@ ul {
 }
 
 .squares div[data-level='0'] {
-  background-color: #333333;
+  background-color: #30363d;
 }
 
 .squares div[data-level='1'] {
-  background-color: #006310;
+  background-color: #0e4429;
 }
 
 .squares div[data-level='2'] {
-  background-color: #04a11f;
+  background-color: #006d32;
 }
 
 .squares div[data-level='3'] {
-  background-color: #00c00a;
+  background-color: #26a641;
+}
+
+.squares div[data-level='4'] {
+  background-color: #39d353;
 }
 
 .explain div[data-level='0'] {
-  background-color: #333333;
+  background-color: #30363d;
 }
 
 .explain div[data-level='1'] {
-  background-color: #006310;
+  background-color: #0e4429;
 }
 
 .explain div[data-level='2'] {
-  background-color: #04a11f;
+  background-color: #006d32;
 }
 
 .explain div[data-level='3'] {
-  background-color: #00c00a;
+  background-color: #26a641;
 }
 
-.bg-blue {
-  background-color: #1dfa00;
-}
-
-/* Tooltip */
-
-.tooltip-main {
-  background: #ffffff;
-  border: 1px solid #0000;
-  border-radius: 0% !important;
-  color: #000;
-  font-family: monospace !important;
-  font-size: 9px;
-}
-
-.tooltip-inner {
-  background: #ffffff;
-  border-radius: 0% !important;
-  color: rgb(0, 0, 0, 0.7);
-  border: 1px solid #d7ddf2;
-}
-
-.tooltip.show {
-  opacity: 1;
-}
-
-.bs-tooltip-auto[x-placement^='bottom'] .arrow::before,
-.bs-tooltip-bottom .arrow::before {
-  border-bottom-color: transparent;
+.explain div[data-level='4'] {
+  background-color: #39d353;
 }
