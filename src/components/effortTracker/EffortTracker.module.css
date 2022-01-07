@@ -62,7 +62,7 @@
   grid-gap: var(--square-gap);
   grid-auto-columns: var(--square-size);
   grid-auto-flow: column;
-  padding: 0 5px;
+  padding: 3px 5px;
 }
 
 /* Other styling */
