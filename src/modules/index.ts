@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import activityReducer from './activity';
 import categoryReducer from './category';
 import performanceReducer from './performance';
@@ -9,11 +9,7 @@ export const store = configureStore({
         category: categoryReducer,
         performance: performanceReducer,
     },
-    middleware: [
-        ...getDefaultMiddleware({
-            serializableCheck: false
-        }),
-    ],
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
     devTools: process.env.NODE_ENV !== 'production',
 });
 
