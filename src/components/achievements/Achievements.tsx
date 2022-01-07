@@ -74,7 +74,7 @@ function Achievements() {
         {performances?.map((performanceData, index) =>
           performanceData.length > 1 ? (
             <LinearProgressWithLabel
-              title={`${performanceData[0]?.subcategory} (${
+              title={`${performanceData[0]?.subcategory} in a set (${
                 performanceData[0].values
               } / ${goals[index % 4]} reps)`}
               value={(performanceData[0].values / goals[index % 4]) * 100}
