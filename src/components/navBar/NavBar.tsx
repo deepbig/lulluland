@@ -321,13 +321,13 @@ export default function NavBar() {
                           >
                             <Grid item>
                               <Typography variant='subtitle2'>
-                                주어진 시간을 계획하고 의미있게 사용하는 것을
-                                즐기는 2년차 웹 (Frontend & Backend) 개발자
-                                류홍석입니다. 현 직장인 실크로드소프트에서 React
-                                기반 Frontend와 Java Spring Boot 기반 Backend를
-                                전담하여 개발하고 있습니다. Backend와 연동되는
-                                Netty 기반 Server Manager Tool 개발에도 참여하고
-                                있습니다. 전 직장인 Logitech에서 System
+                                주어진 시간을 계획하고 의미 있게 사용하는 것을
+                                즐기는 3년 차 웹 (Frontend & Backend) 개발자
+                                류홍석입니다. 현 직장인 실크로드 소프트에서
+                                React 기반 Frontend와 Java Spring Boot 기반
+                                Backend를 전담하여 개발하고 있습니다. Backend와
+                                연동되는 Netty 기반 Server Manager Tool 개발에도
+                                참여하고 있습니다. 전 직장인 Logitech에서 System
                                 Administrator 업무를 담당하였고, RPA를 사용하여
                                 Process Automation 및 Data Analysis 작업을
                                 수행하였습니다. 3년간 Bryant University에서
