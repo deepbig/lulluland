@@ -52,7 +52,7 @@ const LinearProgressWithLabel = ({
       <Grid item>
         <BorderLinearProgress
           variant='determinate'
-          value={value}
+          value={value <= 100 ? value : 100}
           barColor={barColor}
         />
       </Grid>
