@@ -10,7 +10,7 @@ export const selectedCurrentFive = async (subcategories: Array<string>): Promise
     let promise = new Promise<void>((resolve, reject) => {
         subcategories.forEach(async (subcategory, index, array) => {
             const q = query(collection(db, COLLECTION_NAME), where("category", "==", "Workout"),
-                where("subcategory", "==", subcategory), orderBy("date", "desc"), limit(5));
+                where("subcategory", "==", subcategory), orderBy("date", "desc"), limit(10));
             const PerformancesSnapshot = await getDocs(q);
             const subData: Array<any> = [];
 
