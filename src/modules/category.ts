@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './index';
-import { CategoryData } from 'types/types';
+import { CategoryData } from 'types';
 
 export interface categoryState {
     category: CategoryData;

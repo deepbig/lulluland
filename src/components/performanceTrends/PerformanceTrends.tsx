@@ -8,7 +8,7 @@ import PerformanceChart from 'components/performanceChart/PerformanceChart';
 import MainCard from 'components/customCards/MainCard';
 import { styled } from '@mui/material/styles';
 import { blue, purple, teal, orange, brown } from '@mui/material/colors';
-import { PerformanceData, PerformanceChartData } from 'types/types';
+import { PerformanceData, PerformanceChartData } from 'types';
 import * as dbPerformance from 'db/repositories/performance';
 import * as dbCategory from 'db/repositories/category';
 

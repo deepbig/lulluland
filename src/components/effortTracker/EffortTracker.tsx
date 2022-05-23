@@ -5,7 +5,7 @@ import * as activity from 'db/repositories/activity';
 import Box, { BoxProps } from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import styles from './EffortTracker.module.css';
-import { ActivityData } from 'types/types';
+import { ActivityData } from 'types';
 
 const Item = forwardRef((props: BoxProps, ref) => {
   const { sx, ...other } = props;
@@ -22,10 +22,17 @@ const Item = forwardRef((props: BoxProps, ref) => {
   );
 });
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export default function EffortTracker() {
   const activities = useAppSelector(getActivities);
   const dispatch = useAppDispatch();
   const [selectedYear] = useState(null); // setSelectedYear는 filter 기능 추가 후 적용.
+  const [monthList, setMonthList] = useState<any>([]);
+
+  useEffect(() => {
+    fetchMonthList();
+  }, []);
 
   useEffect(() => {
     fetchActivities(selectedYear);
@@ -38,6 +45,19 @@ export default function EffortTracker() {
       : await activity.current();
     dispatch(setActivityList(_activities));
   };
+
+  const fetchMonthList = () => {
+    const currentMonth = new Date().getMonth();
+    let i = 0;
+    let res = [];
+    
+    while (++i <= 12) {
+      res.push(<li key={i}>{months[(currentMonth + i) % 12]}</li>)
+    }
+
+    setMonthList(res);
+  }
+  
 
   const drawBoxes = (activities: ActivityData[]) => {
     let rows = [];
@@ -105,18 +125,7 @@ export default function EffortTracker() {
     <div>
       <div className={styles.graph}>
         <ul className={styles.months}>
-          <li>Jan</li>
-          <li>Feb</li>
-          <li>Mar</li>
-          <li>Apr</li>
-          <li>May</li>
-          <li>Jun</li>
-          <li>Jul</li>
-          <li>Aug</li>
-          <li>Sep</li>
-          <li>Oct</li>
-          <li>Nov</li>
-          <li>Dec</li>
+          {monthList}
         </ul>
         <ul className={styles.days}>
           <li>Sun</li>

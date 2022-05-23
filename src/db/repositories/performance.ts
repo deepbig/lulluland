@@ -1,6 +1,6 @@
 import db from "..";
 import { collection, getDocs, query, orderBy, where, limit } from 'firebase/firestore';
-import { PerformanceData } from 'types/types';
+import { PerformanceData } from 'types';
 const COLLECTION_NAME = "performances";
 
 // retrieve current (5 recent records) performances

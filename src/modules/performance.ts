@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from './index';
-import { PerformanceData } from 'types/types';
+import { PerformanceData } from 'types';
 
 export interface PerformanceState {
     performanceList: Array<PerformanceData[]>

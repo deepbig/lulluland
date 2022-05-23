@@ -1,6 +1,6 @@
 import db from "..";
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { CategoryData } from "types/types";
+import { CategoryData } from "types";
 
 const COLLECTION_NAME = "categories";
 

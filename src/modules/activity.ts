@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './index';
-import { ActivityData } from 'types/types';
+import { ActivityData } from 'types';
 
 export interface ActivityState {
     activityList: ActivityData[];

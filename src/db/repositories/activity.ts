@@ -1,6 +1,6 @@
 import db from "..";
 import { collection, getDocs, query, orderBy, addDoc, updateDoc, deleteDoc, doc, where } from 'firebase/firestore';
-import { ActivityData } from 'types/types';
+import { ActivityData } from 'types';
 const COLLECTION_NAME = "activities";
 
 // retrieve selected year activities

@@ -13,13 +13,14 @@ import {
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
-import { ActivityData } from 'types/types';
+import { ActivityData } from 'types';
 
 function YearlySummary() {
   const activities = useAppSelector(getActivities);
   const [totalPractices, setTotalPractices] = useState<number>(0);
   const [totalDurations, setTotalDurations] = useState<number>(0);
   const [bestPractice, setBestPractice] = useState<ActivityData | null>(null);
+  
   const countPractices = () => {
     let practices = 0;
     let index = null;
