@@ -1,13 +1,11 @@
 import React from 'react';
-import Dashboard from 'components/dashboard/Dashboard';
-import { Box } from '@mui/material';
-import NavBar from 'components/navBar/NavBar';
-import { PageName } from 'types';
+import { Box, useTheme } from '@mui/material';
+import SignUp from 'components/auth/SignUp';
+import MainFormLayout from 'layout/MainFormLayout';
 
-function DashboardPage() {
+function SingInPage() {
   return (
     <Box sx={{ display: 'flex' }}>
-      <NavBar selectedName={PageName.EFFORT_TRACKER} />
       <Box
         component='main'
         sx={{
@@ -20,10 +18,12 @@ function DashboardPage() {
           overflow: 'auto',
         }}
       >
-      <Dashboard />
+        <MainFormLayout>
+          <SignUp />
+        </MainFormLayout>
       </Box>
     </Box>
-      );
+  );
 }
 
-export default DashboardPage;
+export default SingInPage;
