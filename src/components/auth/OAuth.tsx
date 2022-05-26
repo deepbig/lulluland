@@ -3,7 +3,7 @@ import React from 'react';
 
 export const GoogleIcon = (
   <svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
-    <g clip-path='url(#clip0)'>
+    <g clipPath='url(#clip0)'>
       <path
         d='M16.0008 8.17753C16.0008 7.51976 15.9463 7.03976 15.8285 6.54199H8.16406V9.51085H12.6629C12.5722 10.2486 12.0824 11.3598 10.994 12.1064L10.9787 12.2058L13.4021 14.0456L13.5699 14.062C15.1119 12.6664 16.0008 10.6131 16.0008 8.17753Z'
         fill='#4285F4'
@@ -47,7 +47,7 @@ function OAuth() {
         </Button>
       </Box>
       <Box pb={1}>
-        <Button variant='outlined' startIcon={AppleIcon} fullWidth>
+        <Button variant='outlined' startIcon={AppleIcon} fullWidth disabled>
           Sign in with Apple
         </Button>
       </Box>
