@@ -1,16 +1,11 @@
 import React from 'react';
-import Dashboard from 'components/dashboard/Dashboard';
 import { Box } from '@mui/material';
-import NavBar from 'components/navBar/NavBar';
-import { PageName } from 'types';
-import { useParams } from 'react-router-dom';
+import MainFormLayout from 'layout/MainFormLayout';
+import InitialSteps from 'components/initialSteps/InitialSteps';
 
-function DashboardPage() {
-  const { username } = useParams();
-
+function InitialPage() {
   return (
     <Box sx={{ display: 'flex' }}>
-      <NavBar selectedName={PageName.EFFORT_TRACKER} />
       <Box
         component='main'
         sx={{
@@ -23,10 +18,12 @@ function DashboardPage() {
           overflow: 'auto',
         }}
       >
-        <Dashboard username={username} />
+        <MainFormLayout>
+          <InitialSteps />
+        </MainFormLayout>
       </Box>
     </Box>
   );
 }
 
-export default DashboardPage;
+export default InitialPage;

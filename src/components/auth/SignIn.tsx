@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { signInWithGoogle } from 'db/repositories/auth';
 import {
   Box,
   Container,
@@ -11,31 +10,57 @@ import {
   Grid,
   Collapse,
   Alert,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import OAuth from './OAuth';
 import { useNavigate } from 'react-router-dom';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+interface State {
+  email: string;
+  emailError: string;
+  passwordError: string;
+  password: string;
+  openPassword: boolean;
+  showPassword: boolean;
+  resetPassword: boolean;
+  isEmailSent: boolean;
+}
 
 function SignIn() {
   const navigate = useNavigate();
-  const [passwordOpen, setPasswordOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordReset, setPasswordReset] = useState(false);
-  const [isEmailSent, setIsEmailSent] = useState(false);
-
+  const [values, setValues] = useState<State>({
+    email: '',
+    emailError: '',
+    passwordError: '',
+    password: '',
+    openPassword: false,
+    showPassword: false,
+    resetPassword: false,
+    isEmailSent: false,
+  });
   const handleEmailSignIn = () => {
-    if (!passwordReset) {
-      if (!passwordOpen) {
+    if (!values.resetPassword) {
+      if (!values.openPassword) {
         // check email
-        if (!email) {
-          setEmailError('Required');
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-          setEmailError('Invalid email address');
+        if (!values.email) {
+          setValues({ ...values, emailError: 'Required' });
+        } else if (
+          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+        ) {
+          setValues({ ...values, emailError: 'Invalid email address' });
         } else {
-          setPasswordOpen(true);
+          setValues({ ...values, openPassword: true });
         }
       } else {
+        if (!values.password) {
+          setValues({ ...values, passwordError: 'Required' });
+        }
         // submit sign in form.
       }
     } else {
@@ -43,39 +68,60 @@ function SignIn() {
     }
   };
 
-  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    if (emailError) {
-      setEmailError('');
-    }
-    if (passwordOpen) {
-      setPasswordOpen(false);
-      setPassword('');
-    }
-  };
+  const handleChange =
+    (type: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues({ ...values, [type]: event.target.value });
+      if (type === 'email') {
+        if (values.emailError) {
+          setValues({ ...values, emailError: '' });
+        }
+        if (values.openPassword) {
+          setValues({ ...values, openPassword: false, password: '' });
+        }
+      }
+    };
 
-  const handlePasswordReset = () => {
-    setPasswordReset(true);
-    setEmail('');
-    setEmailError('');
-    setPassword('');
-    setPasswordOpen(false);
+  const handleResetPassword = () => {
+    setValues({
+      ...values,
+      resetPassword: true,
+      email: '',
+      emailError: '',
+      passwordError: '',
+      password: '',
+      openPassword: false,
+    });
   };
 
   const handleBackToSignIn = () => {
-    setEmail('');
-    setPasswordReset(false);
-    setIsEmailSent(false);
+    setValues({
+      ...values,
+      email: '',
+      resetPassword: false,
+      isEmailSent: false,
+    });
   };
 
   const handleSendEmail = () => {
-    if (!email) {
-      setEmailError('Required');
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-      setEmailError('Invalid email address');
+    if (!values.email) {
+      setValues({ ...values, emailError: 'Required' });
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+    ) {
+      setValues({ ...values, emailError: 'Invalid email address' });
     } else {
-      setIsEmailSent(true);
+      setValues({ ...values, isEmailSent: true });
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
   };
 
   return (
@@ -83,19 +129,22 @@ function SignIn() {
       <Paper variant='outlined' sx={{ padding: 4 }}>
         <Box display='flex' justifyContent='space-between' pb={3}>
           <Typography color='textPrimary' variant='h5'>
-            {!passwordReset ? 'Sign In' : 'Password Reset'}
+            {!values.resetPassword ? 'Sign In' : 'Password Reset'}
           </Typography>
           <Link
+            disabled
             component='button'
             onClick={() =>
-              !passwordReset ? navigate(`/signup`) : handleBackToSignIn()
+              !values.resetPassword ? navigate(`/signup`) : handleBackToSignIn()
             }
           >
-            {!passwordReset ? "I don't have an account" : 'Back to sign-in'}
+            {!values.resetPassword
+              ? "I don't have an account"
+              : 'Back to sign-in'}
           </Link>
         </Box>
 
-        {passwordReset ? (
+        {values.resetPassword ? (
           <Typography variant='body1' paddingBottom={2}>
             Enter your email, and we'll send you instructions on how to reset
             your password.
@@ -104,70 +153,104 @@ function SignIn() {
 
         <Grid container justifyContent='center' spacing={2}>
           <Grid item xs={12}>
-            {!isEmailSent ? (
+            {!values.isEmailSent ? (
               <TextField
                 label='Email'
                 size='small'
                 name='email'
                 variant='outlined'
-                value={email}
-                onChange={handleChangeEmail}
+                value={values.email}
+                onChange={handleChange('email')}
                 required
                 fullWidth
-                error={emailError ? true : false}
-                helperText={emailError}
+                error={values.emailError ? true : false}
+                helperText={values.emailError}
               />
             ) : null}
-            {!passwordReset ? (
-              <Collapse in={passwordOpen}>
-                <TextField
-                  label='Password'
+            {!values.resetPassword ? (
+              <Collapse in={values.openPassword}>
+                <FormControl
                   size='small'
-                  name='password'
-                  variant='outlined'
                   required
                   fullWidth
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  sx={{ marginTop: 1 }}
-                />
+                  variant='outlined'
+                  sx={{ marginTop: 1.5 }}
+                >
+                  <InputLabel htmlFor='Password'>Password</InputLabel>
+                  <OutlinedInput
+                    id='password'
+                    type={values.showPassword ? 'text' : 'password'}
+                    value={values.password}
+                    onChange={handleChange('password')}
+                    endAdornment={
+                      <InputAdornment position='end'>
+                        <IconButton
+                          aria-label='toggle password visibility'
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge='end'
+                        >
+                          {values.showPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label='Password'
+                  />
+                </FormControl>
               </Collapse>
             ) : null}
           </Grid>
 
-          {isEmailSent ? (
+          {values.isEmailSent ? (
             <Grid item xs={12}>
               <Alert severity='success'>
                 If there's a Lulluland account connected to this email address,
-                we'll email you password reset instructions.<br /> If you don't
-                receive the email, please try again and make sure you enter the
-                email address associated with your Lulluland account.
+                we'll email you password reset instructions.
+                <br /> If you don't receive the email, please try again and make
+                sure you enter the email address associated with your Lulluland
+                account.
               </Alert>
             </Grid>
           ) : null}
 
           <Grid item xs={12}>
-            {!passwordReset ? (
-              <Button fullWidth variant='contained' onClick={handleEmailSignIn}>
-                {passwordOpen ? 'Sign in' : 'Continues'}
+            {!values.resetPassword ? (
+              <Button
+                fullWidth
+                variant='contained'
+                onClick={handleEmailSignIn}
+                disabled
+              >
+                {values.openPassword ? 'Sign in' : 'Continues'}
               </Button>
             ) : (
               <Button
                 fullWidth
                 variant='contained'
                 onClick={() =>
-                  isEmailSent ? handleBackToSignIn() : handleSendEmail()
+                  values.isEmailSent ? handleBackToSignIn() : handleSendEmail()
                 }
+                disabled
               >
-                {isEmailSent ? 'Back to sign-in' : 'Send me reset instructions'}
+                {values.isEmailSent
+                  ? 'Back to sign-in'
+                  : 'Send me reset instructions'}
               </Button>
             )}
           </Grid>
-          {!passwordReset ? (
+          {!values.resetPassword ? (
             <>
               <Grid item xs={12}>
                 <Box display='flex' justifyContent='center'>
-                  <Link component='button' onClick={handlePasswordReset}>
+                  <Link
+                    component='button'
+                    onClick={handleResetPassword}
+                    disabled
+                  >
                     Can't sign in?
                   </Link>
                 </Box>

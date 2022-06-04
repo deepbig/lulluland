@@ -1,6 +1,6 @@
 import { auth } from '..';
 import {
-  signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -13,8 +13,8 @@ import {
 
 export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
-
-  return signInWithPopup(auth, provider);
+  
+  await signInWithRedirect(auth, provider);
 };
 
 export const onAuthChange = (callback: any) => {

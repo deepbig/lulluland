@@ -8,7 +8,7 @@ import {
   Typography,
   linearProgressClasses,
 } from '@mui/material';
-import { blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { barColors } from 'lib';
 
 const BorderLinearProgress = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'barColor',
@@ -60,7 +60,6 @@ const LinearProgressWithLabel = ({
   );
 };
 
-const barColor = [blue[500], purple[500], teal[500], orange[500], brown[500]];
 const goals = [84, 12, 102, 82];
 
 function Achievements() {
@@ -78,7 +77,7 @@ function Achievements() {
                 performanceData[0].values
               } / ${goals[index % 4]} reps)`}
               value={(performanceData[0].values / goals[index % 4]) * 100}
-              barColor={barColor[index % 5]}
+              barColor={barColors[index % 5]}
               key={index}
             />
           ) : null

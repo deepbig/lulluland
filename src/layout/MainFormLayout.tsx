@@ -1,4 +1,3 @@
-import React from 'react';
 import { blue } from '@mui/material/colors';
 import { styled, Box } from '@mui/material';
 

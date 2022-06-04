@@ -4,17 +4,46 @@ export enum PageName {
   EFFORT_TRACKER = 'Effort Tracker',
   FINANCE_TRACKER = 'Finance Tracker',
   GROUP = 'Group Dashboard',
-  PROFILE = "Profile",
+  PROFILE = 'Profile',
+}
+
+export type UserData = {
+  uid: string;
+  displayName: string;
+  username: string;
+  email: string;
+  photoURL: string;
+  gender: 'male' | 'female' | 'other' | null;
+  age: number;
+  levelOfExperience: number;
+  peerRating: number;
+  categories: string[];
+  groups: string[];
+  summaries: SummaryData[];
+  disabled: string[];
+  removed: string[];
+};
+
+export interface SummaryData {
+  totalPractices: number;
+  totalDurations: number;
 }
 
 export interface ActivityData {
-  id?: string;
+  id: string;
   category: string;
   date: any;
-  level: number;
+  duration: number;
   note: string;
-  values: number;
-};
+}
+
+export interface ActivityAddFormData {
+  category: string;
+  date: string;
+  duration: number;
+  note: string;
+  uid: string;
+}
 
 export type CategoryData = {
   category?: string;
@@ -28,7 +57,7 @@ export interface PerformanceData {
   date: any;
   note: string;
   values: number;
-};
+}
 
 export interface PerformanceChartData {
   time: string;
@@ -37,17 +66,17 @@ export interface PerformanceChartData {
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
-      guideline: React.CSSProperties;
+    guideline: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions {
-      guideline?: React.CSSProperties;
+    guideline?: React.CSSProperties;
   }
 }
 
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
-      guideline: true;
+    guideline: true;
   }
 }

@@ -1,14 +1,14 @@
 import { Box, Container, Paper, Typography, Link, Grid, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function SignUp() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [emailError, setEmailError] = useState('');
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
+    // email, password, name
   } 
   
 
@@ -31,12 +31,12 @@ function SignUp() {
               size='small'
               name='email'
               variant='outlined'
-              value={email}
+              // value={email}
               onChange={handleChangeEmail}
               required
               fullWidth
-              error={emailError ? true : false}
-              helperText={emailError}
+              // error={emailError ? true : false}
+              // helperText={emailError}
             />
           </Grid>
         </Grid>

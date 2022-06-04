@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import SignUp from 'components/auth/SignUp';
 import MainFormLayout from 'layout/MainFormLayout';
 

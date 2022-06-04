@@ -1,5 +1,6 @@
 import { Button, Box } from '@mui/material';
 import React from 'react';
+import { signInWithGoogle } from 'db/repositories/auth';
 
 export const GoogleIcon = (
   <svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
@@ -39,10 +40,19 @@ export const AppleIcon = (
 );
 
 function OAuth() {
+    const handleSignInWithGoogle = async () => {
+        await signInWithGoogle();
+    }
+
   return (
     <>
       <Box pb={1}>
-        <Button variant='outlined' startIcon={GoogleIcon} fullWidth>
+        <Button
+          variant='outlined'
+          startIcon={GoogleIcon}
+          fullWidth
+          onClick={handleSignInWithGoogle}
+        >
           Sign in with Google
         </Button>
       </Box>

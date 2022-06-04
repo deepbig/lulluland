@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   ListSubheader,
@@ -12,14 +12,7 @@ import {
   Divider,
   Typography,
   Toolbar,
-  Avatar,
   Popover,
-  Paper,
-  Box,
-  Stack,
-  CardContent,
-  Card,
-  Grid,
   Button,
 } from '@mui/material';
 import { orange } from '@mui/material/colors';
@@ -33,9 +26,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NavCard from '../customCards/NavCard';
-import MainCard from '../customCards/MainCard';
 import { auth } from 'db';
-import { PageName } from 'types';
 import UserMenu from './UserMenu';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
