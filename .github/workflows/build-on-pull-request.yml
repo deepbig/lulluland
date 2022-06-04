@@ -25,9 +25,6 @@ jobs:
       - name: Build Project
         run: npm ci && npm run build
 
-      - name: Run React Unit Tests
-        run: npm test
-
       - name: Delopy to Preview Server
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
