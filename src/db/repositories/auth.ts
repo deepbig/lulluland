@@ -9,6 +9,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   onAuthStateChanged,
+  getRedirectResult,
 } from 'firebase/auth';
 
 export const signInWithGoogle = async () => {
@@ -16,6 +17,16 @@ export const signInWithGoogle = async () => {
   
   await signInWithRedirect(auth, provider);
 };
+
+export const checkRedirectResult = async (): Promise<any> => {
+    let result;
+    await getRedirectResult(auth).then((res) => {
+        result = res;
+    }).catch((err) => {
+        result = null;
+    });
+    return result;
+}
 
 export const onAuthChange = (callback: any) => {
   return onAuthStateChanged(auth, (user) => {

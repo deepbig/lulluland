@@ -12,8 +12,8 @@ import DashboardPage from 'pages/DashboardPage';
 // import LoadingLogo from 'components/loading/LoadingLogo';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { getBackdrop, setBackdrop, reset as resetBackdrop } from 'modules/backdrop';
-import { reset as resetActivity  } from 'modules/activity';
-import { onAuthChange } from 'db/repositories/auth';
+import { reset as resetActivity } from 'modules/activity';
+import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
 import SignInPage from 'pages/SignInPage';
 import SignUpPage from 'pages/SignUpPage';
 import { setUser, reset as resetUser } from 'modules/user';
@@ -37,8 +37,8 @@ function App() {
         display: 'block',
       },
       button: {
-        textTransform: 'none'
-      }
+        textTransform: 'none',
+      },
     },
   });
 
@@ -46,16 +46,16 @@ function App() {
     onAuthChange(async (user: any) => {
       dispatch(setBackdrop(true));
       if (user) {
-        console.log('why this is called? this is called when user enter the website.');
-        // user logged in
         const loggedInUser = await getLoggedInUser(user);
         if (loggedInUser) {
           dispatch(setUser(loggedInUser));
-          if (loggedInUser.username) {
-            navigate(`/dashboard/${loggedInUser.username}`);
-          } else {
-            // update username
-            navigate('/initial')
+          const result = await checkRedirectResult();
+          if (result) {
+            if (loggedInUser.username) {
+              navigate(`/dashboard/${loggedInUser.username}`);
+            } else {
+              navigate('/initial');
+            }
           }
         } else {
           alert('Failed to fetch user from database. Please login again.');
@@ -68,7 +68,7 @@ function App() {
       }
       dispatch(setBackdrop(false));
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -76,8 +76,8 @@ function App() {
       <CssBaseline />
       {/* <LoadingLogo /> */}
       <Routes>
-        <Route path='/' element={<Navigate to='/dashboard/deepbig' />} />
-        <Route path='/dashboard' element={<Navigate to='/dashboard/deepbig' />} />
+        <Route path='/' element={<Navigate to='/dashboard' />} />
+        <Route path='/dashboard' element={<DashboardPage />} />
         <Route path='/dashboard/:username' element={<DashboardPage />} />
         <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
