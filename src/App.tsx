@@ -13,6 +13,7 @@ import DashboardPage from 'pages/DashboardPage';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { getBackdrop, setBackdrop, reset as resetBackdrop } from 'modules/backdrop';
 import { reset as resetActivity } from 'modules/activity';
+import { reset as resetPerformance } from 'modules/performance';
 import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
 import SignInPage from 'pages/SignInPage';
 import SignUpPage from 'pages/SignUpPage';
@@ -62,9 +63,11 @@ function App() {
         }
       } else {
         // user logged out
+        dispatch(resetActivity());
         dispatch(resetBackdrop());
         dispatch(resetUser());
-        dispatch(resetActivity());
+        dispatch(resetPerformance());
+        
       }
       dispatch(setBackdrop(false));
     });

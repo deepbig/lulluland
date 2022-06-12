@@ -8,7 +8,7 @@ import {
   Typography,
   linearProgressClasses,
 } from '@mui/material';
-import { barColors } from 'lib';
+import { backgroundColors } from 'lib';
 
 const BorderLinearProgress = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'barColor',
@@ -62,7 +62,12 @@ const LinearProgressWithLabel = ({
 
 const goals = [84, 12, 102, 82];
 
-function Achievements() {
+interface ObjectiveProps {
+  category: string;
+}
+
+
+function Achievements({ category } : ObjectiveProps) {
   // goals from performance.
   const performances = useAppSelector(getPerformances);
 
@@ -70,17 +75,19 @@ function Achievements() {
     <div>
       <List sx={{ p: 0, m: 0 }}>
         {/* TODO - Goal collection should be in the database */}
-        {performances?.map((performanceData, index) =>
-          performanceData.length > 1 ? (
+        {performances?.map((performance, index) =>
+          performance.map((subPerformance) => (
+            !category || category === subPerformance[0].category ?
             <LinearProgressWithLabel
-              title={`${performanceData[0]?.subcategory} in a set (${
-                performanceData[0].values
+              title={`${subPerformance[0].subcategory} in a set (${
+                subPerformance[0].performance
               } / ${goals[index % 4]} reps)`}
-              value={(performanceData[0].values / goals[index % 4]) * 100}
-              barColor={barColors[index % 5]}
-              key={index}
+              value={(subPerformance[0].performance / goals[index % 4]) * 100}
+              barColor={backgroundColors[index % 5]}
+              key={subPerformance[0].subcategory + index}
             />
-          ) : null
+            : null
+          ))
         )}
       </List>
     </div>

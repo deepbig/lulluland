@@ -14,6 +14,8 @@ import {
 import MainCard from 'components/customCards/MainCard';
 import { auth } from 'db';
 import { signOutUser } from 'db/repositories/auth';
+// import { useAppSelector } from 'hooks';
+// import { getUser } from 'modules/user';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +25,7 @@ function UserMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  // const user = useAppSelector(getUser);
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,7 +65,7 @@ function UserMenu() {
           <MainCard>
             <Box sx={{ width: 300 }}>
               <Stack direction='column'  alignItems='center'>
-                <Typography variant='h5'>Hongsuk Ryu</Typography>
+                <Typography variant='h5'>{currentUser?.displayName}</Typography>
                 <Typography variant='subtitle2'>
                   Full-Stack Web Developer
                 </Typography>

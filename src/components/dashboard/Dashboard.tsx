@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { chipColors } from 'lib';
 import ActivityAddForm from 'components/effortTracker/ActivityAddForm';
 import { getUser } from 'modules/user';
+import PerformanceAddForm from 'components/performanceTrends/PerformanceAddForm';
 
 function Copyright(props: any) {
   return (
@@ -49,8 +50,8 @@ export default function Dashboard({ username }: DashboardProps) {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [openActivityForm, setOpenActivityForm] = useState(false);
+  const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
   const user = useAppSelector(getUser);
-  // const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
   // const [openAchievementForm, setOpenAcehivementForm] = useState(false);
 
   useEffect(() => {
@@ -181,8 +182,11 @@ export default function Dashboard({ username }: DashboardProps) {
                       }}
                       elevation={4}
                     >
-                      <Title>Achievements</Title>
-                      <Achievements />
+                      <Title>
+                        Objectives{' '}
+                        {selectedCategory ? ` | ${selectedCategory}` : ''}
+                      </Title>
+                      <Achievements category={selectedCategory} />
                     </Paper>
                   </Grid>
                 </Grid>
@@ -195,7 +199,9 @@ export default function Dashboard({ username }: DashboardProps) {
               sx={{
                 p: 2,
                 display: 'flex',
+                position: 'relative',
                 flexDirection: 'column',
+                minHeight: 160,
                 [theme.breakpoints.up('lg')]: {
                   maxHeight: 632,
                 },
@@ -204,8 +210,25 @@ export default function Dashboard({ username }: DashboardProps) {
               }}
               elevation={4}
             >
-              <Title>Performance Trends</Title>
-              <PerformanceTrends />
+              {user && user.username === username ? (
+                <Title buttonFunction={() => setOpenPerformanceForm(true)}>
+                  Performance Trends
+                </Title>
+              ) : (
+                <Title>Performance Trends</Title>
+              )}
+              <PerformanceTrends
+                selectedCategory={selectedCategory}
+                selectedUser={selectedUser ? selectedUser : null}
+                username={username}
+              />
+              {openPerformanceForm ? (
+                <PerformanceAddForm
+                  open={openPerformanceForm}
+                  handleClose={() => setOpenPerformanceForm(false)}
+                  selectedCategory={selectedCategory}
+                />
+              ) : null}
             </Paper>
           </Grid>
         </Grid>

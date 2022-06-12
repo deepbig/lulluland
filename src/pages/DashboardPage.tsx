@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dashboard from 'components/dashboard/Dashboard';
 import { Box } from '@mui/material';
 import NavBar from 'components/navBar/NavBar';
 import { PageName } from 'types';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAppSelector } from 'hooks';
+import { getUser } from 'modules/user';
 
 function DashboardPage() {
   const { username } = useParams();
+  const user = useAppSelector(getUser);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!username) {
+      if (user) {
+        navigate(`/dashboard/${user.username}`);
+      } else {
+        navigate(`/dashboard/deepbig`);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username])
+
+  // 
 
   return (
     <Box sx={{ display: 'flex' }}>

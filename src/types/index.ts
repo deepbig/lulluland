@@ -45,18 +45,27 @@ export interface ActivityAddFormData {
   uid: string;
 }
 
-export type CategoryData = {
-  category?: string;
-  subcategories?: string[];
-} | null;
+export interface CategoryData {
+  category: string;
+  subcategories: string[];
+};
 
 export interface PerformanceData {
-  id?: string;
+  id: string;
   category: string;
   subcategory: string;
   date: any;
   note: string;
-  values: number;
+  performance: number;
+}
+
+export interface PerformanceAddFormData {
+  uid: string;
+  category: string;
+  subcategory: string;
+  date: any;
+  note: string;
+  performance: number;
 }
 
 export interface PerformanceChartData {

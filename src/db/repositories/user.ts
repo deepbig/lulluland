@@ -77,7 +77,7 @@ export const updateUserUsernameAndCategories = async (
 
     await updateDoc(docRef, {
       username: username,
-      categories: categories,
+      categories: [...categories].sort(),
     });
 
     const newDocSnap = await getDoc(docRef);
