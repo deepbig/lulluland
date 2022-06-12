@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
@@ -217,12 +217,22 @@ export default function NavBar(props: { selectedName: string }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = auth.currentUser;
+  const [start, setStart] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStart(false);
+    }, 2500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  return (
+  return start !== true ? (
     <>
       <AppBar position='absolute' open={open}>
         <Toolbar
@@ -282,5 +292,5 @@ export default function NavBar(props: { selectedName: string }) {
         <MenuListItems open={open} />
       </Drawer>
     </>
-  );
+  ) : null;
 }
