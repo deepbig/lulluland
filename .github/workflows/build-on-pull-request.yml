@@ -12,6 +12,7 @@ env:
   REACT_APP_SID: '${{ secrets.REACT_APP_SID }}'
   REACT_APP_APPID: '${{ secrets.REACT_APP_APPID }}'
   REACT_APP_MID: '${{ secrets.REACT_APP_MID }}'
+  REACT_APP_RECAPTCHA_SITE_KEY: '${{ secrets.REACT_APP_RECAPTCHA_SITE_KEY }}'
 
 jobs:
   build_and_preview:
