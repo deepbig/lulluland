@@ -91,8 +91,6 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
         const performances: Array<any> = [];
         const newCategories: Array<any> = [];
 
-        console.log('unsubscribe');
-
         const categories = props.selectedUser?.categories;
         if (categories) {
           categories.forEach((category) => {
