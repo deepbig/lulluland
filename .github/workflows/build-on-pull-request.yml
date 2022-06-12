@@ -23,8 +23,8 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v2
 
-      # - name: Install Dependencies
-      #   run: npm install
+      - name: Install Dependencies
+        run: npm install
 
       - name: Build Project
         run: npm ci && npm run build
