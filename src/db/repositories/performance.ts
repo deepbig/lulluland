@@ -1,31 +1,73 @@
-import db from "..";
-import { collection, getDocs, query, orderBy, where, limit } from 'firebase/firestore';
-import { PerformanceData } from 'types/types';
-const COLLECTION_NAME = "performances";
+import db from '..';
+import {
+  collection,
+  addDoc,
+  Timestamp,
+} from 'firebase/firestore';
+import { PerformanceAddFormData } from 'types';
+const COLLECTION_NAME = 'users';
+const SUBCOLLECTION_NAME = 'performances';
 
-// retrieve current (5 recent records) performances
-export const selectedCurrentFive = async (subcategories: Array<string>): Promise<Array<PerformanceData[]>> => {
+// export const getAllPerformances = async (
+//   uid: string,
+//   categories: string[]
+// ): Promise<any> => {
+//   const q = query(
+//     collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_NAME),
+//     orderBy('category'),
+//     orderBy('subcategory'),
+//     orderBy('date', 'desc')
+//   );
 
-    const data: Array<any> = [];
-    let promise = new Promise<void>((resolve, reject) => {
-        subcategories.forEach(async (subcategory, index, array) => {
-            const q = query(collection(db, COLLECTION_NAME), where("category", "==", "Workout"),
-                where("subcategory", "==", subcategory), orderBy("date", "desc"), limit(10));
-            const PerformancesSnapshot = await getDocs(q);
-            const subData: Array<any> = [];
+//   const performances: Array<any> = [];
+//   const newCategories: Array<any> = [];
+//   const unsubscribe = onSnapshot(q, (querySnapshot) => {
+//     //   const performanceSnapshot = await getDocs(q);
 
-            PerformancesSnapshot.docs.forEach((_data) => {
-                subData.push({
-                    id: _data.id, // because id field in separate function in firestore
-                    ..._data.data(), // the remaining fields
-                });
-            });
-            data.push(subData);
-            if (index === array.length - 1) resolve();
-        })
-    });
+//     categories.forEach((category) => {
+//       newCategories.push({ category: category, subcategories: [] });
+//       performances.push([]);
+//     });
 
-    await promise.then();
-    // return and convert back it array of activity
-    return data as Array<PerformanceData[]>;
-}
+//     let index = -1;
+//     let category = '';
+//     let subcategory = '';
+
+//     querySnapshot.docs.forEach((_data) => {
+//       if (category !== _data.data().category) {
+//         category = _data.data().category;
+//         index = categories.indexOf(category);
+//       }
+
+//       if (subcategory !== _data.data().subcategory) {
+//         subcategory = _data.data().subcategory;
+//         newCategories[index].subcategories.push(subcategory);
+//       }
+//       performances[index].push({
+//         id: _data.id,
+//         ..._data.data(),
+//       });
+//     });
+//   });
+
+//   return [
+//     performances as Array<PerformanceData[]>,
+//     newCategories as CategoryData[],
+//     unsubscribe,
+//   ];
+// };
+
+export const savePerformance = async (values: PerformanceAddFormData) => {
+  console.log(values);
+  await addDoc(
+    collection(db, COLLECTION_NAME, values.uid, SUBCOLLECTION_NAME),
+    {
+      uid: values.uid,
+      category: values.category,
+      subcategory: values.subcategory,
+      date: Timestamp.fromDate(new Date(values.date)),
+      note: values.note,
+      performance: +values.performance,
+    }
+  );
+};

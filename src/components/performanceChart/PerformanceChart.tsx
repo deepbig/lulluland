@@ -11,7 +11,7 @@ import {
 } from 'recharts/types/component/DefaultTooltipContent';
 import { Card, CardContent, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { PerformanceChartData } from 'types/types';
+import { PerformanceChartData } from 'types';
 
 interface performanceChartProps {
   data: PerformanceChartData[];

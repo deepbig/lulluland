@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer from '@mui/material/Drawer';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   ListSubheader,
@@ -12,14 +12,8 @@ import {
   Divider,
   Typography,
   Toolbar,
-  Avatar,
   Popover,
-  Paper,
-  Box,
-  Stack,
-  CardContent,
-  Card,
-  Grid,
+  Button,
 } from '@mui/material';
 import { orange } from '@mui/material/colors';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -32,7 +26,8 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NavCard from '../customCards/NavCard';
-import MainCard from '../customCards/MainCard';
+import { auth } from 'db';
+import UserMenu from './UserMenu';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -218,37 +213,16 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-export default function NavBar() {
-  const theme = useTheme();
+export default function NavBar(props: { selectedName: string }) {
   const [open, setOpen] = useState(false);
-  const [start, setStart] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStart(true);
-    }, 2400);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  const navigate = useNavigate();
+  const user = auth.currentUser;
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  const handleClickProfile = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseProfile = () => {
-    setAnchorEl(null);
-  };
-
-  const openProfile = Boolean(anchorEl);
-  const id = open ? 'popover-profile' : undefined;
-
-  return start ? (
+  return (
     <>
       <AppBar position='absolute' open={open}>
         <Toolbar
@@ -275,81 +249,20 @@ export default function NavBar() {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-            Effort Tracker
+            {props.selectedName}
           </Typography>
 
-          <IconButton
-            sx={{ p: 0 }}
-            aria-describedby={id}
-            onClick={handleClickProfile}
-          >
-            <Avatar alt='Hongsuk Ryu' src='/profile_img.jpg' />
-          </IconButton>
-          <Popover
-            id={id}
-            open={openProfile}
-            anchorEl={anchorEl}
-            onClose={handleCloseProfile}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Paper>
-              <MainCard>
-                <Box sx={{ width: 300 }}>
-                  <Stack>
-                    <Stack direction='row' spacing={0.5} alignItems='center'>
-                      <Typography variant='h5'>Hongsuk Ryu</Typography>
-                    </Stack>
-                    <Typography variant='subtitle2'>
-                      Full-Stack Web Developer
-                    </Typography>
-                  </Stack>
-
-                  <Card
-                    sx={{ backgroundColor: theme.palette.primary.dark, my: 2 }}
-                  >
-                    <CardContent>
-                      <Typography variant='body1' gutterBottom>
-                        <b>Who is Hongsuk?</b>
-                      </Typography>
-                      <Grid container spacing={3} direction='column'>
-                        <Grid item>
-                          <Grid
-                            item
-                            container
-                            alignItems='center'
-                            justifyContent='space-between'
-                          >
-                            <Grid item>
-                              <Typography variant='subtitle2'>
-                                주어진 시간을 계획하고 의미 있게 사용하는 것을
-                                즐기는 3년 차 웹 (Frontend & Backend) 개발자
-                                류홍석입니다. 현 직장인 실크로드 소프트에서
-                                React 기반 Frontend와 Java Spring Boot 기반
-                                Backend를 전담하여 개발하고 있습니다. Backend와
-                                연동되는 Netty 기반 Server Manager Tool 개발에도
-                                참여하고 있습니다. 전 직장인 Logitech에서 System
-                                Administrator 업무를 담당하였고, RPA를 사용하여
-                                Process Automation 및 Data Analysis 작업을
-                                수행하였습니다. 3년간 Bryant University에서
-                                Information Systems and Analytics Tutor & Lab
-                                Assistant로서 학우들의 학업을 도와주는 역할을
-                                수행하였습니다. Bryant University에서
-                                Information Systems 전공 수석으로
-                                졸업하였습니다.
-                              </Typography>
-                            </Grid>
-                            <Grid item>
-                              {/* need to create switch component */}
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                </Box>
-              </MainCard>
-            </Paper>
-          </Popover>
+          {user ? (
+            <UserMenu />
+          ) : (
+            <Button
+              variant='outlined'
+              color='inherit'
+              onClick={() => navigate(`/signin`)}
+            >
+              Sign In
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
@@ -369,5 +282,5 @@ export default function NavBar() {
         <MenuListItems open={open} />
       </Drawer>
     </>
-  ) : null;
+  );
 }

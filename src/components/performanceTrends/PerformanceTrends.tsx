@@ -1,16 +1,22 @@
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from 'hooks';
-import { getPerformances, setPerformanceList } from 'modules/performance';
-import { getCategory, setCategory } from 'modules/category';
+import {
+  setCategoryList,
+  getPerformances,
+  setPerformanceList,
+} from 'modules/performance';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/performanceChart/PerformanceChart';
 import MainCard from 'components/customCards/MainCard';
 import { styled } from '@mui/material/styles';
-import { blue, purple, teal, orange, brown } from '@mui/material/colors';
-import { PerformanceData, PerformanceChartData } from 'types/types';
-import * as dbPerformance from 'db/repositories/performance';
-import * as dbCategory from 'db/repositories/category';
+import { PerformanceData, PerformanceChartData, UserData } from 'types';
+import { backgroundColors, circleColors, avatarColors } from 'lib';
+import { getUser } from 'modules/user';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import db from 'db';
+const COLLECTION_NAME = 'users';
+const SUBCOLLECTION_NAME = 'performances';
 
 const CardWrapper = styled(MainCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
@@ -56,73 +62,84 @@ const CardWrapper = styled(MainCard, {
   },
 }));
 
-// This will be used after firestore api created.
-const colorList = [
-  {
-    bgColor: blue[500],
-    baColor: blue[800],
-    avColor: blue[200],
-  },
-  {
-    bgColor: purple[500],
-    baColor: purple[800],
-    avColor: purple[200],
-  },
-  {
-    bgColor: teal[500],
-    baColor: teal[800],
-    avColor: teal[200],
-  },
-  {
-    bgColor: orange[500],
-    baColor: orange[800],
-    avColor: orange[200],
-  },
-  {
-    bgColor: brown[500],
-    baColor: brown[800],
-    avColor: brown[200],
-  },
-];
+export interface PerformanceTrendsProps {
+  selectedCategory: string;
+  selectedUser: UserData | null;
+  username: string | undefined;
+}
 
-function PerformanceTrends() {
+function PerformanceTrends(props: PerformanceTrendsProps) {
   const performances = useAppSelector(getPerformances);
-  const category = useAppSelector(getCategory);
+  const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    fetchSubcategories('Workout');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let unsubscribe;
+    if (props.selectedUser && props.selectedUser.categories.length > 0) {
+      const q = query(
+        collection(
+          db,
+          COLLECTION_NAME,
+          props.selectedUser.uid,
+          SUBCOLLECTION_NAME
+        ),
+        orderBy('category'),
+        orderBy('subcategory'),
+        orderBy('date', 'desc')
+      );
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const performances: Array<any> = [];
+        const newCategories: Array<any> = [];
 
-  useEffect(() => {
-    if (category?.subcategories?.length && category.subcategories?.length > 0) {
-      fetchPerformances(category.subcategories);
+        const categories = props.selectedUser?.categories;
+        if (categories) {
+          categories.forEach((category) => {
+            newCategories.push({ category: category, subcategories: [] });
+            performances.push([]);
+          });
+
+          let category = '';
+          let index = -1;
+          let subcategory = '';
+          let subIndex = -1;
+
+          querySnapshot.docs.forEach((_data) => {
+            if (category !== _data.data().category) {
+              category = _data.data().category;
+              index = categories.indexOf(category);
+              subIndex = -1;
+            }
+
+            if (subcategory !== _data.data().subcategory || subIndex === -1) {
+              subcategory = _data.data().subcategory;
+              subIndex++;
+              newCategories[index].subcategories.push(subcategory);
+              performances[index].push([]);
+            }
+            performances[index][subIndex].push({
+              id: _data.id,
+              ..._data.data(),
+            });
+          });
+          dispatch(setPerformanceList(performances));
+          dispatch(setCategoryList(newCategories));
+        }
+      });
+    } else {
+      dispatch(setPerformanceList([]));
+      dispatch(setCategoryList([]));
     }
+    
+    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
-
-  const fetchSubcategories = async (categoryName: string) => {
-    const _category = await dbCategory.selectedSubcategories(categoryName);
-    if (
-      JSON.stringify(category?.subcategories) !==
-      JSON.stringify(_category?.subcategories)
-    ) {
-      dispatch(setCategory(_category));
-    }
-  };
-
-  const fetchPerformances = async (subcategory: string[]) => {
-    const _performances = await dbPerformance.selectedCurrentFive(subcategory);
-    dispatch(setPerformanceList(_performances));
-  };
+  }, [props.selectedUser]);
 
   const createChartData = (performances: PerformanceData[]) => {
     let chartData: PerformanceChartData[] = [];
     performances?.forEach((data) =>
       chartData.unshift({
         time: data.date?.toDate().toDateString(),
-        count: data.values,
+        count: data.performance,
       })
     );
     return chartData;
@@ -130,99 +147,124 @@ function PerformanceTrends() {
 
   return (
     <>
+      <Box m={2}>
+        {performances.length < 1 ? (
+          <Typography variant='guideline' align='center' mt={1}>
+            {user && user.username === props.username
+              ? "You don't have any performance history. Please add an indicator for your record!"
+              : 'There is no performance history.'}
+          </Typography>
+        ) : null}
+      </Box>
       <Grid container direction='row' spacing={2}>
-        {/* need loop start */}
         {performances?.map((performance, index) =>
-          performance.length > 1 ? (
-            <Grid item xs={12} md={6} lg={12} key={index}>
-              <CardWrapper
-                bgColor={colorList[index % 5]?.bgColor}
-                baColor={colorList[index % 5]?.baColor}
+          performance.map((subPerformance, index) =>
+            !props.selectedCategory ||
+            props.selectedCategory === subPerformance[0].category ? (
+              <Grid
+                item
+                xs={12}
+                md={6}
+                lg={12}
+                key={subPerformance[0].subcategory + index}
               >
-                <Grid container alignItems='center'>
-                  <Grid item xs={6}>
-                    <Grid container alignItems='center'>
-                      <Grid item xs={12}>
-                        <Typography component='h3' variant='h6'>
-                          💪{performance[0]?.subcategory}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                          sx={{
-                            fontSize: '2rem',
-                            fontWeight: 500,
-                            mr: 1,
-                          }}
-                        >
-                          {performance[0]?.values} reps
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '1.5rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 0.75,
-                            mb: 0.75,
-                          }}
-                        >
-                          {(
-                            (performance[0]?.values /
-                              performance[performance.length - 1]?.values -
-                              1) *
-                            100
-                          ).toFixed(1)}
-                          %
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            backgroundColor: colorList[index % 5]?.avColor,
-                            color: colorList[index % 5]?.bgColor,
-                          }}
-                        >
-                          <ArrowForwardIcon
-                            fontSize='inherit'
+                <CardWrapper
+                  bgColor={backgroundColors[index % backgroundColors.length]}
+                  baColor={circleColors[index % circleColors.length]}
+                >
+                  <Grid container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Grid container alignItems='center'>
+                        <Grid item xs={12}>
+                          <Typography component='h3' variant='h6'>
+                            💪{subPerformance[0]?.subcategory}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography
                             sx={{
-                              transform: `rotate(${
-                                performance[0]?.values >
-                                performance[performance.length - 1]?.values
-                                  ? '-45deg'
-                                  : '45deg'
-                              })`,
+                              fontSize: '2rem',
+                              fontWeight: 500,
+                              mr: 1,
                             }}
-                          />
-                        </Avatar>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography>
-                          from{' '}
-                          {performance[performance.length - 1].date
-                            ?.toDate()
-                            .toDateString()}
-                        </Typography>
+                          >
+                            {subPerformance[0]?.performance} reps
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            sx={{
+                              fontSize: '1.5rem',
+                              fontWeight: 500,
+                              mr: 1,
+                              mt: 0.75,
+                              mb: 0.75,
+                            }}
+                          >
+                            {(
+                              (subPerformance[0]?.performance /
+                                subPerformance[subPerformance.length - 1]
+                                  ?.performance -
+                                1) *
+                              100
+                            ).toFixed(1)}
+                            %
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              backgroundColor:
+                                avatarColors[index % avatarColors.length],
+                              color:
+                                backgroundColors[
+                                  index % backgroundColors.length
+                                ],
+                            }}
+                          >
+                            <ArrowForwardIcon
+                              fontSize='inherit'
+                              sx={{
+                                transform: `rotate(${
+                                  subPerformance[0]?.performance >
+                                  subPerformance[subPerformance.length - 1]
+                                    ?.performance
+                                    ? '-45deg'
+                                    : '45deg'
+                                })`,
+                              }}
+                            />
+                          </Avatar>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography>
+                            from{' '}
+                            {subPerformance[subPerformance.length - 1].date
+                              ?.toDate()
+                              .toDateString()}
+                          </Typography>
+                        </Grid>
                       </Grid>
                     </Grid>
+                    <Grid item xs={6}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          height: 150,
+                        }}
+                      >
+                        <PerformanceChart
+                          data={createChartData(subPerformance)}
+                        />
+                      </Box>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        height: 150,
-                      }}
-                    >
-                      <PerformanceChart data={createChartData(performance)} />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardWrapper>
-            </Grid>
-          ) : null
+                </CardWrapper>
+              </Grid>
+            ) : null
+          )
         )}
       </Grid>
     </>

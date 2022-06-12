@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './index';
-import { ActivityData } from 'types/types';
+import { ActivityData } from 'types';
 
 export interface ActivityState {
     activityList: ActivityData[];
@@ -16,11 +16,12 @@ export const activitySlice = createSlice({
     reducers: {
         setActivityList: (state, action: PayloadAction<ActivityData[]>) => {
             state.activityList = action.payload;
-        }
+        },
+        reset: () => initialState,
     }
 })
 
-export const { setActivityList } = activitySlice.actions;
+export const { setActivityList, reset } = activitySlice.actions;
 
 export const getActivities = (state: RootState) => state.activity.activityList;
 
