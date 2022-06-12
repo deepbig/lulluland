@@ -158,7 +158,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
       </Box>
       <Grid container direction='row' spacing={2}>
         {performances?.map((performance, index) =>
-          performance.map((subPerformance) =>
+          performance.map((subPerformance, index) =>
             !props.selectedCategory ||
             props.selectedCategory === subPerformance[0].category ? (
               <Grid
@@ -203,7 +203,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                           >
                             {(
                               (subPerformance[0]?.performance /
-                                subPerformance[performance.length - 1]
+                                subPerformance[subPerformance.length - 1]
                                   ?.performance -
                                 1) *
                               100
@@ -229,7 +229,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                               sx={{
                                 transform: `rotate(${
                                   subPerformance[0]?.performance >
-                                  subPerformance[performance.length - 1]
+                                  subPerformance[subPerformance.length - 1]
                                     ?.performance
                                     ? '-45deg'
                                     : '45deg'

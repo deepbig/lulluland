@@ -60,7 +60,7 @@ const LinearProgressWithLabel = ({
   );
 };
 
-const goals = [84, 12, 102, 82];
+const goals = [12, 84, 102, 82];
 
 interface ObjectiveProps {
   category: string;
@@ -75,8 +75,8 @@ function Achievements({ category } : ObjectiveProps) {
     <div>
       <List sx={{ p: 0, m: 0 }}>
         {/* TODO - Goal collection should be in the database */}
-        {performances?.map((performance, index) =>
-          performance.map((subPerformance) => (
+        {performances?.map((performance) =>
+          performance.map((subPerformance, index) => (
             !category || category === subPerformance[0].category ?
             <LinearProgressWithLabel
               title={`${subPerformance[0].subcategory} in a set (${

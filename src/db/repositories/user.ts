@@ -37,6 +37,8 @@ export const getLoggedInUser = async (user: {
         categories: [],
         groups: [],
         age: 0,
+        title: '',
+        bio: '',
       });
     } catch (e) {
       // need to handle error case.

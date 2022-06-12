@@ -139,7 +139,7 @@ export default function EffortTracker(props: EffortTrackerProps) {
               data-toggle='tooltip'
               data-placement='bottom'
               data-animation='false'
-              data-level={duration / 60 <= 4 ? Math.ceil(duration / 60) : 4}
+              data-level={duration / 30 <= 4 ? Math.ceil(duration / 30) : 4}
             />
           </Tooltip>
         );

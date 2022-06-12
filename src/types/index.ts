@@ -22,6 +22,8 @@ export type UserData = {
   summaries: SummaryData[];
   disabled: string[];
   removed: string[];
+  title: string;
+  bio: string;
 };
 
 export interface SummaryData {
