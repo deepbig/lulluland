@@ -21,6 +21,7 @@ import { setUser, reset as resetUser } from 'modules/user';
 import { getLoggedInUser } from 'db/repositories/user';
 import NotFoundPage from 'pages/NotFoundPage';
 import InitialPage from 'pages/InitialPage';
+import LoadingLogo from 'components/loading/LoadingLogo';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -77,7 +78,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <LoadingLogo /> */}
+      <LoadingLogo />
       <Routes>
         <Route path='/' element={<Navigate to='/dashboard' />} />
         <Route path='/dashboard' element={<DashboardPage />} />
