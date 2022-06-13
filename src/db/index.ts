@@ -13,7 +13,7 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MID,
 };
 
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 // initializeAppCheck(app, {
 //   provider: new ReCaptchaV3Provider(process.env.REACT_APP_RECAPTCHA_SITE_KEY ? process.env.REACT_APP_RECAPTCHA_SITE_KEY : ''),
 
