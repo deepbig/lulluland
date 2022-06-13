@@ -1,7 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
-// import { connectFirestoreEmulator } from 'firebase/firestore';
-// import { connectAuthEmulator } from "firebase/auth";
 import { getAuth } from "firebase/auth";
 // import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
@@ -15,7 +13,7 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MID,
 };
 
-// const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 // initializeAppCheck(app, {
 //   provider: new ReCaptchaV3Provider(process.env.REACT_APP_RECAPTCHA_SITE_KEY ? process.env.REACT_APP_RECAPTCHA_SITE_KEY : ''),
 
