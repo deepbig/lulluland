@@ -75,6 +75,12 @@ export interface PerformanceChartData {
   count?: number;
 }
 
+export interface SnackbarData {
+  open: boolean;
+  severity: 'success' | 'info' | 'warning' | 'error';
+  message: string;
+}
+
 declare module '@mui/material/styles' {
   interface TypographyVariants {
     guideline: React.CSSProperties;

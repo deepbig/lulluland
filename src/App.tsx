@@ -5,6 +5,7 @@ import {
   Backdrop,
   CircularProgress,
   CssBaseline,
+  Snackbar,
   useMediaQuery,
 } from '@mui/material';
 import { Navigate, Routes, Route, useNavigate } from 'react-router-dom';
@@ -14,6 +15,7 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import { getBackdrop, setBackdrop, reset as resetBackdrop } from 'modules/backdrop';
 import { reset as resetActivity } from 'modules/activity';
 import { reset as resetPerformance } from 'modules/performance';
+import { reset as resetSnackbar, setOpen } from 'modules/snackbar';
 import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
 import SignInPage from 'pages/SignInPage';
 import SignUpPage from 'pages/SignUpPage';
@@ -22,11 +24,18 @@ import { getLoggedInUser } from 'db/repositories/user';
 import NotFoundPage from 'pages/NotFoundPage';
 import InitialPage from 'pages/InitialPage';
 import LoadingLogo from 'components/loading/LoadingLogo';
+import { getSnackbar } from 'modules/snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function App() {
   const dispatch = useAppDispatch();
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const backdrop = useAppSelector(getBackdrop);
+  const snackbar = useAppSelector(getSnackbar);
   const navigate = useNavigate();
 
   const theme = createTheme({
@@ -40,6 +49,15 @@ function App() {
       },
       button: {
         textTransform: 'none',
+      },
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 2000,
       },
     },
   });
@@ -68,12 +86,17 @@ function App() {
         dispatch(resetBackdrop());
         dispatch(resetUser());
         dispatch(resetPerformance());
+        dispatch(resetSnackbar());
         
       }
       dispatch(setBackdrop(false));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleSnackbarClose = () => {
+    dispatch(setOpen(false));
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -94,6 +117,11 @@ function App() {
       >
         <CircularProgress color='inherit' />
       </Backdrop>
+      <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%'}}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

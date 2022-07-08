@@ -58,7 +58,6 @@ const SUBCOLLECTION_NAME = 'performances';
 // };
 
 export const savePerformance = async (values: PerformanceAddFormData) => {
-  console.log(values);
   await addDoc(
     collection(db, COLLECTION_NAME, values.uid, SUBCOLLECTION_NAME),
     {
