@@ -3,6 +3,7 @@ import activityReducer from './activity';
 import performanceReducer from './performance';
 import backdropReducer from './backdrop';
 import userReducer from './user';
+import snackbarReducer from './snackbar';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         performance: performanceReducer,
         backdrop: backdropReducer,
         user: userReducer,
+        snackbar: snackbarReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
     devTools: process.env.NODE_ENV !== 'production',

@@ -49,7 +49,6 @@ function ActivityAddForm(props: ActivityAddFormProps) {
         };
 
         const newActivity: ActivityData | null = await saveActivity(addValues);
-
         let updatedActivities = [...activities];
 
         if (newActivity) {

@@ -3,7 +3,6 @@ import { useAppSelector } from 'hooks';
 import { getActivities } from 'modules/activity';
 import {
   Grid,
-  List,
   ListItem,
   ListItemText,
   ListItemAvatar,
@@ -47,15 +46,12 @@ function YearlySummary(props: SummaryProps) {
         }
       }
     });
-    if (practices > 0) {
-      setTotalPractices(practices);
-      if (index !== null && index >= 0) {
-        setBestPractice(activities[index]);
-      } else {
-        setBestPractice(null);
-      }
+    setTotalPractices(practices);
+    if (index !== null && index >= 0) {
+      setBestPractice(activities[index]);
+    } else {
+      setBestPractice(null);
     }
-    return practices;
   };
 
   const countDurations = () => {
@@ -68,79 +64,77 @@ function YearlySummary(props: SummaryProps) {
         durations += activity.duration;
       }
     });
-    if (durations > 0) {
-      setTotalDurations(durations);
-    }
-    return durations;
+    setTotalDurations(durations);
   };
 
   return (
     <Grid container direction='row' spacing={3}>
-      <Grid item xs={12}>
-        <List>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <FitnessCenterIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={totalPractices ? `${totalPractices} days` : `0 days`}
-              secondary='Total Practices in the Last Year'
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <TimerIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                totalDurations
-                  ? `${
-                      totalDurations >= 60
-                        ? (totalDurations / 60).toFixed(1) + ' hours'
-                        : totalDurations + ' mins'
-                    }`
-                  : `0 mins`
-              }
-              secondary='Total Practice Durations in the Last Year'
-            />
-          </ListItem>
-          {bestPractice ? (
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <StarIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <Tooltip title={bestPractice.note} arrow>
-                <ListItemText
-                  primary={
-                    bestPractice.duration +
-                    ' mins (' +
-                    bestPractice.date.toDate().toDateString() +
-                    ')'
-                  }
-                  secondary='Best Practice in the Last Year'
-                />
-              </Tooltip>
-            </ListItem>
-          ) :             <ListItem>
+      <Grid item xs={4}>
+        <ListItem>
           <ListItemAvatar>
             <Avatar>
-              <StarIcon />
+              <FitnessCenterIcon />
             </Avatar>
           </ListItemAvatar>
-            <ListItemText
-              primary={
-                '0 mins'
+          <ListItemText
+            primary={totalPractices ? `${totalPractices} days` : `0 days`}
+            secondary='Total Practices'
+          />
+        </ListItem>
+      </Grid>
+      <Grid item xs={4}>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>
+              <TimerIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={
+              totalDurations
+                ? `${
+                    totalDurations >= 60
+                      ? (totalDurations / 60).toFixed(1) + ' hours'
+                      : totalDurations + ' mins'
+                  }`
+                : `0 mins`
+            }
+            secondary='Total Durations'
+          />
+        </ListItem>
+      </Grid>
+      <Grid item xs={4}>
+        {bestPractice ? (
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <StarIcon />
+              </Avatar>
+            </ListItemAvatar>
+            <Tooltip
+              title={
+                bestPractice.date.toDate().toDateString() +
+                '\n Note: ' +
+                bestPractice.note
               }
-              secondary='Best Practice in the Last Year'
-            />
-        </ListItem>}
-        </List>
+              arrow
+            >
+              <ListItemText
+                primary={bestPractice.duration + ' mins'}
+                secondary='Best Practice'
+              />
+            </Tooltip>
+          </ListItem>
+        ) : (
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <StarIcon />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={'0 mins'} secondary='Best Practice' />
+          </ListItem>
+        )}
       </Grid>
     </Grid>
   );

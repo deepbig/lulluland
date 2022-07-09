@@ -25,6 +25,7 @@ import { chipColors } from 'lib';
 import ActivityAddForm from 'components/effortTracker/ActivityAddForm';
 import { getUser } from 'modules/user';
 import PerformanceAddForm from 'components/performanceTrends/PerformanceAddForm';
+import RecentActivity from 'components/recentActivity/RecentActivity';
 
 function Copyright(props: any) {
   return (
@@ -73,7 +74,7 @@ export default function Dashboard({ username }: DashboardProps) {
   return (
     <>
       <Toolbar />
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4 }}>
+      <Container maxWidth={'xl'} sx={{ mt: 2, mb: 4 }}>
         <Stack direction='column' alignItems='center' sx={{ marginBottom: 2 }}>
           {selectedUser ? (
             <Avatar
@@ -150,6 +151,25 @@ export default function Dashboard({ username }: DashboardProps) {
               </Grid>
               {/* Summary of Year */}
               <Grid item xs={12}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        overflowY: 'auto',
+                      }}
+                      elevation={4}
+                    >
+                      <Title>
+                        Summary of Year{''}
+                        {selectedCategory ? ` | ${selectedCategory}` : ''}
+                      </Title>
+                      <YearlySummary category={selectedCategory} />
+                    </Paper>
+                  </Grid> 
+              {/* Summary of Year */}
+              <Grid item xs={12}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <Paper
@@ -157,17 +177,20 @@ export default function Dashboard({ username }: DashboardProps) {
                         p: 2,
                         display: 'flex',
                         flexDirection: 'column',
-                        height: 330,
+                        height: 255,
+                        [theme.breakpoints.up('xl')]: {
+                          height: 330,
+                        },
                         overflow: 'hidden',
                         overflowY: 'auto',
                       }}
                       elevation={4}
                     >
                       <Title>
-                        Summary of Year{' '}
+                        Recent Activity{' '}
                         {selectedCategory ? ` | ${selectedCategory}` : ''}
                       </Title>
-                      <YearlySummary category={selectedCategory} />
+                      <RecentActivity category={selectedCategory} username={username} />
                     </Paper>
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -177,6 +200,9 @@ export default function Dashboard({ username }: DashboardProps) {
                         display: 'flex',
                         flexDirection: 'column',
                         height: 330,
+                        [theme.breakpoints.between('md', 'xl')]: {
+                          height: 255,
+                        },
                         overflow: 'hidden',
                         overflowY: 'auto',
                       }}
@@ -202,8 +228,11 @@ export default function Dashboard({ username }: DashboardProps) {
                 position: 'relative',
                 flexDirection: 'column',
                 minHeight: 160,
-                [theme.breakpoints.up('lg')]: {
-                  maxHeight: 632,
+                [theme.breakpoints.between('lg','xl')]: {
+                  height: 725,
+                },
+                [theme.breakpoints.up('xl')]: {
+                  height: 795,
                 },
                 overflow: 'hidden',
                 overflowY: 'auto',

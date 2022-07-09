@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './index'; 
 
-export interface backdropState {
+export interface BackdropState {
     backdrop: boolean;
 }
 
-const initialState: backdropState = {
+const initialState: BackdropState = {
     backdrop: false
 }
 

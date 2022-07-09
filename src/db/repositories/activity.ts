@@ -114,6 +114,8 @@ export const update = async (
   } as ActivityData;
 };
 
-export const remove = async (id: string) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+export const remove = async (userId: string, activityId: string) => {
+  await deleteDoc(
+    doc(db, COLLECTION_NAME, userId, SUBCOLLECTION_NAME, activityId)
+  );
 };
