@@ -9,18 +9,17 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Navigate, Routes, Route, useNavigate } from 'react-router-dom';
-import DashboardPage from 'pages/DashboardPage';
-// import LoadingLogo from 'components/loading/LoadingLogo';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { getBackdrop, setBackdrop, reset as resetBackdrop } from 'modules/backdrop';
 import { reset as resetActivity } from 'modules/activity';
 import { reset as resetPerformance } from 'modules/performance';
 import { reset as resetSnackbar, setOpen } from 'modules/snackbar';
 import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
-import SignInPage from 'pages/SignInPage';
-import SignUpPage from 'pages/SignUpPage';
 import { setUser, reset as resetUser } from 'modules/user';
 import { getLoggedInUser } from 'db/repositories/user';
+import DashboardPage from 'pages/DashboardPage';
+import SignInPage from 'pages/SignInPage';
+import SignUpPage from 'pages/SignUpPage';
 import NotFoundPage from 'pages/NotFoundPage';
 import InitialPage from 'pages/InitialPage';
 import LoadingLogo from 'components/loading/LoadingLogo';
