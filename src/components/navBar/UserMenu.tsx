@@ -127,6 +127,7 @@ function UserMenu() {
                     <TextField
                       label='Title'
                       size='small'
+                      fullWidth
                       name='title'
                       variant='outlined'
                       value={profileValues.title}
@@ -136,6 +137,7 @@ function UserMenu() {
                     <TextField
                       label='Bio'
                       size='small'
+                      fullWidth
                       name='bio'
                       variant='outlined'
                       value={profileValues.bio}
@@ -175,7 +177,7 @@ function UserMenu() {
                     >
                       Save
                     </LoadingButton>
-                    <Button variant='outlined' onClick={handleClose}>
+                    <Button variant='outlined' onClick={handleCancel}>
                       Cancel
                     </Button>
                   </>
