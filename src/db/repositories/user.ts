@@ -79,13 +79,31 @@ export const updateUserUsernameAndCategories = async (
 
     await updateDoc(docRef, {
       username: username,
-      categories: [...categories].sort(),
+      categories: categories,
     });
 
     const newDocSnap = await getDoc(docRef);
-    return newDocSnap.data() as UserData;
+    return { uid: newDocSnap.id, ...newDocSnap.data() } as UserData;
   } catch (e) {
     // need to handle error case.
     return null;
   }
+};
+
+export const updateUserProfile = async (
+  userId: string,
+  values: { title: string; bio: string }
+): Promise<UserData | null> => {
+  const docRef = doc(db, COLLECTION_NAME, userId);
+  try {
+    await updateDoc(docRef, {
+      title: values.title,
+      bio: values.bio,
+    });
+  } catch (e) {
+    return null;
+  }
+
+  const newDocSnap = await getDoc(docRef);
+  return { uid: newDocSnap.id, ...newDocSnap.data() } as UserData;
 };
