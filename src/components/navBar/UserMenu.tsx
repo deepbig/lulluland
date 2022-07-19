@@ -143,7 +143,7 @@ function UserMenu() {
                       value={profileValues.bio}
                       onChange={handleChange}
                       multiline
-                      maxRows={4}
+                      maxRows={15}
                       sx={{ margin: '8px 0px' }}
 
                     />
