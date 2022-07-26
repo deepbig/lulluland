@@ -16,3 +16,18 @@ export const currentDateTime = () => {
       }-${dateObj.getDate() < 10 ? '0' : ''}${dateObj.getDate()}T${dateObj.getHours() < 10 ? '0' : ''}${dateObj.getHours()
       }:${dateObj.getMinutes() < 10 ? '0' : ''}${dateObj.getMinutes()}`;
 };
+
+export const givenDateFormat = (date: string) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (1 + dateObj.getMonth()).toString().padStart(2, '0');
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  return `${month}/${day}/${year}`;  
+}
+
+export const givenMonthYearFormat = (date: string) => {
+  const dateObj = date ? new Date(date) : new Date();
+  const year = dateObj.getFullYear();
+  const month = (1 + dateObj.getMonth()).toString().padStart(2, '0');
+  return `${month}/${year}`; 
+}
