@@ -34,6 +34,16 @@ export enum ExpenseTypes {
   ETC = 'etc',
 }
 
+export enum StockCountryTypes {
+  USA = 'USA',
+  KOR = 'KOR',
+}
+
+export enum StockTypes {
+  ETF = 'etf',
+  STOCK = 'stock',
+}
+
 export type UserData = {
   uid: string;
   displayName: string;
@@ -153,19 +163,30 @@ export interface SubAssetData {
 }
 
 export interface StockData {
-  market: string;
   symbol: string;
+  companyName: string;
   buyPrice: number;
   shares: number;
+  country: string;
+  type: string;
+}
+
+export interface StockTag {
+  symbol: string;
+  companyName: string;
+  country: StockCountryTypes.KOR | StockCountryTypes.USA;
+  type: StockTypes.ETF | StockTypes.STOCK;
 }
 
 export interface StockHistoryData {
   id: string;
   date: any;
   symbol: string;
+  companyName: string;
   buyPrice: number;
   shares: number;
   sellPrice: number;
+  country: StockCountryTypes.KOR | StockCountryTypes.USA;
 }
 
 export interface SnackbarData {
