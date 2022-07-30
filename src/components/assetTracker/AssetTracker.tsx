@@ -1,7 +1,7 @@
 import { Grid, Paper } from '@mui/material';
 import Title from 'components/title/Title';
 import React, { useEffect } from 'react';
-import { StockCountryTypes, StockTypes, UserData } from 'types';
+import { StockCountryTypes, UserData } from 'types';
 import AssetChart from './assetPieChart/AssetPieChart';
 import AssetTrend from './assetTrend/AssetTrend';
 import MonthlyExpenseChart from './monthlyExpensePieChart/MonthlyExpensePieChart';
@@ -12,6 +12,7 @@ import { current, summaries } from 'db/repositories/asset';
 import { useAppDispatch } from 'hooks';
 import { setAssetList, setAssetSummaryList } from 'modules/asset';
 import { setBackdrop } from 'modules/backdrop';
+import axios from 'axios';
 
 type AssetTrackerProps = {
   username: string | undefined;
@@ -36,24 +37,18 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
     dispatch(setAssetSummaryList(_summaries));
     if (_summaries.length > 0) {
       // current Price 업데이트 필요. 여기서 업데이트를 해줘야
-      const updatedSummaries = [..._summaries];
+      // const updatedSummaries = [..._summaries];
       for (const stock of _summaries[_summaries.length - 1].stocks) {
         const location =
           stock.country === StockCountryTypes.KOR ? 'domestic' : 'worldstock';
-        const _realtimePrices = await fetch(
-          `https://cors-anywhere.herokuapp.com/https://polling.finance.naver.com/api/realtime/${location}/${stock.type}/${stock.symbol}`,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'User-Agent': 'Mozilla/5.0',
-            },
-          }
-        ).catch((e) => {
-          console.log(e);
-          // 없으면 패스
-        });
+        const _realtimePrices = await axios
+          .get(
+            `https://polling.finance.naver.com/api/realtime/${location}/${stock.type}/${stock.symbol}`
+          )
+          .catch((e) => {
+            console.log(e);
+            // 없으면 패스
+          });
         console.log(_realtimePrices);
         // if (_realtimePrices?.datas?.closePrice) {
         //   stock.currentPrice = _realtimePrices.datas[0].closePrice;
