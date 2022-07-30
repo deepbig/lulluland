@@ -166,6 +166,7 @@ export interface StockData {
   symbol: string;
   companyName: string;
   buyPrice: number;
+  currentPrice: number;
   shares: number;
   country: string;
   type: string;
@@ -173,7 +174,7 @@ export interface StockData {
 
 export interface StockTag {
   symbol: string;
-  companyName: string;
+  label: string;
   country: StockCountryTypes.KOR | StockCountryTypes.USA;
   type: StockTypes.ETF | StockTypes.STOCK;
 }

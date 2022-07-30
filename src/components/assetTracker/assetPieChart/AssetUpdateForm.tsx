@@ -12,21 +12,30 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  MenuItem,
   OutlinedInput,
-  Select,
-  SelectChangeEvent,
   TextField,
   Typography,
+  Autocomplete,
 } from '@mui/material';
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { givenMonthYearFormat } from 'lib';
-import { getAssetSummaries } from 'modules/asset';
+import { getAssetSummaries, setAssetSummaryList } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
-import { AssetData, AssetTypes, StockData, SubAssetData } from 'types';
+import {
+  AssetData,
+  AssetTypes,
+  StockCountryTypes,
+  StockData,
+  StockTag,
+  SubAssetData,
+} from 'types';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getStockTags } from 'modules/stock';
+import { setSnackbar } from 'modules/snackbar';
+import { getUser } from 'modules/user';
+import { updateAssetSummary } from 'db/repositories/asset';
+import { setBackdrop } from 'modules/backdrop';
 
 interface AssetUpdateFormProps {
   open: boolean;
@@ -36,6 +45,8 @@ interface AssetUpdateFormProps {
 function AssetUpdateForm(props: AssetUpdateFormProps) {
   const assetSummaries = useAppSelector(getAssetSummaries);
   const stockTags = useAppSelector(getStockTags);
+  const user = useAppSelector(getUser);
+  const dispatch = useAppDispatch();
   const [values, setValues] = useState<AssetData>({
     id: '',
     date: '',
@@ -47,12 +58,15 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
     } as SubAssetData,
     stocks: [] as StockData[],
   });
-  const [stockAddValues, setStockAddValues] = useState({
-    open: false,
+  const [stockFormOpen, setStockFormOpen] = useState(false);
+  const defaultStockValue = {
     symbol: '',
-    companyName: '',
+    label: '',
     country: '',
     type: '',
+  };
+  const [stockAddValues, setStockAddValues] = useState({
+    ...defaultStockValue,
   });
 
   useEffect(() => {
@@ -62,13 +76,48 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
   }, [assetSummaries]);
 
   const handleSubmit = async () => {
+    if (user?.uid) {
+      try {
+        dispatch(setBackdrop(true));
+        const res = await updateAssetSummary(user.uid, values);
+        if (res) {
+          let updatedAssetSummaries = [...assetSummaries];
+          updatedAssetSummaries.splice(
+            updatedAssetSummaries.length - 1,
+            1,
+            res
+          );
+          dispatch(setAssetSummaryList(updatedAssetSummaries));
+          dispatch(
+            setSnackbar({
+              open: true,
+              severity: 'success',
+              message: 'Asset is successfully updated.',
+            })
+          );
+          props.handleClose();
+        }
+        dispatch(setBackdrop(false));
+      } catch (error) {
+        dispatch(
+          setSnackbar({
+            open: true,
+            severity: 'error',
+            message:
+              'Failed to update asset infomation due to an internal server error: ' +
+              error,
+          })
+        );
+      }
+    }
     console.log(values);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAssets = { ...values.assets, [e.target.id]: +e.target.value };
     setValues({
       ...values,
-      [e.target.id]: +e.target.value,
+      assets: newAssets,
     });
   };
 
@@ -79,30 +128,45 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
     const newStocks = [...values.stocks];
     const newStock = { ...values.stocks[idx], [e.target.id]: +e.target.value };
     newStocks[idx] = newStock;
-    console.log(newStocks, newStock);
     setValues({
       ...values,
       stocks: newStocks,
     });
   };
 
-  const handleChangeStockTag = (event: SelectChangeEvent) => {
-    const values = event.target.value.split(',');
-    setStockAddValues({
-      ...stockAddValues,
-      companyName: values[0],
-      symbol: values[1],
-      country: values[2],
-      type: values[3],
-    });
+  const handleChangeStockTag = (newValue: StockTag | null) => {
+    if (!newValue) {
+      setStockAddValues({ ...defaultStockValue });
+      return;
+    }
+
+    // if newValue is already on the list
+    if (
+      values.stocks.findIndex((stock) => stock.symbol === newValue.symbol) > -1
+    ) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'warning',
+          message: 'Selected Stock already exists on your list.',
+        })
+      );
+      setStockAddValues({ ...defaultStockValue });
+      return;
+    }
+
+    if (newValue) {
+      setStockAddValues({ ...newValue });
+    }
   };
 
   const handleClickStockAdd = () => {
     const newStocks = [...values.stocks];
     newStocks.push({
       symbol: stockAddValues.symbol,
-      companyName: stockAddValues.companyName,
+      companyName: stockAddValues.label,
       buyPrice: 0,
+      currentPrice: 0,
       shares: 0,
       country: stockAddValues.country,
       type: stockAddValues.type,
@@ -124,13 +188,8 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
   };
 
   const handleClickStockClose = () => {
-    setStockAddValues({
-      open: false,
-      symbol: '',
-      companyName: '',
-      country: '',
-      type: '',
-    });
+    setStockFormOpen(false);
+    setStockAddValues({ ...defaultStockValue });
   };
 
   return (
@@ -206,7 +265,12 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
               <Typography variant='h6'>Stocks</Typography>
             </Box>
             {values.stocks.map((stock, idx) => (
-              <Grid container direction='row' spacing={1}>
+              <Grid
+                container
+                direction='row'
+                spacing={1}
+                key={`${stock.symbol}`}
+              >
                 <Grid item xs={12}>
                   <Grid
                     container
@@ -241,9 +305,9 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
                       value={stock.buyPrice}
                       onChange={(e) => handleChangeStocks(e, idx)}
                       startAdornment={
-                        <InputAdornment position='start'>₩</InputAdornment>
+                        <InputAdornment position='start'>{stock.country === StockCountryTypes.USA ? '$' : '₩'}</InputAdornment>
                       }
-                      label="Buy Price"
+                      label='Buy Price'
                     />
                   </FormControl>
                 </Grid>
@@ -265,9 +329,7 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
             <Box display='flex' justifyContent='center' alignItems='center'>
               <IconButton
                 className='add-stock-button'
-                onClick={() =>
-                  setStockAddValues({ ...stockAddValues, open: true })
-                }
+                onClick={() => setStockFormOpen(true)}
               >
                 <AddCircleIcon color='primary' />
               </IconButton>
@@ -285,34 +347,27 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
       </Dialog>
 
       {/* Stock Add Form */}
-      <Dialog open={stockAddValues.open}>
+      <Dialog open={stockFormOpen}>
         <DialogTitle sx={{ textAlign: 'center' }}>Stock Add Form</DialogTitle>
         <DialogContent>
           {/* 카테고리 south korea, united state */}
-          <FormControl sx={{ mt: 1, mb: 1 }} fullWidth>
-            <Select
-              id='stock-to-add'
-              value={
-                stockAddValues.symbol
-                  ? `${stockAddValues.companyName},${stockAddValues.symbol},${stockAddValues.country},${stockAddValues.type}`
-                  : ''
-              }
-              onChange={handleChangeStockTag}
-              size='small'
-            >
-              {stockTags.map((s) => (
-                <MenuItem
-                  key={s.symbol}
-                  value={`${s.companyName},${s.symbol},${s.country},${s.type}`}
-                >
-                  {s.companyName} ({s.symbol}, {s.country}, {s.type})
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            id='combo-box-demo'
+            options={stockTags}
+            sx={{ mt: 1, mb: 0, width: 300 }}
+            size='small'
+            onChange={(e, newValue) => handleChangeStockTag(newValue)}
+            renderInput={(params) => (
+              <TextField {...params} label='Stock Tag' />
+            )}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClickStockAdd} variant='contained'>
+          <Button
+            onClick={handleClickStockAdd}
+            disabled={stockAddValues?.symbol ? false : true}
+            variant='contained'
+          >
             Create
           </Button>
           <Button onClick={handleClickStockClose} variant='contained'>

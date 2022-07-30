@@ -12,15 +12,20 @@ import {
   Surface,
   Symbols,
 } from 'recharts';
-import { AssetTypes, SubAssetData } from 'types';
+import { AssetTypes, SubAssetData, UserData } from 'types';
 import { chipColors as colors, givenDateFormat } from 'lib/index';
 import { Button, Stack, Typography } from '@mui/material';
 import AssetUpdateForm from '../assetPieChart/AssetUpdateForm';
+import { getUser } from 'modules/user';
 
 interface AssetTrendDataType {
   date: string;
   assets: SubAssetData;
 }
+
+type AssetTrendProps = {
+  selectedUser: UserData | null;
+};
 
 /**
  * base number가 없다면 초기 세팅 필요
@@ -31,8 +36,9 @@ interface AssetTrendDataType {
  * @returns
  */
 
-function AssetTrend() {
+function AssetTrend({ selectedUser }: AssetTrendProps) {
   const assetSummaries = useAppSelector(getAssetSummaries);
+  const user = useAppSelector(getUser);
   const categories = Object.values(AssetTypes);
   const [data, setData] = useState<Array<AssetTrendDataType>>([]);
   const [disabled, setDisabled] = useState<string[]>([]);
@@ -42,10 +48,22 @@ function AssetTrend() {
     if (assetSummaries?.length > 0) {
       const _assetSummaries = [];
       for (const summary of assetSummaries) {
-        _assetSummaries.push({
-          date: givenDateFormat(summary.date.toDate().toDateString()),
-          assets: { ...summary.assets },
-        });
+        // 같은 달에는 stocks 값은 주기적으로 업데이트 되어야 한다.
+        if (summary.date.toDate().getMonth() === new Date().getMonth()) {
+          let sum = 0;
+          summary.stocks.forEach(
+            (stock) => (sum += stock.buyPrice * stock.shares)
+          );
+          _assetSummaries.push({
+            date: givenDateFormat(summary.date.toDate().toDateString()),
+            assets: { ...summary.assets, [AssetTypes.EQUITY]: sum },
+          });
+        } else {
+          _assetSummaries.push({
+            date: givenDateFormat(summary.date.toDate().toDateString()),
+            assets: { ...summary.assets },
+          });
+        }
       }
       setData(_assetSummaries);
     }
@@ -150,13 +168,28 @@ function AssetTrend() {
         </ResponsiveContainer>
       ) : (
         <Stack direction='column' alignItems='center' sx={{ m: 2 }}>
-          <Typography variant='guideline' align='center'>
-            Please add initial asset to show asset trends!
-          </Typography>
-          <Button onClick={() => setIsFormOpen(true)}>ADD INITIAL ASSET</Button>
+          {user && selectedUser && user.uid === selectedUser.uid ? (
+            <>
+              <Typography variant='guideline' align='center'>
+                Please add initial asset to show asset trends!
+              </Typography>
+              <Button onClick={() => setIsFormOpen(true)}>
+                ADD INITIAL ASSET
+              </Button>
+            </>
+          ) : (
+            <Typography variant='guideline' align='center'>
+              No asset history to display.
+            </Typography>
+          )}
         </Stack>
       )}
-      {isFormOpen && <AssetUpdateForm open={isFormOpen} handleClose={() => setIsFormOpen(false)} />}
+      {isFormOpen && (
+        <AssetUpdateForm
+          open={isFormOpen}
+          handleClose={() => setIsFormOpen(false)}
+        />
+      )}
     </>
   );
 }

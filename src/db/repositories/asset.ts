@@ -1,5 +1,16 @@
 import db from '..';
-import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  where,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+  Timestamp,
+} from 'firebase/firestore';
 import { AssetData, StockHistoryData } from 'types';
 const SUBCOLLECTION_ASSETS = 'assets';
 const SUBCOLLECTION_ASSET_SUMMARIES = 'asset_summaries';
@@ -55,8 +66,9 @@ export const summaries = async (uid: string): Promise<Array<AssetData>> => {
   return data as Array<AssetData>;
 };
 
-export const stockHistories = async (uid: string): Promise<Array<StockHistoryData>> => {
-
+export const stockHistories = async (
+  uid: string
+): Promise<Array<StockHistoryData>> => {
   const q = query(
     collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_STOCK_HISTORIES),
     orderBy('date')
@@ -73,6 +85,29 @@ export const stockHistories = async (uid: string): Promise<Array<StockHistoryDat
   });
 
   return data as Array<StockHistoryData>;
+};
+
+export const updateAssetSummary = async (
+  uid: string,
+  values: AssetData
+): Promise<AssetData> => {
+  // if id is not exist, create new one
+  try {
+    if (!values.id) {
+      await addDoc(
+        collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES),
+        { ...values, date: serverTimestamp() }
+      );
+    } else {
+      await updateDoc(
+        doc(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES, values.id),
+        { ...values, date: serverTimestamp() }
+      );
+    }
+    return { ...values, date: Timestamp.fromDate(new Date()) } as AssetData;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // export const saveActivity = async (
