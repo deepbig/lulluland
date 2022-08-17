@@ -19,7 +19,10 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { givenMonthYearFormat } from 'lib';
-import { getAssetSummaries, setAssetSummaryList } from 'modules/asset';
+import {
+  getAssetSummaries,
+  setAssetSummaryList,
+} from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import {
   AssetData,
@@ -57,6 +60,8 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
       [AssetTypes.EQUITY]: 0,
     } as SubAssetData,
     stocks: [] as StockData[],
+    incomes: [],
+    expenses: [],
   });
   const [stockFormOpen, setStockFormOpen] = useState(false);
   const defaultStockValue = {
@@ -71,7 +76,41 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
 
   useEffect(() => {
     if (assetSummaries.length > 0) {
-      setValues(assetSummaries[assetSummaries.length - 1]);
+      // 이번달과 같은 달인지 확인.
+      const assetSummary = assetSummaries[assetSummaries.length - 1];
+      // 가장 최근 달이 같은 달이면 그대로 반영
+      if (assetSummary.date.toDate().getMonth() === new Date().getMonth()) {
+        setValues(assetSummary);
+      } else {
+        // 만약 다른 달이면 새롭게 시작할 수 있도록 값 수정.
+        const previous = assetSummaries[assetSummaries.length - 2];
+        let totalIncome = 0;
+        if (previous?.incomes) {
+          for (const income of previous.incomes) {
+            totalIncome += income.amount;
+          }
+        }
+
+        let totalExpense = 0;
+        if (previous?.expenses) {
+          for (const expense of previous.expenses) {
+            totalExpense += expense.amount;
+          }
+        }
+
+        setValues({
+          ...assetSummary,
+          id: '',
+          date: '',
+          incomes: [],
+          expenses: [],
+          assets: {
+            ...assetSummary.assets,
+            [AssetTypes.CASH]:
+              assetSummary.assets[AssetTypes.CASH] + totalIncome - totalExpense,
+          },
+        });
+      }
     }
   }, [assetSummaries]);
 
@@ -110,7 +149,6 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
         );
       }
     }
-    console.log(values);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,6 +206,7 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
       buyPrice: 0,
       currentPrice: 0,
       shares: 0,
+      currency: 1,
       country: stockAddValues.country,
       type: stockAddValues.type,
     });
@@ -200,7 +239,9 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
           <Typography variant='body1' sx={{ textAlign: 'center' }}>
             {givenMonthYearFormat(
               assetSummaries.length > 0
-                ? assetSummaries[0].date.toString()
+                ? assetSummaries[assetSummaries.length - 1].date
+                    .toDate()
+                    .toString()
                 : null
             )}
           </Typography>
@@ -305,7 +346,9 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
                       value={stock.buyPrice}
                       onChange={(e) => handleChangeStocks(e, idx)}
                       startAdornment={
-                        <InputAdornment position='start'>{stock.country === StockCountryTypes.USA ? '$' : '₩'}</InputAdornment>
+                        <InputAdornment position='start'>
+                          {stock.country === StockCountryTypes.USA ? '$' : '₩'}
+                        </InputAdornment>
                       }
                       label='Buy Price'
                     />

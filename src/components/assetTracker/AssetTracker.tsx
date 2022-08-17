@@ -1,18 +1,20 @@
-import { Grid, Paper } from '@mui/material';
+import { Box, Grid, IconButton, Paper, Typography } from '@mui/material';
 import Title from 'components/title/Title';
-import React, { useEffect } from 'react';
-import { StockCountryTypes, UserData } from 'types';
+import React, { useEffect, useState } from 'react';
+import { UserData } from 'types';
 import AssetChart from './assetPieChart/AssetPieChart';
 import AssetTrend from './assetTrend/AssetTrend';
 import MonthlyExpenseChart from './monthlyExpensePieChart/MonthlyExpensePieChart';
 import MonthlyExpenseTrend from './monthlyExpenseTrend/MonthlyExpenseTrend';
-import MonthlySummary from './monthlySummaryPieChart/MonthlySummaryPieChart';
+import MonthlySummary from './monthlySummary/MonthlySummary';
 import StockValueTrends from './stockValueTrends/StockValueTrends';
-import { current, summaries } from 'db/repositories/asset';
-import { useAppDispatch } from 'hooks';
-import { setAssetList, setAssetSummaryList } from 'modules/asset';
+import { summaries } from 'db/repositories/asset';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { setAssetSummaryList } from 'modules/asset';
 import { setBackdrop } from 'modules/backdrop';
-import axios from 'axios';
+import AssetUpdateForm from './assetPieChart/AssetUpdateForm';
+import EditIcon from '@mui/icons-material/Edit';
+import { getUser } from 'modules/user';
 
 type AssetTrackerProps = {
   username: string | undefined;
@@ -21,6 +23,8 @@ type AssetTrackerProps = {
 
 function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
   const dispatch = useAppDispatch();
+  const [openAssetEditForm, setOpenAssetEditForm] = useState(false);
+  const user = useAppSelector(getUser);
 
   useEffect(() => {
     if (selectedUser?.uid) {
@@ -31,31 +35,9 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
 
   const fetchAssets = async (uid: string) => {
     dispatch(setBackdrop(true));
-    const _assets = await current(uid);
-    dispatch(setAssetList(_assets));
     const _summaries = await summaries(uid);
     dispatch(setAssetSummaryList(_summaries));
-    if (_summaries.length > 0) {
-      // current Price 업데이트 필요. 여기서 업데이트를 해줘야
-      // const updatedSummaries = [..._summaries];
-      for (const stock of _summaries[_summaries.length - 1].stocks) {
-        const location =
-          stock.country === StockCountryTypes.KOR ? 'domestic' : 'worldstock';
-        const _realtimePrices = await axios
-          .get(
-            `https://polling.finance.naver.com/api/realtime/${location}/${stock.type}/${stock.symbol}`
-          )
-          .catch((e) => {
-            console.log(e);
-            // 없으면 패스
-          });
-        console.log(_realtimePrices);
-        // if (_realtimePrices?.datas?.closePrice) {
-        //   stock.currentPrice = _realtimePrices.datas[0].closePrice;
-
-        // }
-      }
-    }
+    // 일단 stock 가격은 유저가 입력값을 주도록 설정.
     dispatch(setBackdrop(false));
   };
 
@@ -73,16 +55,31 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
           <Title>Monthly Summary</Title>
-          <MonthlySummary />
+          <MonthlySummary selectedUser={selectedUser} />
         </Paper>
       </Grid>
 
       {/* Asset Chart */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Asset Chart</Title>
+          <Box display='flex' justifyContent='space-between'>
+            <Typography component='h2' variant='h6' gutterBottom>
+              Asset Chart
+            </Typography>
+            {user && selectedUser && user.uid === selectedUser.uid && (
+              <IconButton onClick={() => setOpenAssetEditForm(true)}>
+                <EditIcon />
+              </IconButton>
+            )}
+          </Box>
           <AssetChart />
         </Paper>
+        {openAssetEditForm && (
+          <AssetUpdateForm
+            open={openAssetEditForm}
+            handleClose={() => setOpenAssetEditForm(false)}
+          />
+        )}
       </Grid>
 
       {/* Monthly Expense Chart */}

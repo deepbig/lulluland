@@ -68,10 +68,10 @@ export default function EffortTracker(props: EffortTrackerProps) {
 
   const fetchMonthList = () => {
     const currentMonth = new Date().getMonth();
-    let i = 0;
+    let i = -1;
     let res = [];
 
-    while (++i <= 12) {
+    while (++i < 12) {
       res.push(<li key={i}>{months[(currentMonth + i) % 12]}</li>);
     }
 

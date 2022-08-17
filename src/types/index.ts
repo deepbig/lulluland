@@ -18,19 +18,30 @@ export enum ExpenseTypes {
   HOUSING = 'Housing', // mortgage or rent, household repairs, property taxes
   TRANSPORTATION = 'Transportation', // car payment, car warranty, gas, tires, maintenance, parking fees, repairs, registration and DMV fees
   FOOD = 'Food', // Groceries, Restaurants, Pet food
-  UTILITIES = 'Utilities', // Electricity, water, garbage, phones, cable, internet
+  UTILITY = 'Utility', // Electricity, water, garbage, phones, cable, internet
   CLOTHING = 'Clothing', // clothing, shoes
   HEALTHCARE = 'Medical/Healthcare', // primary care, dental care, specialty care, urgent care, medications, medical devices
   INSURANCE = 'Insurance', // Health insurance, homeowner's or renter's insurance, home warranty or protection plan, auto insurance, life insurance, disability insurance
-  SUPPLIES = 'Household Items/Supplies', // Toiletries, laundary detergent, dishwasher detergent, cleaning supplies, tools
+  SUPPLY = 'Household Item/Supply', // Toiletries, laundary detergent, dishwasher detergent, cleaning supplies, tools
   PERSONAL = 'Personal', // Gym memberships, haircuts, salon services, cosmetics, babysitter, subscriptions
   DEBT = 'Debt', // Personal loans, student loans, credit cards
   RETIREMENT = 'Retirement', // Financial planning, investing
   EDUCATION = 'Education', // Children's college, your college, school supplies, books
-  SAVINGS = 'Savings', // Emergency fund, big purchases(matress or laptop), other savings
-  GIFTS_DONATIONS = 'Gifts/Donations', // Birthday, anniversary, wedding, chrismas, special occation, charities
+  SAVING = 'Saving', // Emergency fund, big purchases(matress or laptop), other savings
+  GIFT_DONATION = 'Gift/Donation', // Birthday, anniversary, wedding, chrismas, special occation, charities
   ENTERTAINMENT = 'Entertainment', // Alcohol and/or bars, Games, Movies, Concerts, Vacations, Subscriptions (Netflix, Amazon, etc.)
-  TAXES = 'Taxes', // tax return
+  TAX = 'Tax', // tax return
+  ETC = 'etc',
+}
+
+export enum IncomeTypes {
+  SALARY = 'Salary',
+  COMMISSION = 'Commission',
+  INTEREST = 'Interest',
+  SELLING = 'Selling',
+  INVESTMENT = 'Investment',
+  DIVIDEND = 'Dividend',
+  GIFT = 'Gift',
   ETC = 'etc',
 }
 
@@ -118,40 +129,14 @@ export interface AssetData {
   date: any;
   assets: SubAssetData;
   stocks: StockData[];
+  incomes: IncomeExpensesData[];
+  expenses: IncomeExpensesData[];
 }
 
-export interface IncomeExpenseData {
-  id: string;
+export interface IncomeExpensesData {
   date: any;
-  expenses: ExpenseData[];
-  // totalExpenses: ExpenseData[];
-  incomes: IncomeData[];
-}
-
-export interface IncomeData {
+  description: string;
   category: string;
-  amt: number;
-}
-
-export interface ExpenseData {
-  category:
-    | ExpenseTypes.HOUSING
-    | ExpenseTypes.TRANSPORTATION
-    | ExpenseTypes.FOOD
-    | ExpenseTypes.UTILITIES
-    | ExpenseTypes.CLOTHING
-    | ExpenseTypes.HEALTHCARE
-    | ExpenseTypes.INSURANCE
-    | ExpenseTypes.SUPPLIES
-    | ExpenseTypes.PERSONAL
-    | ExpenseTypes.DEBT
-    | ExpenseTypes.RETIREMENT
-    | ExpenseTypes.EDUCATION
-    | ExpenseTypes.SAVINGS
-    | ExpenseTypes.GIFTS_DONATIONS
-    | ExpenseTypes.ENTERTAINMENT
-    | ExpenseTypes.TAXES
-    | ExpenseTypes.ETC;
   amount: number;
 }
 
@@ -170,6 +155,7 @@ export interface StockData {
   shares: number;
   country: string;
   type: string;
+  currency: number;
 }
 
 export interface StockTag {

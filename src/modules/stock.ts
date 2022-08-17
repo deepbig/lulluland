@@ -66,7 +66,7 @@ const initialState: StockState = {
       symbol: 'VTV',
       label: 'Vanguard Value Index Fund ETF',
       country: StockCountryTypes.USA,
-      type: StockTypes.STOCK,
+      type: StockTypes.ETF,
     },
     {
       symbol: 'XOM',

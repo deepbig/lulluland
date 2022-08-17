@@ -1,5 +1,5 @@
 import { useAppSelector } from 'hooks';
-import { getAssetSummaries } from 'modules/asset';
+import { getAssetSummaries, getTotalIncomeExpense } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import {
   BarChart,
@@ -11,12 +11,22 @@ import {
   ResponsiveContainer,
   Surface,
   Symbols,
+  TooltipProps,
 } from 'recharts';
+import {
+  ValueType,
+  NameType,
+} from 'recharts/types/component/DefaultTooltipContent';
 import { AssetTypes, SubAssetData, UserData } from 'types';
-import { chipColors as colors, givenDateFormat } from 'lib/index';
-import { Button, Stack, Typography } from '@mui/material';
+import {
+  chipColors as colors,
+  givenMonthYearFormat,
+  numWithCommas,
+} from 'lib/index';
+import { Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import AssetUpdateForm from '../assetPieChart/AssetUpdateForm';
 import { getUser } from 'modules/user';
+import { grey } from '@mui/material/colors';
 
 interface AssetTrendDataType {
   date: string;
@@ -27,6 +37,35 @@ type AssetTrendProps = {
   selectedUser: UserData | null;
 };
 
+const CustomTooltip = ({
+  active,
+  payload,
+}: TooltipProps<ValueType, NameType>) => {
+  if (active) {
+    return (
+      <div>
+        <Card sx={{ backgroundColor: grey[800], border: 'none' }}>
+          <CardContent style={{ padding: 7 }}>
+            <Typography variant='body2'>
+              {payload && payload[0] && payload[0].payload.date}
+            </Typography>
+            {payload?.map((payload, idx) => (
+              <Typography
+                key={idx}
+                variant='body2'
+                style={{ color: payload.color }}
+              >
+                {payload.name}: ₩ {numWithCommas(payload.value as number)}
+              </Typography>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  return null;
+};
+
 /**
  * base number가 없다면 초기 세팅 필요
  * 아님 채워넣는 형식으로 가야할 듯
@@ -35,7 +74,6 @@ type AssetTrendProps = {
  * total 값이 없다면 차트 가운데 입력하라는 창 표시
  * @returns
  */
-
 function AssetTrend({ selectedUser }: AssetTrendProps) {
   const assetSummaries = useAppSelector(getAssetSummaries);
   const user = useAppSelector(getUser);
@@ -43,31 +81,44 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
   const [data, setData] = useState<Array<AssetTrendDataType>>([]);
   const [disabled, setDisabled] = useState<string[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const totalIncomeExpense = useAppSelector(getTotalIncomeExpense);
 
   useEffect(() => {
     if (assetSummaries?.length > 0) {
       const _assetSummaries = [];
       for (const summary of assetSummaries) {
         // 같은 달에는 stocks 값은 주기적으로 업데이트 되어야 한다.
+        // 일단은 유저의 input 값으로 대체한다.
         if (summary.date.toDate().getMonth() === new Date().getMonth()) {
           let sum = 0;
           summary.stocks.forEach(
-            (stock) => (sum += stock.buyPrice * stock.shares)
+            (stock) =>
+              (sum +=
+                stock.currentPrice > 0
+                  ? stock.currentPrice * stock.shares * stock.currency
+                  : 0)
           );
           _assetSummaries.push({
-            date: givenDateFormat(summary.date.toDate().toDateString()),
-            assets: { ...summary.assets, [AssetTypes.EQUITY]: sum },
+            date: givenMonthYearFormat(summary.date.toDate().toString()),
+            assets: {
+              ...summary.assets,
+              [AssetTypes.CASH]:
+                summary.assets[AssetTypes.CASH] +
+                totalIncomeExpense[0] -
+                totalIncomeExpense[1],
+              [AssetTypes.EQUITY]: sum,
+            },
           });
         } else {
           _assetSummaries.push({
-            date: givenDateFormat(summary.date.toDate().toDateString()),
+            date: givenMonthYearFormat(summary.date.toDate().toString()),
             assets: { ...summary.assets },
           });
         }
       }
       setData(_assetSummaries);
     }
-  }, [assetSummaries]);
+  }, [assetSummaries, totalIncomeExpense]);
 
   const handleClick = (dataKey: string) => {
     if (disabled.includes(dataKey)) {
@@ -140,7 +191,15 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
           >
             <XAxis dataKey='date' />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              content={<CustomTooltip />}
+              contentStyle={{
+                backgroundColor: 'rgba(0,0,0,0.9)',
+                fontSize: 12,
+                borderRadius: 10,
+              }}
+              labelStyle={{ color: 'white' }}
+            />
             {categories.map(
               (category, index) =>
                 !disabled.includes(category) && (

@@ -11,36 +11,12 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { AssetData, StockHistoryData } from 'types';
-const SUBCOLLECTION_ASSETS = 'assets';
+import { AssetData } from 'types';
 const SUBCOLLECTION_ASSET_SUMMARIES = 'asset_summaries';
 const SUBCOLLECTION_STOCK_HISTORIES = 'stock_histories';
 const COLLECTION_NAME = 'users';
 // TIME_ZONE = KST
 
-export const current = async (uid: string): Promise<Array<AssetData>> => {
-  const end = new Date();
-  const start = new Date(end.getFullYear() - 1, end.getMonth(), 1);
-
-  const q = query(
-    collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSETS),
-    where('date', '>=', start),
-    where('date', '<', end),
-    orderBy('date')
-  );
-
-  const assetsSnapshot = await getDocs(q);
-  const data: Array<any> = [];
-
-  assetsSnapshot.docs.forEach((_data) => {
-    data.push({
-      id: _data.id, // because id field in separate function in firestore
-      ..._data.data(), // the remaining fields
-    });
-  });
-
-  return data as Array<AssetData>;
-};
 
 export const summaries = async (uid: string): Promise<Array<AssetData>> => {
   const end = new Date();
@@ -66,11 +42,14 @@ export const summaries = async (uid: string): Promise<Array<AssetData>> => {
   return data as Array<AssetData>;
 };
 
-export const stockHistories = async (
-  uid: string
-): Promise<Array<StockHistoryData>> => {
+export const stockHistories = async (uid: string): Promise<Array<any>> => {
+  const end = new Date();
+  const start = new Date(end.getFullYear() - 1, end.getMonth(), 1);
+
   const q = query(
     collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_STOCK_HISTORIES),
+    where('date', '>=', start),
+    where('date', '<', end),
     orderBy('date')
   );
 
@@ -84,7 +63,7 @@ export const stockHistories = async (
     });
   });
 
-  return data as Array<StockHistoryData>;
+  return data as Array<AssetData>;
 };
 
 export const updateAssetSummary = async (
@@ -109,6 +88,8 @@ export const updateAssetSummary = async (
     throw error;
   }
 };
+
+
 
 // export const saveActivity = async (
 //   values: ActivityAddFormData
