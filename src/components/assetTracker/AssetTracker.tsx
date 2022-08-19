@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { UserData } from 'types';
 import AssetChart from './assetPieChart/AssetPieChart';
 import AssetTrend from './assetTrend/AssetTrend';
-import MonthlyExpenseChart from './monthlyExpensePieChart/MonthlyExpensePieChart';
-import MonthlyExpenseTrend from './monthlyExpenseTrend/MonthlyExpenseTrend';
+import MonthlyExpenseLineChart from './monthlyExpenseChart/MonthlyExpenseLineChart';
+import MonthlyTrend from './monthlyTrend/MonthlyTrend';
 import MonthlySummary from './monthlySummary/MonthlySummary';
 import StockValueTrends from './stockValueTrends/StockValueTrends';
 import { summaries } from 'db/repositories/asset';
@@ -15,6 +15,7 @@ import { setBackdrop } from 'modules/backdrop';
 import AssetUpdateForm from './assetPieChart/AssetUpdateForm';
 import EditIcon from '@mui/icons-material/Edit';
 import { getUser } from 'modules/user';
+import { givenMonthYearFormat } from 'lib';
 
 type AssetTrackerProps = {
   username: string | undefined;
@@ -25,6 +26,7 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
   const dispatch = useAppDispatch();
   const [openAssetEditForm, setOpenAssetEditForm] = useState(false);
   const user = useAppSelector(getUser);
+  const currentMonthYear = givenMonthYearFormat(new Date().toString());
 
   useEffect(() => {
     if (selectedUser?.uid) {
@@ -54,7 +56,7 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
       {/* Monthly Summary */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Monthly Summary</Title>
+          <Title>Monthly Summary ({currentMonthYear})</Title>
           <MonthlySummary selectedUser={selectedUser} />
         </Paper>
       </Grid>
@@ -64,7 +66,7 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
         <Paper sx={{ p: 2 }} elevation={4}>
           <Box display='flex' justifyContent='space-between'>
             <Typography component='h2' variant='h6' gutterBottom>
-              Asset Chart
+              Asset Chart ({currentMonthYear})
             </Typography>
             {user && selectedUser && user.uid === selectedUser.uid && (
               <IconButton onClick={() => setOpenAssetEditForm(true)}>
@@ -85,23 +87,23 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
       {/* Monthly Expense Chart */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Monthly Expense Chart</Title>
-          <MonthlyExpenseChart />
+          <Title>Expense Chart ({currentMonthYear})</Title>
+          <MonthlyExpenseLineChart />
         </Paper>
       </Grid>
 
-      {/* Monthly Expense Trend: 2-lines chart, min / avg / max of year  */}
+      {/* Monthly Trend: bar chart (income, expenses for 6 months)  */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Monthly Expense Trend</Title>
-          <MonthlyExpenseTrend />
+          <Title>Monthly Trends</Title>
+          <MonthlyTrend />
         </Paper>
       </Grid>
 
       {/* stock value trends: icon, buy-value, current-value, today's change(%), my value change(%), trade history, total income/loss, actual income/loss  */}
       <Grid item xs={12}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Stock value trends</Title>
+          <Title>Stock Value Trends</Title>
           <StockValueTrends />
         </Paper>
       </Grid>

@@ -21,9 +21,17 @@ import { AssetTypes, SubAssetData, UserData } from 'types';
 import {
   chipColors as colors,
   givenMonthYearFormat,
+  numFormatter,
   numWithCommas,
 } from 'lib/index';
-import { Button, Card, CardContent, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  Stack,
+  Typography,
+} from '@mui/material';
 import AssetUpdateForm from '../assetPieChart/AssetUpdateForm';
 import { getUser } from 'modules/user';
 import { grey } from '@mui/material/colors';
@@ -42,6 +50,8 @@ const CustomTooltip = ({
   payload,
 }: TooltipProps<ValueType, NameType>) => {
   if (active) {
+    let totalValue = 0;
+    payload?.map((payload) => (totalValue += payload.value as number));
     return (
       <div>
         <Card sx={{ backgroundColor: grey[800], border: 'none' }}>
@@ -49,15 +59,21 @@ const CustomTooltip = ({
             <Typography variant='body2'>
               {payload && payload[0] && payload[0].payload.date}
             </Typography>
+
             {payload?.map((payload, idx) => (
               <Typography
                 key={idx}
                 variant='body2'
                 style={{ color: payload.color }}
               >
-                {payload.name}: ₩ {numWithCommas(payload.value as number)}
+                {payload.name}: ₩ {numWithCommas(payload.value as number)} (
+                {(((payload.value as number) / totalValue) * 100).toFixed(0)}%)
               </Typography>
             ))}
+            <Divider />
+            <Typography variant='body2' pt={1}>
+              Total: ₩ {numWithCommas(+totalValue.toFixed(2))}
+            </Typography>
           </CardContent>
         </Card>
       </div>
@@ -90,14 +106,6 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
         // 같은 달에는 stocks 값은 주기적으로 업데이트 되어야 한다.
         // 일단은 유저의 input 값으로 대체한다.
         if (summary.date.toDate().getMonth() === new Date().getMonth()) {
-          let sum = 0;
-          summary.stocks.forEach(
-            (stock) =>
-              (sum +=
-                stock.currentPrice > 0
-                  ? stock.currentPrice * stock.shares * stock.currency
-                  : 0)
-          );
           _assetSummaries.push({
             date: givenMonthYearFormat(summary.date.toDate().toString()),
             assets: {
@@ -106,7 +114,6 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
                 summary.assets[AssetTypes.CASH] +
                 totalIncomeExpense[0] -
                 totalIncomeExpense[1],
-              [AssetTypes.EQUITY]: sum,
             },
           });
         } else {
@@ -190,7 +197,7 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
             }}
           >
             <XAxis dataKey='date' />
-            <YAxis />
+            <YAxis tickFormatter={numFormatter} />
             <Tooltip
               content={<CustomTooltip />}
               contentStyle={{

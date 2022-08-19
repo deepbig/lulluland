@@ -5,7 +5,7 @@ import { useAppSelector } from 'hooks';
 import { getAssetSummaries, getTotalIncomeExpense } from 'modules/asset';
 import { AssetTypes } from 'types';
 
-interface AssetPieCharType {
+interface AssetPieChartType {
   name: string;
   value: number;
 }
@@ -72,7 +72,7 @@ const renderActiveShape = (props: any) => {
 function AssetPieChart() {
   const assetSummaries = useAppSelector(getAssetSummaries);
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const [data, setData] = useState<Array<AssetPieCharType>>([]);
+  const [data, setData] = useState<Array<AssetPieChartType>>([]);
   const totalIncomeExpense = useAppSelector(getTotalIncomeExpense);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function AssetPieChart() {
 
   return (
     <ResponsiveContainer height={300}>
-      <PieChart width={400} height={400}>
+      <PieChart>
         <Pie
           activeIndex={activeIndex}
           activeShape={renderActiveShape}
@@ -130,15 +130,3 @@ function AssetPieChart() {
 }
 
 export default AssetPieChart;
-
-// const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-//   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-//   const x = cx + radius * Math.cos(-midAngle * RADIAN);
-//   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-//   return (
-//     <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-//       {`${(percent * 100).toFixed(0)}%`}
-//     </text>
-//   );
-// };

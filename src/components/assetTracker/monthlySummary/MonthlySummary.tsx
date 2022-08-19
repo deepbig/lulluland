@@ -63,8 +63,12 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
 
   return (
     <>
-      <Box>
-        <Grid container spacing={0} justifyContent='flex-end'>
+      <Box display="flex" alignItems="center" height={300}>
+        <Grid
+          container
+          spacing={0}
+          justifyContent='flex-end'
+        >
           {/* Income */}
           <Grid item xs={12}>
             <Box display='flex'>

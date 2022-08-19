@@ -43,6 +43,7 @@ import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import { updateAssetSummary } from 'db/repositories/asset';
+import { Timestamp } from 'firebase/firestore';
 
 interface Column {
   field: 'date' | 'category' | 'description' | 'amount';
@@ -57,7 +58,7 @@ const columns: readonly Column[] = [
     field: 'date',
     label: 'Date',
     align: 'right',
-    width: '20%',
+    width: '30%',
   },
   {
     field: 'category',
@@ -115,7 +116,11 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
   // const [isEditing, setIsEditing] = useState(false);
 
   const handleAdd = () => {
-    const newIncomeExpenses = [...updatedIncomeExpenses, newData];
+    const _newData = {
+      ...newData,
+      date: Timestamp.fromDate(new Date(newData.date)),
+    };
+    const newIncomeExpenses = [...updatedIncomeExpenses, _newData];
     newIncomeExpenses.sort((a, b) => {
       if (a.date > b.date) {
         return -1;
@@ -125,6 +130,8 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
         return 0;
       }
     });
+
+    // Timestamp.fromDate(new Date())
 
     setUpdatedIncomeExpenses(newIncomeExpenses);
     setNewData({ ...defaultNewData });
@@ -333,6 +340,8 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
                           <TableCell key={column.field} align={column.align}>
                             {column.format && typeof value === 'number'
                               ? column.format(value)
+                              : column.field === 'date'
+                              ? value.toDate().toLocaleString()
                               : value}
                           </TableCell>
                         );
