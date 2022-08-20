@@ -1,5 +1,20 @@
 import { blue, purple, teal, orange, brown } from '@mui/material/colors';
 
+export const months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 export const isFound = (value: string, arr: string[]) => {
   const left = value.toLowerCase();
   return arr?.some((right) => left === right.toLowerCase());
@@ -71,7 +86,7 @@ export const numFormatter = (num: number) => {
   if (num >= 1000) {
     return parseFloat((num / 1000).toFixed(3)) + ' K';
   }
-  return num;
+  return num.toString();
 };
 
 export const numWithCommas = (num: number) => {

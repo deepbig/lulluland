@@ -6,6 +6,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import styles from './ActivityBoard.module.css';
 import { ActivityData } from 'types';
+import { months } from 'lib';
 
 const Item = forwardRef((props: BoxProps, ref) => {
   const { sx, ...other } = props;
@@ -26,21 +27,6 @@ interface EffortTrackerProps {
   category: string;
   uid: string;
 }
-
-const months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
 
 export default function EffortTracker(props: EffortTrackerProps) {
   const activities = useAppSelector(getActivities);
