@@ -7,7 +7,7 @@ import {
 } from 'modules/performance';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import PerformanceChart from 'components/performanceChart/PerformanceChart';
+import PerformanceChart from 'components/effortTracker/performanceChart/PerformanceChart';
 import MainCard from 'components/customCards/MainCard';
 import { styled } from '@mui/material/styles';
 import { PerformanceData, PerformanceChartData, UserData } from 'types';

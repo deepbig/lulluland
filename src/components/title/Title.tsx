@@ -13,11 +13,11 @@ export default function Title(props: TitleProps) {
       <Typography component='h2' variant='h6' gutterBottom>
         {props.children}
       </Typography>
-      {props.buttonFunction ? (
-        <Button onClick={props.buttonFunction} variant='contained' >
+      {props.buttonFunction && (
+        <Button onClick={props.buttonFunction} variant='contained'>
           NEW
         </Button>
-      ) : null}
+      )}
     </Box>
   );
 }

@@ -71,7 +71,7 @@ function App() {
           const result = await checkRedirectResult();
           if (result) {
             if (loggedInUser.username) {
-              navigate(`/dashboard/${loggedInUser.username}`);
+              navigate(`/dashboard/${loggedInUser.username}/effort-tracker`);
             } else {
               navigate('/initial');
             }
@@ -105,6 +105,7 @@ function App() {
         <Route path='/' element={<Navigate to='/dashboard' />} />
         <Route path='/dashboard' element={<DashboardPage />} />
         <Route path='/dashboard/:username' element={<DashboardPage />} />
+        <Route path='/dashboard/:username/:type' element={<DashboardPage />} />
         <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/initial' element={<InitialPage />} />

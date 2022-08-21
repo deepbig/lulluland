@@ -18,6 +18,7 @@ import {
 import { orange } from '@mui/material/colors';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import SavingsIcon from '@mui/icons-material/Savings';
 import BookIcon from '@mui/icons-material/Book';
 import WebIcon from '@mui/icons-material/Web';
 import InfoIcon from '@mui/icons-material/Info';
@@ -26,8 +27,9 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NavCard from '../customCards/NavCard';
-import { auth } from 'db';
 import UserMenu from './UserMenu';
+import { useAppSelector } from 'hooks';
+import { getUser } from 'modules/user';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -54,14 +56,22 @@ function MenuListItems(props: any) {
 
   return (
     <div>
-      <ListItem button onClick={() => navigate(`/dashboard`)}>
+      <ListItem button onClick={() => navigate(`/dashboard/${props.username}/effort-tracker`)}>
         <ListItemIcon>
           <Badge badgeContent={'✨'}>
             <TrackChangesIcon />
           </Badge>
         </ListItemIcon>
+        <ListItemText primary='Effort Tracker' />
+      </ListItem>
+      <ListItem button onClick={() => navigate(`/dashboard/${props.username}/asset-tracker`)}>
+        <ListItemIcon>
+          <Badge badgeContent={'💵'}>
+            <SavingsIcon />
+          </Badge>
+        </ListItemIcon>
         <StyledBadge badgeContent={'new'} color='secondary'>
-          <ListItemText primary='Effort Tracker' />
+          <ListItemText primary='Assert Tracker' />
         </StyledBadge>
       </ListItem>
       <Divider />
@@ -216,7 +226,7 @@ const Drawer = styled(MuiDrawer, {
 export default function NavBar(props: { selectedName: string }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const user = auth.currentUser;
+  const user = useAppSelector(getUser);
   const [start, setStart] = useState(true);
 
   useEffect(() => {
@@ -289,7 +299,7 @@ export default function NavBar(props: { selectedName: string }) {
           </IconButton>
         </Toolbar>
         <Divider />
-        <MenuListItems open={open} />
+        <MenuListItems open={open} username={user?.username ? user.username : 'deepbig'} />
       </Drawer>
     </>
   ) : null;
