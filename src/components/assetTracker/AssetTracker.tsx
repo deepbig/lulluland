@@ -16,6 +16,7 @@ import AssetUpdateForm from './assetPieChart/AssetUpdateForm';
 import EditIcon from '@mui/icons-material/Edit';
 import { getUser } from 'modules/user';
 import { givenMonthYearFormat } from 'lib';
+import EquityUpdateForm from './stockValueTrends/EquityUpdateForm';
 
 type AssetTrackerProps = {
   username: string | undefined;
@@ -25,6 +26,7 @@ type AssetTrackerProps = {
 function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
   const dispatch = useAppDispatch();
   const [openAssetEditForm, setOpenAssetEditForm] = useState(false);
+  const [openEquityUpdateForm, setOpenEquityUpdateForm] = useState(false);
   const user = useAppSelector(getUser);
   const currentMonthYear = givenMonthYearFormat(new Date().toString());
 
@@ -103,9 +105,24 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
       {/* stock value trends: icon, buy-value, current-value, today's change(%), my value change(%), trade history, total income/loss, actual income/loss  */}
       <Grid item xs={12}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Stock Value Trends</Title>
+          <Box display='flex' justifyContent='space-between'>
+            <Typography component='h2' variant='h6' gutterBottom>
+              Stock Value Trends
+            </Typography>
+            {user && selectedUser && user.uid === selectedUser.uid && (
+              <IconButton onClick={() => setOpenEquityUpdateForm(true)}>
+                <EditIcon />
+              </IconButton>
+            )}
+          </Box>
           <StockValueTrends />
         </Paper>
+        {openEquityUpdateForm && (
+          <EquityUpdateForm
+            open={openEquityUpdateForm}
+            handleClose={() => setOpenEquityUpdateForm(false)}
+          />
+        )}
       </Grid>
     </Grid>
   );

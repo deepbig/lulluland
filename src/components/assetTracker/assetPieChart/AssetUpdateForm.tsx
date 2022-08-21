@@ -166,9 +166,18 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
     const newStocks = [...values.stocks];
     const newStock = { ...values.stocks[idx], [e.target.id]: +e.target.value };
     newStocks[idx] = newStock;
+    let sum = 0;
+    for (const stock of newStocks) {
+      sum += stock.currentPrice * stock.shares * stock.currency;
+    }
+
     setValues({
       ...values,
       stocks: newStocks,
+      assets: {
+        ...values.assets,
+        [AssetTypes.EQUITY]: sum,
+      }
     });
   };
 
