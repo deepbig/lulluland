@@ -1,4 +1,4 @@
-import { Card, CardContent, Divider, Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { numWithCommas } from 'lib';
 import React from 'react';
