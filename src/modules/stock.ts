@@ -16,7 +16,7 @@ const initialState: StockState = {
     },
     {
       symbol: 'JNJ',
-      label: 'Johnson & Johnso',
+      label: 'Johnson & Johnson',
       country: StockCountryTypes.USA,
       type: StockTypes.STOCK,
     },
@@ -101,6 +101,12 @@ const initialState: StockState = {
     {
       symbol: 'WBD.O',
       label: 'Warner Bros Discovery Inc',
+      country: StockCountryTypes.USA,
+      type: StockTypes.STOCK,
+    },
+    {
+      symbol: 'ALLY.K',
+      label: 'Ally Financial Inc',
       country: StockCountryTypes.USA,
       type: StockTypes.STOCK,
     },

@@ -1,7 +1,5 @@
-import { Card, CardContent, Typography } from '@mui/material';
-import { grey } from '@mui/material/colors';
 import { useAppSelector } from 'hooks';
-import { numFormatter, numWithCommas } from 'lib';
+import { numFormatter } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import {
@@ -12,48 +10,14 @@ import {
   Legend,
   ResponsiveContainer,
   Area,
-  TooltipProps,
 } from 'recharts';
-import {
-  NameType,
-  ValueType,
-} from 'recharts/types/component/DefaultTooltipContent';
+import CustomTooltip from 'components/custom/CustomTooltip';
 
 interface ExpenseLineChartType {
   name: string;
   previous: number;
   current?: number;
 }
-
-const CustomTooltip = ({
-  active,
-  payload,
-}: TooltipProps<ValueType, NameType>) => {
-  if (active) {
-    return (
-      <div>
-        <Card sx={{ backgroundColor: grey[800], border: 'none' }}>
-          <CardContent style={{ padding: 7 }}>
-            <Typography variant='body2'>
-              {payload && payload[0] && payload[0].payload.name}
-            </Typography>
-
-            {payload?.map((payload, idx) => (
-              <Typography
-                key={idx}
-                variant='body2'
-                style={{ color: payload.color }}
-              >
-                {payload.name}: ₩ {numWithCommas(payload.value as number)}
-              </Typography>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-  return null;
-};
 
 function MonthlyExpenseLineChart() {
   const assetSummaries = useAppSelector(getAssetSummaries);

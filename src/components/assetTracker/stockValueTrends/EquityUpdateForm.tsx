@@ -71,7 +71,7 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
           stocks: updatedStocks,
           assets: {
             ...assetSummary.assets,
-            [AssetTypes.EQUITY]: sum,
+            [AssetTypes.EQUITY]: +sum.toFixed(2),
           },
         });
 

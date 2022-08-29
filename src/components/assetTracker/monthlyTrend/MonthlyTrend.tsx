@@ -1,6 +1,4 @@
-import { Card, CardContent, Typography } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import { months, numFormatter, numWithCommas } from 'lib';
+import { months, numFormatter } from 'lib';
 import React, { useEffect, useState } from 'react';
 import {
   BarChart,
@@ -10,52 +8,18 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
-import {
-  NameType,
-  ValueType,
-} from 'recharts/types/component/DefaultTooltipContent';
 import { green, red } from '@mui/material/colors';
 import { useAppSelector } from 'hooks';
 import { getAssetSummaries } from 'modules/asset';
 import { IncomeExpensesData } from 'types';
+import CustomTooltip from 'components/custom/CustomTooltip';
 
 interface MonthlyTrendDataType {
   name: string;
   expense: number;
   income: number;
 }
-
-const CustomTooltip = ({
-  active,
-  payload,
-}: TooltipProps<ValueType, NameType>) => {
-  if (active) {
-    return (
-      <div>
-        <Card sx={{ backgroundColor: grey[800], border: 'none' }}>
-          <CardContent style={{ padding: 7 }}>
-            <Typography variant='body2'>
-              {payload && payload[0] && payload[0].payload.name}
-            </Typography>
-
-            {payload?.map((payload, idx) => (
-              <Typography
-                key={idx}
-                variant='body2'
-                style={{ color: payload.color }}
-              >
-                {payload.name}: ₩ {numWithCommas(payload.value as number)}
-              </Typography>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-  return null;
-};
 
 const sumOfIncomeExpenses = (data: IncomeExpensesData[]) => {
   if (!data) {

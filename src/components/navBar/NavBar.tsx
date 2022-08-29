@@ -26,7 +26,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NavCard from '../customCards/NavCard';
+import NavCard from '../custom/NavCard';
 import UserMenu from './UserMenu';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
@@ -62,7 +62,10 @@ function MenuListItems(props: any) {
             <TrackChangesIcon />
           </Badge>
         </ListItemIcon>
+        <StyledBadge badgeContent={'new'} color='secondary'>
+
         <ListItemText primary='Effort Tracker' />
+        </StyledBadge>
       </ListItem>
       <ListItem button onClick={() => navigate(`/dashboard/${props.username}/asset-tracker`)}>
         <ListItemIcon>
@@ -70,7 +73,7 @@ function MenuListItems(props: any) {
             <SavingsIcon />
           </Badge>
         </ListItemIcon>
-        <StyledBadge badgeContent={'new'} color='secondary'>
+        <StyledBadge badgeContent={'beta'} color='secondary'>
           <ListItemText primary='Assert Tracker' />
         </StyledBadge>
       </ListItem>
