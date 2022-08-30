@@ -7,6 +7,54 @@ export enum PageName {
   PROFILE = 'Profile',
 }
 
+export enum AssetTypes {
+  CASH = 'Cash',
+  FIXED_INCOME = 'Fixed Income',
+  REAL_ASSET = 'Real Asset',
+  EQUITY = 'Equity',
+}
+
+export enum ExpenseTypes {
+  HOUSING = 'Housing', // mortgage or rent, household repairs, property taxes
+  TRANSPORTATION = 'Transportation', // car payment, car warranty, gas, tires, maintenance, parking fees, repairs, registration and DMV fees
+  FOOD = 'Food', // Groceries, Restaurants, Pet food
+  UTILITY = 'Utility', // Electricity, water, garbage, phones, cable, internet
+  CLOTHING = 'Clothing', // clothing, shoes
+  HEALTHCARE = 'Medical/Healthcare', // primary care, dental care, specialty care, urgent care, medications, medical devices
+  INSURANCE = 'Insurance', // Health insurance, homeowner's or renter's insurance, home warranty or protection plan, auto insurance, life insurance, disability insurance
+  SUPPLY = 'Household Item/Supply', // Toiletries, laundary detergent, dishwasher detergent, cleaning supplies, tools
+  PERSONAL = 'Personal', // Gym memberships, haircuts, salon services, cosmetics, babysitter, subscriptions
+  DEBT = 'Debt', // Personal loans, student loans, credit cards
+  RETIREMENT = 'Retirement', // Financial planning, investing
+  EDUCATION = 'Education', // Children's college, your college, school supplies, books
+  SAVING = 'Saving', // Emergency fund, big purchases(matress or laptop), other savings
+  GIFT_DONATION = 'Gift/Donation', // Birthday, anniversary, wedding, chrismas, special occation, charities
+  ENTERTAINMENT = 'Entertainment', // Alcohol and/or bars, Games, Movies, Concerts, Vacations, Subscriptions (Netflix, Amazon, etc.)
+  TAX = 'Tax', // tax return
+  ETC = 'etc',
+}
+
+export enum IncomeTypes {
+  SALARY = 'Salary',
+  COMMISSION = 'Commission',
+  INTEREST = 'Interest',
+  SELLING = 'Selling',
+  INVESTMENT = 'Investment',
+  DIVIDEND = 'Dividend',
+  GIFT = 'Gift',
+  ETC = 'etc',
+}
+
+export enum StockCountryTypes {
+  USA = 'USA',
+  KOR = 'KOR',
+}
+
+export enum StockTypes {
+  ETF = 'etf',
+  STOCK = 'stock',
+}
+
 export type UserData = {
   uid: string;
   displayName: string;
@@ -17,16 +65,16 @@ export type UserData = {
   age: number;
   levelOfExperience: number;
   peerRating: number;
-  categories: string[];
+  categories: string[]; // this should change to object
   groups: string[];
-  summaries: SummaryData[];
+  activitySummaries: ActivitySummaryData[];
   disabled: string[];
   removed: string[];
   title: string;
   bio: string;
 };
 
-export interface SummaryData {
+export interface ActivitySummaryData {
   totalPractices: number;
   totalDurations: number;
 }
@@ -50,7 +98,7 @@ export interface ActivityAddFormData {
 export interface CategoryData {
   category: string;
   subcategories: string[];
-};
+}
 
 export interface PerformanceData {
   id: string;
@@ -73,6 +121,59 @@ export interface PerformanceAddFormData {
 export interface PerformanceChartData {
   time: string;
   count?: number;
+}
+
+// monthly asset summary data type
+export interface AssetData {
+  id: string;
+  date: any;
+  assets: SubAssetData;
+  stocks: StockData[];
+  incomes: IncomeExpensesData[];
+  expenses: IncomeExpensesData[];
+}
+
+export interface IncomeExpensesData {
+  date: any;
+  description: string;
+  category: string;
+  amount: number;
+}
+
+export interface SubAssetData {
+  [AssetTypes.CASH]: number;
+  [AssetTypes.FIXED_INCOME]: number;
+  [AssetTypes.REAL_ASSET]: number;
+  [AssetTypes.EQUITY]: number;
+}
+
+export interface StockData {
+  symbol: string;
+  companyName: string;
+  buyPrice: number;
+  currentPrice: number;
+  shares: number;
+  country: string;
+  type: string;
+  currency: number;
+}
+
+export interface StockTag {
+  symbol: string;
+  label: string;
+  country: StockCountryTypes.KOR | StockCountryTypes.USA;
+  type: StockTypes.ETF | StockTypes.STOCK;
+}
+
+export interface StockHistoryData {
+  id: string;
+  date: any;
+  symbol: string;
+  companyName: string;
+  buyPrice: number;
+  shares: number;
+  sellPrice: number;
+  country: StockCountryTypes.KOR | StockCountryTypes.USA;
 }
 
 export interface SnackbarData {

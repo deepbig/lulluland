@@ -13,7 +13,7 @@ import {
   useTheme,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import MainCard from 'components/customCards/MainCard';
+import MainCard from 'components/custom/MainCard';
 import { auth } from 'db';
 import { signOutUser } from 'db/repositories/auth';
 import { useAppDispatch, useAppSelector } from 'hooks';

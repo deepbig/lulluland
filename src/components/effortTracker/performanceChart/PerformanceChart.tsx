@@ -20,7 +20,6 @@ interface performanceChartProps {
 const CustomTooltip = ({
   active,
   payload,
-  label,
 }: TooltipProps<ValueType, NameType>) => {
   if (active) {
     return (

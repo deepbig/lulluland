@@ -8,16 +8,16 @@ import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
 
 function DashboardPage() {
-  const { username } = useParams();
+  const { username, type } = useParams();
   const user = useAppSelector(getUser);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!username) {
       if (user) {
-        navigate(`/dashboard/${user.username}`);
+        navigate(`/dashboard/${user.username}/effort-tracker`);
       } else {
-        navigate(`/dashboard/deepbig`);
+        navigate(`/dashboard/deepbig/effort-tracker`);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,7 +40,7 @@ function DashboardPage() {
           overflow: 'auto',
         }}
       >
-        <Dashboard username={username} />
+        <Dashboard username={username} type={type} />
       </Box>
     </Box>
   );

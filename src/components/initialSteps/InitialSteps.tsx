@@ -140,7 +140,7 @@ function InitialSteps() {
       );
       if (user) {
         dispatch(setUser(user));
-        navigate(`/dashboard/${user.username}`)
+        navigate(`/dashboard/${user.username}/effort-tracker`)
       }
     }
 
