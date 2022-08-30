@@ -69,6 +69,12 @@ const initialState: StockState = {
       type: StockTypes.ETF,
     },
     {
+      symbol: 'TQQQ.O',
+      label: 'ProShares UltraPro QQQ',
+      country: StockCountryTypes.USA,
+      type: StockTypes.ETF,
+    },
+    {
       symbol: 'XOM',
       label: 'Exxon Mobil Corp',
       country: StockCountryTypes.USA,
