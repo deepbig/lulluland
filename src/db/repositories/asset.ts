@@ -85,7 +85,6 @@ export const updateAssetSummary = async (
       );
       return { ...updatedValues, date: Timestamp.fromDate(new Date()), id: docRef.id } as AssetData;
     } else {
-      console.log(uid, values.id, updatedValues);
       await updateDoc(
         doc(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES, values.id),
         { ...updatedValues }

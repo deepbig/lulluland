@@ -115,7 +115,6 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
             severity: 'error',
           })
         );
-        console.log(e);
       } finally {
         dispatch(setBackdrop(false));
       }
