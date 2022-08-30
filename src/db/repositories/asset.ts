@@ -17,7 +17,6 @@ const SUBCOLLECTION_STOCK_HISTORIES = 'stock_histories';
 const COLLECTION_NAME = 'users';
 // TIME_ZONE = KST
 
-
 export const summaries = async (uid: string): Promise<Array<AssetData>> => {
   const end = new Date();
   const start = new Date(end.getFullYear() - 1, end.getMonth(), 1);
@@ -72,24 +71,31 @@ export const updateAssetSummary = async (
 ): Promise<AssetData> => {
   // if id is not exist, create new one
   try {
+    const updatedValues = {
+      date: serverTimestamp(),
+      assets: values.assets,
+      stocks: values.stocks,
+      incomes: values.incomes,
+      expenses: values.expenses,
+    };
     if (!values.id) {
-      await addDoc(
+      const docRef = await addDoc(
         collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES),
-        { ...values, date: serverTimestamp() }
+        { ...updatedValues }
       );
+      return { ...updatedValues, date: Timestamp.fromDate(new Date()), id: docRef.id } as AssetData;
     } else {
+      console.log(uid, values.id, updatedValues);
       await updateDoc(
         doc(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES, values.id),
-        { ...values, date: serverTimestamp() }
+        { ...updatedValues }
       );
+      return { ...updatedValues, date: Timestamp.fromDate(new Date()), id: values.id } as AssetData;
     }
-    return { ...values, date: Timestamp.fromDate(new Date()) } as AssetData;
   } catch (error) {
     throw error;
   }
 };
-
-
 
 // export const saveActivity = async (
 //   values: ActivityAddFormData

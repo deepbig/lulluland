@@ -19,10 +19,7 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { givenMonthYearFormat } from 'lib';
-import {
-  getAssetSummaries,
-  setAssetSummaryList,
-} from 'modules/asset';
+import { getAssetSummaries, setAssetSummaryList } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import {
   AssetData,
@@ -136,7 +133,6 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
           );
           props.handleClose();
         }
-        dispatch(setBackdrop(false));
       } catch (error) {
         dispatch(
           setSnackbar({
@@ -147,6 +143,8 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
               error,
           })
         );
+      } finally {
+        dispatch(setBackdrop(false));
       }
     }
   };
@@ -177,7 +175,7 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
       assets: {
         ...values.assets,
         [AssetTypes.EQUITY]: sum,
-      }
+      },
     });
   };
 
