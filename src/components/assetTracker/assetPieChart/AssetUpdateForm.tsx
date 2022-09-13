@@ -166,7 +166,9 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
     newStocks[idx] = newStock;
     let sum = 0;
     for (const stock of newStocks) {
-      sum += stock.currentPrice * stock.shares * stock.currency;
+      if (stock.currentPrice) {
+        sum += stock.currentPrice * stock.shares * stock.currency;
+      }
     }
 
     setValues({
