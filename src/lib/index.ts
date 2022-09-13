@@ -78,17 +78,31 @@ export const givenMonthYearFormat = (date: string) => {
 export const numFormatter = (num: number) => {
   // return len > 3 ? `${value / 1000}${units[len/3]}` : value;
   if (num >= 1000000000) {
-    return parseFloat((num / 1000000000).toFixed(3)) + ' B';
+    return parseFloat((num / 1000000000).toFixed(2)) + ' B';
   }
   if (num >= 1000000) {
-    return parseFloat((num / 1000000).toFixed(3)) + ' M';
+    return parseFloat((num / 1000000).toFixed(2)) + ' M';
   }
   if (num >= 1000) {
-    return parseFloat((num / 1000).toFixed(3)) + ' K';
+    return parseFloat((num / 1000).toFixed(2)) + ' K';
   }
   return num.toString();
 };
 
-export const numWithCommas = (num: number) => {
+export const numFormatterWoDecimal = (num: number) => {
+  // return len > 3 ? `${value / 1000}${units[len/3]}` : value;
+  if (num >= 1000000000) {
+    return parseInt((num / 1000000000).toFixed(0)) + ' B';
+  }
+  if (num >= 1000000) {
+    return parseInt((num / 1000000).toFixed(0)) + ' M';
+  }
+  if (num >= 1000) {
+    return parseInt((num / 1000).toFixed(0)) + ' K';
+  }
+  return num.toString();
+};
+
+export const numWithCommas = (num: number|string) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

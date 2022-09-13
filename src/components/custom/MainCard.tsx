@@ -23,7 +23,7 @@ const MainCard = forwardRef((props: any, ref) => {
       {/* content & header divider */}
       {title && <Divider />}
       {/* card content */}
-      <CardContent style={{ padding: 16 }}>{children}</CardContent>
+      <CardContent>{children}</CardContent>
     </Card>
   );
 });

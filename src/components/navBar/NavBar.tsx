@@ -40,7 +40,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-function MenuListItems(props: any) {
+type MenuListItemsProps = {
+  open: boolean;
+  handleClose: () => void;
+  username: string;
+};
+
+function MenuListItems(props: MenuListItemsProps) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -56,7 +62,13 @@ function MenuListItems(props: any) {
 
   return (
     <div>
-      <ListItem button onClick={() => navigate(`/dashboard/${props.username}/effort-tracker`)}>
+      <ListItem
+        button
+        onClick={() => {
+          navigate(`/dashboard/${props.username}/effort-tracker`);
+          props.handleClose();
+        }}
+      >
         <ListItemIcon>
           <Badge badgeContent={'✨'}>
             <TrackChangesIcon />
@@ -67,14 +79,20 @@ function MenuListItems(props: any) {
         <ListItemText primary='Effort Tracker' />
         </StyledBadge>
       </ListItem>
-      <ListItem button onClick={() => navigate(`/dashboard/${props.username}/asset-tracker`)}>
+      <ListItem
+        button
+        onClick={() => {
+          navigate(`/dashboard/${props.username}/asset-tracker`);
+          props.handleClose();
+        }}
+      >
         <ListItemIcon>
           <Badge badgeContent={'💵'}>
             <SavingsIcon />
           </Badge>
         </ListItemIcon>
         <StyledBadge badgeContent={'beta'} color='secondary'>
-          <ListItemText primary='Assert Tracker' />
+          <ListItemText primary='Asset Tracker' />
         </StyledBadge>
       </ListItem>
       <Divider />
@@ -130,7 +148,7 @@ function MenuListItems(props: any) {
       {props.open ? (
         <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
           <Typography variant='body2'>
-            Lulluland is a tracker app for<b>calcuating your daily efforts</b>{' '}
+            Lulluland is a tracker app for <b>calcuating your daily efforts</b>{' '}
             and <b>evaluating your improvements</b>. <br />{' '}
           </Typography>
         </NavCard>
@@ -302,7 +320,11 @@ export default function NavBar(props: { selectedName: string }) {
           </IconButton>
         </Toolbar>
         <Divider />
-        <MenuListItems open={open} username={user?.username ? user.username : 'deepbig'} />
+        <MenuListItems
+          open={open}
+          username={user?.username ? user.username : 'deepbig'}
+          handleClose={() => setOpen(false)}
+        />
       </Drawer>
     </>
   ) : null;

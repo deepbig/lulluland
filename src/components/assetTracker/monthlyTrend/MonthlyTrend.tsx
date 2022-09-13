@@ -1,4 +1,4 @@
-import { months, numFormatter } from 'lib';
+import { months, numFormatterWoDecimal } from 'lib';
 import React, { useEffect, useState } from 'react';
 import {
   BarChart,
@@ -60,8 +60,6 @@ function MonthlyTrend() {
   return (
     <ResponsiveContainer height={300}>
       <BarChart
-        width={500}
-        height={300}
         data={data}
         margin={{
           top: 5,
@@ -71,7 +69,7 @@ function MonthlyTrend() {
         }}
       >
         <XAxis dataKey='name' />
-        <YAxis tickFormatter={numFormatter} />
+        <YAxis tickFormatter={numFormatterWoDecimal} />
         <Tooltip
           content={<CustomTooltip />}
           contentStyle={{
@@ -85,12 +83,12 @@ function MonthlyTrend() {
         <Bar
           dataKey='expense'
           fill={red[500]}
-          label={{ fill: red[500], position: 'top', formatter: numFormatter }}
+          label={{ fill: red[500], position: 'top', formatter: numFormatterWoDecimal }}
         />
         <Bar
           dataKey='income'
           fill={green[500]}
-          label={{ fill: green[500], position: 'top', formatter: numFormatter }}
+          label={{ fill: green[500], position: 'top', formatter: numFormatterWoDecimal }}
         />
       </BarChart>
     </ResponsiveContainer>
