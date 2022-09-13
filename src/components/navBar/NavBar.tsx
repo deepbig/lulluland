@@ -75,7 +75,18 @@ function MenuListItems(props: MenuListItemsProps) {
           </Badge>
         </ListItemIcon>
         <StyledBadge badgeContent={'new'} color='secondary'>
-          <ListItemText primary='Effort Tracker' />
+
+        <ListItemText primary='Effort Tracker' />
+        </StyledBadge>
+      </ListItem>
+      <ListItem button onClick={() => navigate(`/dashboard/${props.username}/asset-tracker`)}>
+        <ListItemIcon>
+          <Badge badgeContent={'💵'}>
+            <SavingsIcon />
+          </Badge>
+        </ListItemIcon>
+        <StyledBadge badgeContent={'beta'} color='secondary'>
+          <ListItemText primary='Assert Tracker' />
         </StyledBadge>
       </ListItem>
       <ListItem
