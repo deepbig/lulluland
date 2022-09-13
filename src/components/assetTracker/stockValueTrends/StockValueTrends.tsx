@@ -3,7 +3,7 @@ import { useAppSelector } from 'hooks';
 import { numWithCommas } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
-import { StockData } from 'types';
+import { StockCountryTypes, StockData } from 'types';
 import { green, red } from '@mui/material/colors';
 
 type totalProfitLossType = {
@@ -66,7 +66,7 @@ function StockValueTrends() {
 
   return (
     <>
-      {assetSummaries.length > 2 ? (
+      {assetSummaries.length > 0 ? (
         <Grid
           container
           direction='row'
@@ -99,7 +99,11 @@ function StockValueTrends() {
                     <Typography noWrap>{stock.companyName}</Typography>
                     <Typography>
                       Current Price:{' '}
-                      {stock.currentPrice ? stock.currentPrice : '-'}
+                      {stock.currentPrice
+                        ? `${
+                            stock.country === StockCountryTypes.USA ? '$' : '₩'
+                          } ${stock.currentPrice}`
+                        : '-'}
                     </Typography>
                     <Typography
                       color={
