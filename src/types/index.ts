@@ -171,9 +171,10 @@ export interface StockHistoryData {
   symbol: string;
   companyName: string;
   buyPrice: number;
-  shares: number;
   sellPrice: number;
-  country: StockCountryTypes.KOR | StockCountryTypes.USA;
+  shares: number;
+  country: string;
+  currency: number;
 }
 
 export interface SnackbarData {
