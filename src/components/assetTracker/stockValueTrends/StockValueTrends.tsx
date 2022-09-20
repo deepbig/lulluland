@@ -45,7 +45,7 @@ function StockValueTrends() {
       setActualProfitLoss(getActualProfitLoss(stockHistories));
     }
   }, [stockHistories]);
-
+  
   // total Profit/Loss: 매입가 - 매매가
   const getTotalProfitLoss = (stocks: StockData[]) => {
     let begin, end, value, percent;
