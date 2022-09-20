@@ -3,10 +3,11 @@ import { useAppSelector } from 'hooks';
 import { numWithCommas } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
-import { StockCountryTypes, StockData } from 'types';
+import { StockCountryTypes, StockData, StockHistoryData } from 'types';
 import { green, red } from '@mui/material/colors';
+import { getStockHistories } from 'modules/stockHistory';
 
-type totalProfitLossType = {
+type profitLossType = {
   value: number | string;
   percent: number | string;
 };
@@ -17,8 +18,13 @@ type totalProfitLossType = {
  */
 function StockValueTrends() {
   const assetSummaries = useAppSelector(getAssetSummaries);
+  const stockHistories = useAppSelector(getStockHistories);
   const [stocks, setStocks] = useState<StockData[]>([]);
-  const [totalProfitLoss, setTotalProfitLoss] = useState<totalProfitLossType>({
+  const [totalProfitLoss, setTotalProfitLoss] = useState<profitLossType>({
+    value: 0,
+    percent: 0,
+  });
+  const [actualProfitLoss, setActualProfitLoss] = useState<profitLossType>({
     value: 0,
     percent: 0,
   });
@@ -28,12 +34,17 @@ function StockValueTrends() {
       const assetSummary = assetSummaries[assetSummaries.length - 1];
       if (assetSummary.stocks) {
         setStocks(assetSummary.stocks);
-
         setTotalProfitLoss(getTotalProfitLoss(assetSummary.stocks));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetSummaries]);
+
+  useEffect(() => {
+    if (stockHistories?.length > 0) {
+      setActualProfitLoss(getActualProfitLoss(stockHistories));
+    }
+  }, [stockHistories]);
 
   // total Profit/Loss: 매입가 - 매매가
   const getTotalProfitLoss = (stocks: StockData[]) => {
@@ -51,10 +62,25 @@ function StockValueTrends() {
     // calculate percentage of change from begin to end
     percent = begin ? (((end - begin) / begin) * 100).toFixed(2) : 0;
 
-    return { value, percent } as totalProfitLossType;
+    return { value, percent } as profitLossType;
   };
 
-  // Actual Profit/Loss: stock history 값이 있어야 함
+  const getActualProfitLoss = (stocks: StockHistoryData[]) => {
+    let begin, end, value, percent;
+    begin = end = value = percent = 0;
+    for (const stock of stocks) {
+      // currentPrice가 없으면 currency 값도 없기 때문에 부정확한 값이 나옴.
+      // 따라서 값을 표기하지 않도록 수정.
+      if (stock.sellPrice) {
+        begin += stock.buyPrice * stock.shares * stock.currency;
+        end += stock.sellPrice * stock.shares * stock.currency;
+      }
+    }
+    value = (end - begin).toFixed(0);
+    // calculate percentage of change from begin to end
+    percent = begin ? (((end - begin) / begin) * 100).toFixed(2) : 0;
+    return { value, percent } as profitLossType;
+  };
 
   const selectStockColor = (value: number) => {
     if (value > 0) {
@@ -84,7 +110,10 @@ function StockValueTrends() {
           </Grid>
           <Grid item>
             <Typography variant='h6' gutterBottom>
-              Actual Profit/Loss: ₩ {0}
+              Actual Profit/Loss: ₩{' '}
+              {`${numWithCommas(actualProfitLoss.value)} (${
+                actualProfitLoss.percent
+              }%)`}
             </Typography>
           </Grid>
         </Grid>

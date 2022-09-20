@@ -6,19 +6,22 @@ import userReducer from './user';
 import snackbarReducer from './snackbar';
 import assetReducer from './asset';
 import stockReducer from './stock';
+import stockHistoryReducer from './stockHistory';
 
 export const store = configureStore({
-    reducer: {
-        activity: activityReducer,
-        performance: performanceReducer,
-        backdrop: backdropReducer,
-        user: userReducer,
-        snackbar: snackbarReducer,
-        asset: assetReducer,
-        stock: stockReducer,
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
-    devTools: process.env.NODE_ENV !== 'production',
+  reducer: {
+    activity: activityReducer,
+    performance: performanceReducer,
+    backdrop: backdropReducer,
+    user: userReducer,
+    snackbar: snackbarReducer,
+    asset: assetReducer,
+    stock: stockReducer,
+    stockHistory: stockHistoryReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;

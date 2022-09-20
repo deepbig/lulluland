@@ -8,7 +8,7 @@ import MonthlyExpenseLineChart from './monthlyExpenseChart/MonthlyExpenseLineCha
 import MonthlyTrend from './monthlyTrend/MonthlyTrend';
 import MonthlySummary from './monthlySummary/MonthlySummary';
 import StockValueTrends from './stockValueTrends/StockValueTrends';
-import { summaries } from 'db/repositories/asset';
+import { getAllStockHistories, summaries } from 'db/repositories/asset';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setAssetSummaryList } from 'modules/asset';
 import { setBackdrop } from 'modules/backdrop';
@@ -17,6 +17,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { getUser } from 'modules/user';
 import { givenMonthYearFormat } from 'lib';
 import EquityUpdateForm from './stockValueTrends/EquityUpdateForm';
+import { setStockHistoryList } from 'modules/stockHistory';
+import { setSnackbar } from 'modules/snackbar';
 
 type AssetTrackerProps = {
   username: string | undefined;
@@ -38,11 +40,24 @@ function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
   }, [selectedUser]);
 
   const fetchAssets = async (uid: string) => {
-    dispatch(setBackdrop(true));
-    const _summaries = await summaries(uid);
-    dispatch(setAssetSummaryList(_summaries));
-    // 일단 stock 가격은 유저가 입력값을 주도록 설정.
-    dispatch(setBackdrop(false));
+    try {
+      dispatch(setBackdrop(true));
+      const _summaries = await summaries(uid);
+      dispatch(setAssetSummaryList(_summaries));
+      const _stockHistories = await getAllStockHistories(uid);
+      dispatch(setStockHistoryList(_stockHistories));
+      // 일단 stock 가격은 유저가 입력값을 주도록 설정.
+    } catch (e) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          message: 'Error occured while fetching assets and stock histories',
+          severity: 'error',
+        })
+      );
+    } finally {
+      dispatch(setBackdrop(false));
+    }
   };
 
   return (

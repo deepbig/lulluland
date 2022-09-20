@@ -10,12 +10,17 @@ import {
 } from '@mui/material';
 import { Navigate, Routes, Route, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { getBackdrop, setBackdrop, reset as resetBackdrop } from 'modules/backdrop';
+import {
+  getBackdrop,
+  setBackdrop,
+  reset as resetBackdrop,
+} from 'modules/backdrop';
 import { reset as resetActivity } from 'modules/activity';
 import { reset as resetPerformance } from 'modules/performance';
 import { reset as resetSnackbar, setOpen } from 'modules/snackbar';
-import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
+import { reset as resetStockHistory } from 'modules/stockHistory';
 import { setUser, reset as resetUser } from 'modules/user';
+import { checkRedirectResult, onAuthChange } from 'db/repositories/auth';
 import { getLoggedInUser } from 'db/repositories/user';
 import DashboardPage from 'pages/DashboardPage';
 import SignInPage from 'pages/SignInPage';
@@ -27,7 +32,7 @@ import { getSnackbar } from 'modules/snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 function App() {
@@ -86,7 +91,7 @@ function App() {
         dispatch(resetUser());
         dispatch(resetPerformance());
         dispatch(resetSnackbar());
-        
+        dispatch(resetStockHistory());
       }
       dispatch(setBackdrop(false));
     });
@@ -95,7 +100,7 @@ function App() {
 
   const handleSnackbarClose = () => {
     dispatch(setOpen(false));
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -117,8 +122,16 @@ function App() {
       >
         <CircularProgress color='inherit' />
       </Backdrop>
-      <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%'}}>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

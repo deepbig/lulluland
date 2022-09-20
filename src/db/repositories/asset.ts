@@ -10,8 +10,9 @@ import {
   doc,
   serverTimestamp,
   Timestamp,
+  writeBatch,
 } from 'firebase/firestore';
-import { AssetData } from 'types';
+import { AssetData, StockHistoryData } from 'types';
 const SUBCOLLECTION_ASSET_SUMMARIES = 'asset_summaries';
 const SUBCOLLECTION_STOCK_HISTORIES = 'stock_histories';
 const COLLECTION_NAME = 'users';
@@ -83,64 +84,83 @@ export const updateAssetSummary = async (
         collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES),
         { ...updatedValues }
       );
-      return { ...updatedValues, date: Timestamp.fromDate(new Date()), id: docRef.id } as AssetData;
+      return {
+        ...updatedValues,
+        date: Timestamp.fromDate(new Date()),
+        id: docRef.id,
+      } as AssetData;
     } else {
       await updateDoc(
         doc(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES, values.id),
         { ...updatedValues }
       );
-      return { ...updatedValues, date: Timestamp.fromDate(new Date()), id: values.id } as AssetData;
+      return {
+        ...updatedValues,
+        date: Timestamp.fromDate(new Date()),
+        id: values.id,
+      } as AssetData;
     }
   } catch (error) {
     throw error;
   }
 };
 
-// export const saveActivity = async (
-//   values: ActivityAddFormData
-// ): Promise<ActivityData | null> => {
-//   const docRef = await addDoc(
-//     collection(db, COLLECTION_NAME, values.uid, SUBCOLLECTION_ASSETS),
-//     {
-//       uid: values.uid,
-//       category: values.category,
-//       date: Timestamp.fromDate(new Date(values.date)),
-//       note: values.note,
-//       duration: +values.duration,
-//     }
-//   );
+export const getAllStockHistories = async (
+  uid: string
+): Promise<StockHistoryData[]> => {
+  const stockHistorySnapshot = await getDocs(
+    collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_STOCK_HISTORIES)
+  );
+  const data: Array<any> = [];
 
-//   const newDocRef = doc(
-//     db,
-//     COLLECTION_NAME,
-//     values.uid,
-//     SUBCOLLECTION_ASSETS,
-//     docRef.id
-//   );
-//   const docSnap = await getDoc(newDocRef);
-//   if (docSnap.exists()) {
-//     return { id: docSnap.id, ...docSnap.data() } as ActivityData;
-//   } else {
-//     return null;
-//   }
-// };
+  stockHistorySnapshot.docs.forEach((_data) => {
+    data.push({
+      id: _data.id, // because id field in separate function in firestore
+      ..._data.data(), // the remaining fields
+    });
+  });
 
-// // update an activity
-// export const update = async (
-//   id: string,
-//   activity: ActivityData
-// ): Promise<ActivityData> => {
-//   const docRef = doc(db, COLLECTION_NAME, id);
-//   await updateDoc(docRef, { ...activity });
+  return data as Array<StockHistoryData>;
+};
 
-//   return {
-//     ...activity,
-//     id: id,
-//   } as ActivityData;
-// };
+export const createStockHistory = async (
+  uid: string,
+  stockHistory: StockHistoryData,
+  assetSummary: AssetData
+): Promise<StockHistoryData> => {
+  try {
+    const batch = writeBatch(db);
 
-// export const remove = async (userId: string, activityId: string) => {
-//   await deleteDoc(
-//     doc(db, COLLECTION_NAME, userId, SUBCOLLECTION_ASSETS, activityId)
-//   );
-// };
+    // Step 1. stock history 추가
+    const stockHistoryRef = doc(
+      collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_STOCK_HISTORIES)
+    );
+
+
+    const addedStockHistory = {
+      ...stockHistory,
+      date: Timestamp.fromDate(new Date(stockHistory.date)),
+      id: stockHistoryRef.id,
+    };
+    batch.set(stockHistoryRef, addedStockHistory);
+
+    const assetSummaryRef = doc(
+      db,
+      COLLECTION_NAME,
+      uid,
+      SUBCOLLECTION_ASSET_SUMMARIES,
+      assetSummary.id
+    );
+
+    // Step 2. asset summary 업데이트
+    batch.update(assetSummaryRef, {
+      ...assetSummary,
+    });
+
+    await batch.commit();
+
+    return addedStockHistory;
+  } catch (error) {
+    throw error;
+  }
+};
