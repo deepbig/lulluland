@@ -18,7 +18,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { givenMonthYearFormat } from 'lib';
+import { calculateMonthlyProfitLoss, givenMonthYearFormat } from 'lib';
 import { getAssetSummaries, setAssetSummaryList } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import {
@@ -81,19 +81,10 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
       } else {
         // 만약 다른 달이면 새롭게 시작할 수 있도록 값 수정.
         const previous = assetSummaries[assetSummaries.length - 2];
-        let totalIncome = 0;
-        if (previous?.incomes) {
-          for (const income of previous.incomes) {
-            totalIncome += income.amount;
-          }
-        }
-
-        let totalExpense = 0;
-        if (previous?.expenses) {
-          for (const expense of previous.expenses) {
-            totalExpense += expense.amount;
-          }
-        }
+        let monthlyProfitLoss = calculateMonthlyProfitLoss(
+          previous.incomes,
+          previous.expenses
+        );
 
         setValues({
           ...assetSummary,
@@ -104,7 +95,7 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
           assets: {
             ...assetSummary.assets,
             [AssetTypes.CASH]:
-              assetSummary.assets[AssetTypes.CASH] + totalIncome - totalExpense,
+              assetSummary.assets[AssetTypes.CASH] + monthlyProfitLoss,
           },
         });
       }

@@ -19,6 +19,7 @@ import {
 } from 'recharts/types/component/DefaultTooltipContent';
 import { AssetTypes, SubAssetData, UserData } from 'types';
 import {
+  calculateMonthlyProfitLoss,
   chipColors as colors,
   givenMonthYearFormat,
   numFormatter,
@@ -117,9 +118,18 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
             },
           });
         } else {
+          const monthlyProfitLoss = calculateMonthlyProfitLoss(
+            summary.incomes,
+            summary.expenses
+          );
+
           _assetSummaries.push({
             date: givenMonthYearFormat(summary.date.toDate().toString()),
-            assets: { ...summary.assets },
+            assets: {
+              ...summary.assets,
+              [AssetTypes.CASH]:
+                summary.assets[AssetTypes.CASH] + monthlyProfitLoss,
+            },
           });
         }
       }
