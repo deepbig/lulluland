@@ -1,4 +1,5 @@
 import { blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { IncomeExpensesData } from 'types';
 
 export const months = [
   'Jan',
@@ -103,6 +104,27 @@ export const numFormatterWoDecimal = (num: number) => {
   return num.toString();
 };
 
-export const numWithCommas = (num: number|string) => {
+export const numWithCommas = (num: number | string) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+};
+
+export const calculateMonthlyProfitLoss = (
+  incomes: IncomeExpensesData[],
+  expenses: IncomeExpensesData[]
+) => {
+  let totalIncome = 0;
+  if (incomes) {
+    for (const income of incomes) {
+      totalIncome += income.amount;
+    }
+  }
+
+  let totalExpense = 0;
+  if (expenses) {
+    for (const expense of expenses) {
+      totalExpense += expense.amount;
+    }
+  }
+
+  return totalIncome - totalExpense;
+};
