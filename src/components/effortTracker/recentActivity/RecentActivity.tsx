@@ -20,6 +20,8 @@ import { setSnackbar } from 'modules/snackbar';
 import { remove } from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface SummaryProps {
   category: string;
@@ -33,16 +35,24 @@ function RecentActivity(props: SummaryProps) {
   const [selectedActivity, setSelectedActivity] = useState<ActivityData | null>(
     null
   );
+  const [index, setIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [confirm, setConfirm] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (activities.length > 0) {
       if (!props.category) {
-        setSelectedActivity(activities[activities.length - 1]);
+        setSelectedActivity(activities[activities.length - 1 - index]);
       } else {
+        if (props.category !== selectedCategory) {
+          setSelectedCategory(props.category);
+          setIndex(0);
+          return;
+        }
+        let count = index;
         for (let i = activities.length - 1; i >= 0; i--) {
-          if (activities[i].category === props.category) {
+          if (activities[i].category === props.category && count-- === 0) {
             setSelectedActivity(activities[i]);
             return;
           }
@@ -52,7 +62,8 @@ function RecentActivity(props: SummaryProps) {
     } else {
       setSelectedActivity(null);
     }
-  }, [activities, props.category]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activities, props.category, index]);
 
   const handleDelete = async () => {
     if (selectedActivity && user) {
@@ -69,6 +80,7 @@ function RecentActivity(props: SummaryProps) {
         let newActivities = [...activities];
         newActivities.pop();
         dispatch(setActivityList(newActivities));
+        setIndex(0);
       } catch (error) {
         dispatch(
           setSnackbar({
@@ -82,12 +94,6 @@ function RecentActivity(props: SummaryProps) {
     dispatch(setBackdrop(false));
     setConfirm(false);
   };
-
-  // Recent Activity
-  // 1. category (secondary)
-  // 2. DateTime (primary: title) (본인 것이면, edit & delete)
-  // 3. Duration (secondary)
-  // 4. Note (primary: body)
 
   return (
     <>
@@ -117,6 +123,20 @@ function RecentActivity(props: SummaryProps) {
               Note: {selectedActivity.note}
             </Typography>
           </CardContent>
+          <Box sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
+            <Button color='inherit' disabled={index === activities.length - 1} onClick={() => setIndex(index + 1)}>
+              <ArrowBackIosIcon fontSize='small' />
+              Back
+            </Button>
+            <Box sx={{ flex: '1 1 auto' }} />
+            <Button
+              color='inherit'
+              disabled={index === 0}
+              onClick={() => setIndex(index - 1)}
+            >
+              Next <ArrowForwardIosIcon fontSize='small' />
+            </Button>
+          </Box>
         </Card>
       ) : (
         <Box m='auto'>

@@ -20,10 +20,10 @@ function DashboardPage() {
         navigate(`/dashboard/deepbig/effort-tracker`);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username]);
 
-  // 
+  //
 
   return (
     <Box sx={{ display: 'flex' }}>

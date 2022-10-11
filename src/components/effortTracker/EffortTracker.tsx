@@ -17,9 +17,15 @@ type EffortTrackerProps = {
   username: string | undefined;
   selectedCategory: string;
   selectedUser: UserData | null;
+  interestAddForm: boolean;
 };
 
-function EffortTracker({ username, selectedCategory, selectedUser }: EffortTrackerProps) {
+function EffortTracker({
+  username,
+  selectedCategory,
+  selectedUser,
+  interestAddForm,
+}: EffortTrackerProps) {
   const theme = useTheme();
   const [openActivityForm, setOpenActivityForm] = useState(false);
   const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
@@ -100,9 +106,11 @@ function EffortTracker({ username, selectedCategory, selectedUser }: EffortTrack
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 255,
+                    [theme.breakpoints.between('md', 'xl')]: {
+                      height: 300,
+                    },
                     [theme.breakpoints.up('xl')]: {
-                      height: 330,
+                      height: 400,
                     },
                     overflow: 'hidden',
                     overflowY: 'auto',
@@ -125,9 +133,11 @@ function EffortTracker({ username, selectedCategory, selectedUser }: EffortTrack
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 330,
                     [theme.breakpoints.between('md', 'xl')]: {
-                      height: 255,
+                      height: 300,
+                    },
+                    [theme.breakpoints.up('xl')]: {
+                      height: 400,
                     },
                     overflow: 'hidden',
                     overflowY: 'auto',
@@ -158,7 +168,7 @@ function EffortTracker({ username, selectedCategory, selectedUser }: EffortTrack
               height: 725,
             },
             [theme.breakpoints.up('xl')]: {
-              height: 795,
+              height: 870,
             },
             overflow: 'hidden',
             overflowY: 'auto',
