@@ -6,15 +6,18 @@ import {
   Stack,
   Avatar,
   Chip,
+  IconButton,
 } from '@mui/material';
 import { UserData } from 'types';
 import { getUserFromDB } from 'db/repositories/user';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { setBackdrop } from 'modules/backdrop';
 import { useNavigate } from 'react-router-dom';
 import { chipColors } from 'lib';
 import EffortTracker from 'components/effortTracker/EffortTracker';
 import AssetTracker from 'components/assetTracker/AssetTracker';
+import { getUser } from 'modules/user';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 function Copyright(props: any) {
   return (
@@ -39,6 +42,8 @@ export default function Dashboard({ username, type }: DashboardProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('');
+  const user = useAppSelector(getUser);
+  const [interestAddForm, setInterestAddForm] = useState(false);
 
   useEffect(() => {
     const getSelectedUser = async () => {
@@ -87,6 +92,14 @@ export default function Dashboard({ username, type }: DashboardProps) {
                   onClick={() => setSelectedCategory(category)}
                 />
               ))}
+              {user && user.username === username ? (
+                <IconButton
+                  sx={{ padding: 0 }}
+                  onClick={() => setInterestAddForm(true)}
+                >
+                  <AddCircleIcon />
+                </IconButton>
+              ) : null}
             </Stack>
           ) : null}
         </Stack>
@@ -96,6 +109,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
             username={username}
             selectedCategory={selectedCategory}
             selectedUser={selectedUser}
+            interestAddForm={interestAddForm}
           />
         ) : null}
         {type === 'asset-tracker' ? (
