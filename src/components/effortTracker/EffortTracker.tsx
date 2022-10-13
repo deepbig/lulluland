@@ -17,6 +17,7 @@ type EffortTrackerProps = {
   username: string | undefined;
   selectedCategory: string;
   selectedUser: UserData | null;
+  interestAddForm: boolean;
 };
 
 function EffortTracker({

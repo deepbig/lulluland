@@ -141,6 +141,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
             username={username}
             selectedCategory={selectedCategory}
             selectedUser={selectedUser}
+            interestAddForm={interestAddForm}
           />
         ) : null}
         {type === 'asset-tracker' ? (
