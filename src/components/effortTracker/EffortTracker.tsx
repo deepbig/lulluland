@@ -17,14 +17,12 @@ type EffortTrackerProps = {
   username: string | undefined;
   selectedCategory: string;
   selectedUser: UserData | null;
-  interestAddForm: boolean;
 };
 
 function EffortTracker({
   username,
   selectedCategory,
   selectedUser,
-  interestAddForm,
 }: EffortTrackerProps) {
   const theme = useTheme();
   const [openActivityForm, setOpenActivityForm] = useState(false);
@@ -37,7 +35,7 @@ function EffortTracker({
       <Grid item xs={12} lg={8}>
         <Grid container spacing={3}>
           {/* Activity Board */}
-          <Grid item xs={12}>
+        <Grid item xs={12}>
             <Paper
               sx={{
                 p: 2,
@@ -163,9 +161,8 @@ function EffortTracker({
             display: 'flex',
             position: 'relative',
             flexDirection: 'column',
-            minHeight: 160,
             [theme.breakpoints.between('lg', 'xl')]: {
-              height: 725,
+              height: 770,
             },
             [theme.breakpoints.up('xl')]: {
               height: 870,

@@ -43,12 +43,14 @@ function RecentActivity(props: SummaryProps) {
   useEffect(() => {
     if (activities.length > 0) {
       if (!props.category) {
+        if (selectedCategory) {
+          setSelectedCategory('');
+        }
         setSelectedActivity(activities[activities.length - 1 - index]);
       } else {
         if (props.category !== selectedCategory) {
           setSelectedCategory(props.category);
           setIndex(0);
-          return;
         }
         let count = index;
         for (let i = activities.length - 1; i >= 0; i--) {
@@ -62,7 +64,7 @@ function RecentActivity(props: SummaryProps) {
     } else {
       setSelectedActivity(null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activities, props.category, index]);
 
   const handleDelete = async () => {
@@ -124,7 +126,11 @@ function RecentActivity(props: SummaryProps) {
             </Typography>
           </CardContent>
           <Box sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
-            <Button color='inherit' disabled={index === activities.length - 1} onClick={() => setIndex(index + 1)}>
+            <Button
+              color='inherit'
+              disabled={index === activities.length - 1}
+              onClick={() => setIndex(index + 1)}
+            >
               <ArrowBackIosIcon fontSize='small' />
               Back
             </Button>
