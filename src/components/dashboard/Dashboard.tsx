@@ -7,6 +7,8 @@ import {
   Avatar,
   Chip,
   IconButton,
+  Grid,
+  Box,
 } from '@mui/material';
 import { UserData } from 'types';
 import { getUserFromDB } from 'db/repositories/user';
@@ -18,6 +20,8 @@ import EffortTracker from 'components/effortTracker/EffortTracker';
 import AssetTracker from 'components/assetTracker/AssetTracker';
 import { getUser } from 'modules/user';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { grey, green } from '@mui/material/colors';
+import CategoryAddForm from 'components/effortTracker/categoryAddForm/CategoryAddForm';
 
 function Copyright(props: any) {
   return (
@@ -43,7 +47,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('');
   const user = useAppSelector(getUser);
-  const [interestAddForm, setInterestAddForm] = useState(false);
+  const [categoryAddForm, setCategoryAddForm] = useState(false);
 
   useEffect(() => {
     const getSelectedUser = async () => {
@@ -81,27 +85,55 @@ export default function Dashboard({ username, type }: DashboardProps) {
           <Typography variant='guideline' gutterBottom>
             {selectedUser?.username}
           </Typography>
-          {type === 'effort-tracker' ? (
-            <Stack direction='row' spacing={1}>
-              {selectedUser?.categories.map((category, i) => (
-                <Chip
-                  key={i}
-                  sx={{ backgroundColor: chipColors[i % chipColors.length] }}
-                  label={category}
-                  size='small'
-                  onClick={() => setSelectedCategory(category)}
-                />
-              ))}
-              {user && user.username === username ? (
-                <IconButton
-                  sx={{ padding: 0 }}
-                  onClick={() => setInterestAddForm(true)}
-                >
-                  <AddCircleIcon />
-                </IconButton>
-              ) : null}
-            </Stack>
-          ) : null}
+          <Box>
+            {type === 'effort-tracker' ? (
+              <Grid
+                container
+                direction='row'
+                justifyContent='center'
+                alignItems='center'
+                spacing={1}
+              >
+                <Grid item>
+                  <Chip
+                    sx={{
+                      backgroundColor: selectedCategory
+                        ? grey[500]
+                        : green[500],
+                    }}
+                    label='ALL'
+                    size='small'
+                    onClick={() => setSelectedCategory('')}
+                  />
+                </Grid>
+                {selectedUser?.categories.map((category, i) => (
+                  <Grid key={i} item>
+                    <Chip
+                      sx={{
+                        backgroundColor:
+                          !selectedCategory || selectedCategory === category
+                            ? chipColors[i % chipColors.length]
+                            : grey[500],
+                      }}
+                      label={category}
+                      size='small'
+                      onClick={() => setSelectedCategory(category)}
+                    />
+                  </Grid>
+                ))}
+                {user && user.username === username ? (
+                  <Grid item>
+                    <IconButton
+                      sx={{ padding: 0 }}
+                      onClick={() => setCategoryAddForm(true)}
+                    >
+                      <AddCircleIcon />
+                    </IconButton>
+                  </Grid>
+                ) : null}
+              </Grid>
+            ) : null}
+          </Box>
         </Stack>
 
         {type === 'effort-tracker' ? (
@@ -109,12 +141,18 @@ export default function Dashboard({ username, type }: DashboardProps) {
             username={username}
             selectedCategory={selectedCategory}
             selectedUser={selectedUser}
-            interestAddForm={interestAddForm}
           />
         ) : null}
         {type === 'asset-tracker' ? (
           <AssetTracker username={username} selectedUser={selectedUser} />
         ) : null}
+
+        {categoryAddForm && (
+          <CategoryAddForm
+            open={categoryAddForm}
+            handleClose={() => setCategoryAddForm(false)}
+          />
+        )}
 
         <Copyright sx={{ pt: 4 }} />
       </Container>

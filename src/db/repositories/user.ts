@@ -90,6 +90,19 @@ export const updateUserUsernameAndCategories = async (
   }
 };
 
+export const updateCategories = async (uid: string, categories: string[]) => {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, uid);
+
+    await updateDoc(docRef, {
+      categories: categories,
+    });
+  } catch (e) {
+    // need to handle error case.
+    throw e;
+  }
+};
+
 export const updateUserProfile = async (
   userId: string,
   values: { title: string; bio: string }
