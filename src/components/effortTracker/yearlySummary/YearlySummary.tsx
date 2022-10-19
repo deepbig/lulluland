@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector } from 'hooks';
-import { getActivities } from 'modules/activity';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  getActivities,
+  getSelectedYear,
+  setActivityList,
+  setSelectedYear,
+} from 'modules/activity';
 import {
   Grid,
   ListItem,
@@ -8,27 +13,97 @@ import {
   ListItemAvatar,
   Tooltip,
   Avatar,
+  Button,
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
 import { ActivityData } from 'types';
+import * as activity from 'db/repositories/activity';
+import { fetchAllActivitySummaries } from 'db/repositories/activitySummary';
+import {
+  getActivitySummaries,
+  setActivitySummaryList,
+} from 'modules/activitySummary';
+import { setBackdrop } from 'modules/backdrop';
+import { setSnackbar } from 'modules/snackbar';
 
 interface SummaryProps {
   category: string;
+  uid: string;
 }
 
 function YearlySummary(props: SummaryProps) {
   const activities = useAppSelector(getActivities);
+  const activitySummaries = useAppSelector(getActivitySummaries);
+  const selectedYear = useAppSelector(getSelectedYear);
   const [totalPractices, setTotalPractices] = useState<number>(0);
   const [totalDurations, setTotalDurations] = useState<number>(0);
   const [bestPractice, setBestPractice] = useState<ActivityData | null>(null);
+  const [minRangeYear, setMinRangeYear] = useState<number[]>([]);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let minYear = new Date().getFullYear();
+    for (const data of activitySummaries) {
+      if (props.category === '' || props.category === data.category) {
+        if (data.yearly[data.yearly.length - 1].year < minYear) {
+          minYear = data.yearly[data.yearly.length - 1].year;
+        }
+      }
+    }
+    const currentYear = new Date().getFullYear();
+    const range = [];
+    for (let i = currentYear; i >= minYear; i--) {
+      range.push(i);
+    }
+    setMinRangeYear(range);
+  }, [activitySummaries, props.category]);
 
   useEffect(() => {
     countPractices();
     countDurations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities, props.category]);
+  }, [activities, selectedYear, props.category]);
+
+  useEffect(() => {
+    if (props.uid) {
+      fetchActivities(selectedYear);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear, props.uid]);
+
+  useEffect(() => {
+    if (props.uid) {
+      fetchActivitySummaries();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.uid]);
+
+  const fetchActivities = async (selectedYear: number) => {
+    try {
+      dispatch(setBackdrop(true));
+      const _activities = selectedYear
+        ? await activity.selected(selectedYear, props.uid)
+        : await activity.current(props.uid);
+      dispatch(setActivityList(_activities));
+    } catch (e) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Failed to fetch activity data from db. Error: ' + e,
+        })
+      );
+    } finally {
+      dispatch(setBackdrop(false));
+    }
+  };
+
+  const fetchActivitySummaries = async () => {
+    const _activitiesSummaries = await fetchAllActivitySummaries(props.uid);
+    dispatch(setActivitySummaryList(_activitiesSummaries));
+  };
 
   const countPractices = () => {
     let practices = 0;
@@ -67,9 +142,13 @@ function YearlySummary(props: SummaryProps) {
     setTotalDurations(durations);
   };
 
+  const handleYearChange = (value: number) => {
+    dispatch(setSelectedYear(value));
+  };
+
   return (
-    <Grid container direction='row' spacing={3}>
-      <Grid item xs={4}>
+    <Grid container direction='row' spacing={2}>
+      <Grid item xs={12} sm={4}>
         <ListItem>
           <ListItemAvatar>
             <Avatar>
@@ -82,7 +161,7 @@ function YearlySummary(props: SummaryProps) {
           />
         </ListItem>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={12} sm={4}>
         <ListItem>
           <ListItemAvatar>
             <Avatar>
@@ -103,7 +182,7 @@ function YearlySummary(props: SummaryProps) {
           />
         </ListItem>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={12} sm={4}>
         {bestPractice ? (
           <ListItem>
             <ListItemAvatar>
@@ -135,6 +214,31 @@ function YearlySummary(props: SummaryProps) {
             <ListItemText primary={'0 mins'} secondary='Best Practice' />
           </ListItem>
         )}
+      </Grid>
+
+      <Grid item xs={12}>
+        <Grid container direction='row' spacing={1}>
+          <Grid item>
+            <Button
+              value='Current'
+              onClick={() => handleYearChange(0)}
+              variant={selectedYear === 0 ? 'contained' : 'text'}
+            >
+              Current
+            </Button>
+          </Grid>
+          {minRangeYear.map((year) => (
+            <Grid item key={year}>
+              <Button
+                value={year}
+                onClick={() => handleYearChange(year)}
+                variant={selectedYear === year ? 'contained' : 'text'}
+              >
+                {year}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
     </Grid>
   );

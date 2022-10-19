@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import activityReducer from './activity';
+import activitySummaryReducer from './activitySummary';
 import performanceReducer from './performance';
 import backdropReducer from './backdrop';
 import userReducer from './user';
@@ -11,6 +12,7 @@ import stockHistoryReducer from './stockHistory';
 export const store = configureStore({
   reducer: {
     activity: activityReducer,
+    activitySummary: activitySummaryReducer,
     performance: performanceReducer,
     backdrop: backdropReducer,
     user: userReducer,
