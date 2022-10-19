@@ -67,7 +67,6 @@ export type UserData = {
   peerRating: number;
   categories: string[]; // this should change to object
   groups: string[];
-  activitySummaries: ActivitySummaryData[];
   disabled: string[];
   removed: string[];
   title: string;
@@ -75,8 +74,23 @@ export type UserData = {
 };
 
 export interface ActivitySummaryData {
-  totalPractices: number;
-  totalDurations: number;
+  category: string;
+  yearly: ActivitySummaryYearlyData[];
+}
+
+export interface ActivitySummaryYearlyData {
+  year: number;
+  counts: number;
+  durations: number;
+  bestPractice: number;
+  monthly: ActivitySummaryMonthlyData[];
+}
+
+export interface ActivitySummaryMonthlyData {
+  month: number;
+  counts: number;
+  durations: number;
+  bestPractice: number;
 }
 
 export interface ActivityData {
