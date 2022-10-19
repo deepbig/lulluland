@@ -100,6 +100,33 @@ function YearlySummary(props: SummaryProps) {
     }
   };
 
+  const calculateMonthlySummary = () => {
+    const list = [];
+    let durations = 0;
+    let counts = 0;
+    let bestPractice = 0;
+    let month = 0;
+    for (const data of activities) {
+      if (data.date.toDate().getMonth() > month) {
+        list.push({ month, durations, counts, bestPractice });
+        while (month !== data.date.toDate().getMonth() && month < 13) {
+          month++;
+        }
+        durations = data.duration;
+        counts = 1;
+        bestPractice = data.duration;
+      } else {
+        durations += data.duration;
+        counts++;
+        if (data.duration > bestPractice) {
+          bestPractice = data.duration;
+        }
+      }
+    }
+    list.push({ month, durations, counts, bestPractice });
+    console.log(list);
+  };
+
   const fetchActivitySummaries = async () => {
     const _activitiesSummaries = await fetchAllActivitySummaries(props.uid);
     dispatch(setActivitySummaryList(_activitiesSummaries));
@@ -238,6 +265,7 @@ function YearlySummary(props: SummaryProps) {
               </Button>
             </Grid>
           ))}
+          {calculateMonthlySummary()}
         </Grid>
       </Grid>
     </Grid>
