@@ -1,9 +1,5 @@
 import db from '..';
-import {
-  collection,
-  getDocs,
-  query,
-} from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { ActivitySummaryData } from 'types';
 const SUBCOLLECTION_NAME = 'activity_summaries';
 const COLLECTION_NAME = 'users';
@@ -25,11 +21,16 @@ export const fetchAllActivitySummaries = async (
 
   if (res.length > 0) {
     for (let data of res) {
-      data.yearly.sort((a, b) => b.year - a.year);
-      for (let yearly of data.yearly) {
-        yearly.monthly.sort((a, b) => a.month - b.month);
+      if (data.yearly?.length > 2) {
+        data.yearly.sort((a, b) => b.year - a.year);
+
+        for (let yearly of data.yearly) {
+          if (yearly.monthly?.length > 2) {
+            yearly.monthly.sort((a, b) => a.month - b.month);
+          }
+        } // end of yearly loop
       }
-    }
+    } // end of res loop
   }
 
   return res;
