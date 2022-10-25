@@ -5,6 +5,8 @@ import {
   getSelectedYear,
   setActivityList,
   setSelectedYear,
+  getActivitySummaries,
+  setActivitySummaryList,
 } from 'modules/activity';
 import {
   Grid,
@@ -20,11 +22,6 @@ import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
 import { ActivityData } from 'types';
 import * as activity from 'db/repositories/activity';
-import { fetchAllActivitySummaries } from 'db/repositories/activitySummary';
-import {
-  getActivitySummaries,
-  setActivitySummaryList,
-} from 'modules/activitySummary';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
 
@@ -47,7 +44,10 @@ function YearlySummary(props: SummaryProps) {
     let minYear = new Date().getFullYear();
     for (const data of activitySummaries) {
       if (props.category === '' || props.category === data.category) {
-        if (data.yearly[data.yearly.length - 1].year < minYear) {
+        if (
+          data.yearly?.length > 0 &&
+          data.yearly[data.yearly.length - 1].year < minYear
+        ) {
           minYear = data.yearly[data.yearly.length - 1].year;
         }
       }
@@ -78,7 +78,7 @@ function YearlySummary(props: SummaryProps) {
       fetchActivitySummaries();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.uid]);
+  }, [activities, props.uid]);
 
   const fetchActivities = async (selectedYear: number) => {
     try {
@@ -100,36 +100,21 @@ function YearlySummary(props: SummaryProps) {
     }
   };
 
-  const calculateMonthlySummary = () => {
-    const list = [];
-    let durations = 0;
-    let counts = 0;
-    let bestPractice = 0;
-    let month = 0;
-    for (const data of activities) {
-      if (data.date.toDate().getMonth() > month) {
-        list.push({ month, durations, counts, bestPractice });
-        while (month !== data.date.toDate().getMonth() && month < 13) {
-          month++;
-        }
-        durations = data.duration;
-        counts = 1;
-        bestPractice = data.duration;
-      } else {
-        durations += data.duration;
-        counts++;
-        if (data.duration > bestPractice) {
-          bestPractice = data.duration;
-        }
-      }
-    }
-    list.push({ month, durations, counts, bestPractice });
-    console.log(list);
-  };
-
   const fetchActivitySummaries = async () => {
-    const _activitiesSummaries = await fetchAllActivitySummaries(props.uid);
-    dispatch(setActivitySummaryList(_activitiesSummaries));
+    try {
+      const _activitiesSummaries = await activity.fetchAllActivitySummaries(
+        props.uid
+      );
+      dispatch(setActivitySummaryList(_activitiesSummaries));
+    } catch (e) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Failed to fetch activity summary data from db. Error: ' + e,
+        })
+      );
+    }
   };
 
   const countPractices = () => {
@@ -265,7 +250,6 @@ function YearlySummary(props: SummaryProps) {
               </Button>
             </Grid>
           ))}
-          {calculateMonthlySummary()}
         </Grid>
       </Grid>
     </Grid>

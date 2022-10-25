@@ -20,6 +20,7 @@ import {
   setActivityList,
 } from 'modules/activity';
 import { setBackdrop } from 'modules/backdrop';
+import { setSnackbar } from 'modules/snackbar';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
 import { ActivityAddFormData, ActivityData } from 'types';
@@ -92,16 +93,33 @@ function ActivityAddForm(props: ActivityAddFormProps) {
               }
             }
             dispatch(setActivityList(updatedActivities));
+            dispatch(
+              setSnackbar({
+                open: true,
+                message: 'New Activity data saved successfully!',
+                severity: 'success',
+              })
+            );
           }
         } else {
-          alert(
-            'Failed to save activity due to database error. Please try again.'
+          dispatch(
+            setSnackbar({
+              open: true,
+              message: 'Something went wrong, please try again later.',
+              severity: 'error',
+            })
           );
         }
         props.handleClose();
       }
     } catch (e) {
-      alert('Creating Activity was not successful due to database error: ' + e);
+      dispatch(
+        setSnackbar({
+          open: true,
+          message: `Creating Activity was not successful due to database error: ${e}`,
+          severity: 'error',
+        })
+      );
     } finally {
       dispatch(setBackdrop(false));
     }

@@ -8,9 +8,11 @@ import {
   where,
   getDocs,
   updateDoc,
+  runTransaction,
 } from 'firebase/firestore';
-import { UserData } from 'types';
+import { UserData, ActivitySummaryData } from 'types';
 const COLLECTION_NAME = 'users';
+const ACTIVITY_SUMMARY_SUBCOLLECTION_NAME = 'activity_summaries';
 
 export const getLoggedInUser = async (user: {
   uid: string;
@@ -90,12 +92,39 @@ export const updateUserUsernameAndCategories = async (
   }
 };
 
-export const updateCategories = async (uid: string, categories: string[]) => {
+export const updateCategories = async (
+  uid: string,
+  categories: string[],
+  activitySummaries: ActivitySummaryData[]
+) => {
   try {
     const docRef = doc(db, COLLECTION_NAME, uid);
+    // create activity summary if category's summary does not exist.
+    await runTransaction(db, async (transaction) => {
+      // create activity summaries
+      for (const category of categories) {
+        if (
+          !activitySummaries.find(
+            (activitySummary) => activitySummary.category === category
+          )
+        ) {
+          transaction.set(
+            doc(
+              db,
+              COLLECTION_NAME,
+              uid,
+              ACTIVITY_SUMMARY_SUBCOLLECTION_NAME,
+              category
+            ),
+            { yearly: [] }
+          );
+        }
+      }
 
-    await updateDoc(docRef, {
-      categories: categories,
+      // update category
+      transaction.update(docRef, {
+        categories: categories,
+      });
     });
   } catch (e) {
     // need to handle error case.

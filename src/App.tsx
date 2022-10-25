@@ -16,7 +16,6 @@ import {
   reset as resetBackdrop,
 } from 'modules/backdrop';
 import { reset as resetActivity } from 'modules/activity';
-import { reset as resetActivitySummary } from 'modules/activitySummary';
 import { reset as resetPerformance } from 'modules/performance';
 import { reset as resetSnackbar, setOpen } from 'modules/snackbar';
 import { reset as resetStockHistory } from 'modules/stockHistory';
@@ -88,7 +87,6 @@ function App() {
       } else {
         // user logged out
         dispatch(resetActivity());
-        dispatch(resetActivitySummary());
         dispatch(resetBackdrop());
         dispatch(resetUser());
         dispatch(resetPerformance());
