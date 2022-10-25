@@ -35,7 +35,7 @@ function EffortTracker({
       <Grid item xs={12} lg={8}>
         <Grid container spacing={3}>
           {/* Activity Board */}
-        <Grid item xs={12}>
+          <Grid item xs={12}>
             <Paper
               sx={{
                 p: 2,
@@ -62,10 +62,7 @@ function EffortTracker({
                 }}
               >
                 {/* TODO - year selection: current, 2022, 2021 */}
-                <ActivityBoard
-                  category={selectedCategory}
-                  uid={selectedUser?.uid ? selectedUser.uid : ''}
-                />
+                <ActivityBoard category={selectedCategory} />
                 {openActivityForm ? (
                   <ActivityAddForm
                     open={openActivityForm}
@@ -92,10 +89,13 @@ function EffortTracker({
                 Summary of Year{''}
                 {selectedCategory ? ` | ${selectedCategory}` : ''}
               </Title>
-              <YearlySummary category={selectedCategory} />
+              <YearlySummary
+                category={selectedCategory}
+                uid={selectedUser?.uid ? selectedUser.uid : ''}
+              />
             </Paper>
           </Grid>
-          {/* Summary of Year */}
+          {/* Recent Activity */}
           <Grid item xs={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>

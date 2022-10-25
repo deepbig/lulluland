@@ -15,6 +15,7 @@ import {
 import { updateCategories } from 'db/repositories/user';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { isFound } from 'lib';
+import { getActivitySummaries } from 'modules/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
 import { getUser, setUser } from 'modules/user';
@@ -37,6 +38,7 @@ function CategoryAddForm(props: CategoryAddFormProps) {
   });
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUser);
+  const activitySummaries = useAppSelector(getActivitySummaries);
 
   useEffect(() => {
     if (user?.categories) {
@@ -97,7 +99,7 @@ function CategoryAddForm(props: CategoryAddFormProps) {
     if (user) {
       dispatch(setBackdrop(true));
       try {
-        await updateCategories(user.uid, values.categories);
+        await updateCategories(user.uid, values.categories, activitySummaries);
         dispatch(setUser({ ...user, categories: values.categories }));
         window.location.reload();
       } catch (e) {

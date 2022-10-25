@@ -157,8 +157,8 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
         ) : null}
       </Box>
       <Grid container direction='row' spacing={2}>
-        {performances?.map((performance, index) =>
-          performance.map((subPerformance, index) =>
+        {performances?.map((performance) =>
+          performance?.map((subPerformance, index) =>
             !props.selectedCategory ||
             props.selectedCategory === subPerformance[0].category ? (
               <Grid

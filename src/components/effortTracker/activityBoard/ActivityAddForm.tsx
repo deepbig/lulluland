@@ -14,8 +14,13 @@ import {
 import { saveActivity } from 'db/repositories/activity';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { currentDateTime } from 'lib';
-import { getActivities, setActivityList } from 'modules/activity';
+import {
+  getActivities,
+  getSelectedYear,
+  setActivityList,
+} from 'modules/activity';
 import { setBackdrop } from 'modules/backdrop';
+import { setSnackbar } from 'modules/snackbar';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
 import { ActivityAddFormData, ActivityData } from 'types';
@@ -29,6 +34,7 @@ interface ActivityAddFormProps {
 function ActivityAddForm(props: ActivityAddFormProps) {
   const user = useAppSelector(getUser);
   const activities = useAppSelector(getActivities);
+  const selectedYear = useAppSelector(getSelectedYear);
   const [values, setValues] = useState<ActivityAddFormData>({
     category: props.selectedCategory,
     date: currentDateTime(),
@@ -52,7 +58,21 @@ function ActivityAddForm(props: ActivityAddFormProps) {
         let updatedActivities = [...activities];
 
         if (newActivity) {
-          if (activities.length === 0) {
+          let end = selectedYear
+            ? new Date(selectedYear + 1, 0, 1)
+            : new Date();
+          let start = selectedYear
+            ? new Date(selectedYear, 0, 1)
+            : new Date(end.getFullYear() - 1, end.getMonth(), end.getDate());
+          if (
+            (selectedYear &&
+              newActivity.date.toDate().getFullYear() !== selectedYear) ||
+            (!selectedYear &&
+              (newActivity.date.toDate() < start ||
+                newActivity.date.toDate() > end))
+          ) {
+            // ignore if the activity is out of selected range.
+          } else if (activities.length === 0) {
             dispatch(setActivityList([newActivity]));
           } else {
             const newActivityDate = newActivity.date.toDate().getTime();
@@ -73,16 +93,33 @@ function ActivityAddForm(props: ActivityAddFormProps) {
               }
             }
             dispatch(setActivityList(updatedActivities));
+            dispatch(
+              setSnackbar({
+                open: true,
+                message: 'New Activity data saved successfully!',
+                severity: 'success',
+              })
+            );
           }
         } else {
-          alert(
-            'Failed to save activity due to database error. Please try again.'
+          dispatch(
+            setSnackbar({
+              open: true,
+              message: 'Something went wrong, please try again later.',
+              severity: 'error',
+            })
           );
         }
         props.handleClose();
       }
     } catch (e) {
-      alert('Creating Activity was not successful due to database error: ' + e);
+      dispatch(
+        setSnackbar({
+          open: true,
+          message: `Creating Activity was not successful due to database error: ${e}`,
+          severity: 'error',
+        })
+      );
     } finally {
       dispatch(setBackdrop(false));
     }

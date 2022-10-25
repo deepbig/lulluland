@@ -1,7 +1,6 @@
 import { useEffect, useState, forwardRef } from 'react';
-import { useAppSelector, useAppDispatch } from 'hooks';
-import { getActivities, setActivityList } from 'modules/activity';
-import * as activity from 'db/repositories/activity';
+import { useAppSelector } from 'hooks';
+import { getActivities, getSelectedYear } from 'modules/activity';
 import Box, { BoxProps } from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import styles from './ActivityBoard.module.css';
@@ -23,37 +22,22 @@ const Item = forwardRef((props: BoxProps, ref) => {
   );
 });
 
-interface EffortTrackerProps {
+interface ActivityBoardProps {
   category: string;
-  uid: string;
 }
 
-export default function EffortTracker(props: EffortTrackerProps) {
+export default function ActivityBoard(props: ActivityBoardProps) {
   const activities = useAppSelector(getActivities);
-  const dispatch = useAppDispatch();
-  const [selectedYear] = useState(null); // setSelectedYear는 filter 기능 추가 후 적용.
   const [monthList, setMonthList] = useState<any>([]);
+  const selectedYear = useAppSelector(getSelectedYear);
 
   useEffect(() => {
     fetchMonthList();
-  }, []);
-
-  useEffect(() => {
-    if (props.uid) {
-      fetchActivities(selectedYear);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYear, props.uid]);
-
-  const fetchActivities = async (selectedYear: number | null) => {
-    const _activities = selectedYear
-      ? await activity.selected(selectedYear, props.uid)
-      : await activity.current(props.uid);
-    dispatch(setActivityList(_activities));
-  };
+  }, [selectedYear]);
 
   const fetchMonthList = () => {
-    const currentMonth = new Date().getMonth();
+    const currentMonth = selectedYear ? 12 : new Date().getMonth();
     let i = -1;
     let res = [];
 

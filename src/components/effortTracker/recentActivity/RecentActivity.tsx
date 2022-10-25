@@ -71,7 +71,7 @@ function RecentActivity(props: SummaryProps) {
     if (selectedActivity && user) {
       dispatch(setBackdrop(true));
       try {
-        await remove(user.uid, selectedActivity.id);
+        await remove(user.uid, selectedActivity);
         dispatch(
           setSnackbar({
             open: true,
