@@ -8,8 +8,11 @@ import {
 import { getUser } from 'modules/user';
 import React, { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import { UserData } from 'types';
+import { AssetData, AssetTypes, UserData } from 'types';
 import MonthlyHistory from './MonthlyHistory';
+import { calculateMonthlyProfitLoss } from 'lib';
+import { updateAssetSummary } from 'db/repositories/asset';
+import { setSnackbar } from 'modules/snackbar';
 
 type MonthlySummaryProps = {
   selectedUser: UserData | null;
@@ -28,25 +31,66 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
   const [openForm, setOpenForm] = useState<'income' | 'expenses' | null>(null);
 
   useEffect(() => {
-    if (assetSummaries.length > 0) {
+    if (
+      user?.uid === selectedUser?.uid &&
+      assetSummaries.length > 0
+    ) {
       const assetSummary = assetSummaries[assetSummaries.length - 1];
 
-      let totalIncome = 0;
-      if (assetSummary.incomes) {
-        for (const income of assetSummary.incomes) {
-          totalIncome += income.amount;
+      if (assetSummary.date.toDate().getMonth() === new Date().getMonth()) {
+        let totalIncome = 0;
+        if (assetSummary.incomes) {
+          for (const income of assetSummary.incomes) {
+            totalIncome += income.amount;
+          }
         }
-      }
 
-      let totalExpenses = 0;
-      if (assetSummary.expenses) {
-        for (const expense of assetSummary.expenses) {
-          totalExpenses += expense.amount;
+        let totalExpenses = 0;
+        if (assetSummary.expenses) {
+          for (const expense of assetSummary.expenses) {
+            totalExpenses += expense.amount;
+          }
         }
+        dispatch(setTotalIncomeExpense([totalIncome, totalExpenses]));
+      } else {
+        // 만약 다른 달이면 새롭게 시작할 수 있도록 값 수정.
+        // 다른 달이면 cash 계산, income, expense clear 후 페이지 refresh.
+        const newAssetSummaries = {
+          ...assetSummary,
+          id: '',
+          incomes: [],
+          expenses: [],
+          assets: {
+            ...assetSummary.assets,
+          },
+        };
+        newAssetSummaries.assets[AssetTypes.CASH] += calculateMonthlyProfitLoss(
+          assetSummary.incomes,
+          assetSummary.expenses
+        );
+
+        handleMonthChanges(newAssetSummaries);
       }
-      dispatch(setTotalIncomeExpense([totalIncome, totalExpenses]));
     }
-  }, [assetSummaries, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetSummaries, selectedUser, user, dispatch]);
+
+  const handleMonthChanges = async (newAssetSummary: AssetData) => {
+    if (user?.uid) {
+      try {
+        await updateAssetSummary(user.uid, newAssetSummary);
+        window.location.reload();
+      } catch (e) {
+        dispatch(
+          setSnackbar({
+            open: true,
+            message: `Failed to create asset summary of this month. Error: ${e}`,
+            severity: 'error',
+          })
+        );
+      }
+    }
+  };
 
   const handleFormOpen = (type: 'income' | 'expenses') => {
     if (
@@ -63,12 +107,8 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
 
   return (
     <>
-      <Box display="flex" alignItems="center" height={300}>
-        <Grid
-          container
-          spacing={0}
-          justifyContent='flex-end'
-        >
+      <Box display='flex' alignItems='center' height={300}>
+        <Grid container spacing={0} justifyContent='flex-end'>
           {/* Income */}
           <Grid item xs={12}>
             <Box display='flex'>

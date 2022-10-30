@@ -37,7 +37,7 @@ export default function ActivityBoard(props: ActivityBoardProps) {
   }, [selectedYear]);
 
   const fetchMonthList = () => {
-    const currentMonth = selectedYear ? 12 : new Date().getMonth();
+    const currentMonth = selectedYear ? 12 : new Date().getMonth() + 1;
     let i = -1;
     let res = [];
 

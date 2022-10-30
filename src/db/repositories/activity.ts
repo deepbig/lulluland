@@ -172,8 +172,6 @@ export const saveActivity = async (
           yearlyData.push(newYearlySummary);
         }
 
-        console.log(yearlyData);
-
         transaction.update(activitySummaryDocRef, {
           yearly: yearlyData,
         });
