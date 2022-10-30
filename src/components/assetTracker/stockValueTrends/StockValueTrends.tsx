@@ -131,7 +131,7 @@ function StockValueTrends() {
                       {stock.currentPrice
                         ? `${
                             stock.country === StockCountryTypes.USA ? '$' : '₩'
-                          } ${stock.currentPrice}`
+                          } ${numWithCommas(stock.currentPrice)}`
                         : '-'}
                     </Typography>
                     <Typography

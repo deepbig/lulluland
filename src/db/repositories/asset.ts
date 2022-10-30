@@ -5,12 +5,12 @@ import {
   query,
   orderBy,
   where,
-  addDoc,
   updateDoc,
   doc,
   serverTimestamp,
   Timestamp,
   writeBatch,
+  setDoc,
 } from 'firebase/firestore';
 import { AssetData, StockHistoryData } from 'types';
 const SUBCOLLECTION_ASSET_SUMMARIES = 'asset_summaries';
@@ -80,14 +80,21 @@ export const updateAssetSummary = async (
       expenses: values.expenses,
     };
     if (!values.id) {
-      const docRef = await addDoc(
-        collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES),
+      const id = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+      await setDoc(
+        doc(
+          db,
+          COLLECTION_NAME,
+          uid,
+          SUBCOLLECTION_ASSET_SUMMARIES,
+          id
+        ),
         { ...updatedValues }
       );
       return {
         ...updatedValues,
         date: Timestamp.fromDate(new Date()),
-        id: docRef.id,
+        id: id,
       } as AssetData;
     } else {
       await updateDoc(
@@ -135,7 +142,6 @@ export const createStockHistory = async (
     const stockHistoryRef = doc(
       collection(db, COLLECTION_NAME, uid, SUBCOLLECTION_STOCK_HISTORIES)
     );
-
 
     const addedStockHistory = {
       ...stockHistory,
