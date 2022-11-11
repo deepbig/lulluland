@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { getActivities, setActivityList } from 'modules/activity';
+import {
+  getActivities,
+  setActivityList,
+  setActivitySummaryList,
+} from 'modules/activity';
 import React, { useEffect, useState } from 'react';
 import { ActivityData } from 'types';
 import {
@@ -17,7 +21,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setSnackbar } from 'modules/snackbar';
-import { remove } from 'db/repositories/activity';
+import { fetchAllActivitySummaries, remove } from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -83,12 +87,26 @@ function RecentActivity(props: SummaryProps) {
         newActivities.pop();
         dispatch(setActivityList(newActivities));
         setIndex(0);
+        try {
+          const _activitiesSummaries = await fetchAllActivitySummaries(
+            user.uid
+          );
+          dispatch(setActivitySummaryList(_activitiesSummaries));
+        } catch (e) {
+          dispatch(
+            setSnackbar({
+              open: true,
+              severity: 'error',
+              message: `Failed to fetch activity summaries due to an error: ${e}`,
+            })
+          );
+        }
       } catch (error) {
         dispatch(
           setSnackbar({
             open: true,
             severity: 'error',
-            message: `Failed to delete selected activity due to error: ${error}`,
+            message: `Failed to delete selected activity due to an error: ${error}`,
           })
         );
       }
@@ -114,16 +132,32 @@ function RecentActivity(props: SummaryProps) {
             }
             title={selectedActivity.date.toDate().toLocaleString()}
           />
-          <CardContent sx={{ paddingTop: 0 }}>
-            <Typography variant='body1'>
+          <CardContent
+            sx={{
+              paddingTop: 0,
+              height: 150,
+              [theme.breakpoints.up('lg')]: {
+                height: 200,
+              },
+              overflow: 'hidden',
+              overflowY: 'auto',
+            }}
+          >
+            <Typography variant='body1' gutterBottom>
               category: {selectedActivity.category}
             </Typography>
-            <Typography variant='body1'>
+            <Typography variant='body1' gutterBottom>
               Duration: {selectedActivity.duration} mins
             </Typography>
-            <Typography variant='body1'>
+            <Box sx={{
+              display: 'flex',
+              overflow: 'hidden',
+              overflowY: 'auto',
+            }}>
+            <Typography variant='body1' gutterBottom>
               Note: {selectedActivity.note}
             </Typography>
+              </Box>
           </CardContent>
           <Box sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
             <Button
