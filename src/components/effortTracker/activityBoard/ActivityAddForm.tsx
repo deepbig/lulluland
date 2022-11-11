@@ -11,13 +11,14 @@ import {
   SelectChangeEvent,
   InputLabel,
 } from '@mui/material';
-import { saveActivity } from 'db/repositories/activity';
+import { saveActivity, fetchAllActivitySummaries } from 'db/repositories/activity';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { currentDateTime } from 'lib';
 import {
   getActivities,
   getSelectedYear,
   setActivityList,
+  setActivitySummaryList,
 } from 'modules/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
@@ -93,11 +94,25 @@ function ActivityAddForm(props: ActivityAddFormProps) {
               }
             }
             dispatch(setActivityList(updatedActivities));
+          }
+          try {
+            const _activitiesSummaries = await fetchAllActivitySummaries(
+              user.uid
+            );
+            dispatch(setActivitySummaryList(_activitiesSummaries));
             dispatch(
               setSnackbar({
                 open: true,
                 message: 'New Activity data saved successfully!',
                 severity: 'success',
+              })
+            );
+          } catch (e) {
+            dispatch(
+              setSnackbar({
+                open: true,
+                severity: 'error',
+                message: `Failed to fetch activity summaries due to an error: ${e}`,
               })
             );
           }

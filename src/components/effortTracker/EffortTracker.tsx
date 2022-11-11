@@ -1,5 +1,4 @@
-import { Box, Grid, Paper } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Grid, Paper, useMediaQuery, useTheme } from '@mui/material';
 import Title from 'components/title/Title';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
@@ -8,10 +7,13 @@ import { UserData } from 'types';
 import Achievements from './achievements/Achievements';
 import ActivityAddForm from './activityBoard/ActivityAddForm';
 import ActivityBoard from './activityBoard/ActivityBoard';
+import MonthlyActivityChart from './monthlyActivityChart/MonthlyActivityChart';
+import ActivityTrend from './activityTrend/ActivityTrend';
 import PerformanceAddForm from './performanceTrends/PerformanceAddForm';
 import PerformanceTrends from './performanceTrends/PerformanceTrends';
 import RecentActivity from './recentActivity/RecentActivity';
 import YearlySummary from './yearlySummary/YearlySummary';
+import { getSelectedYear } from 'modules/activity';
 
 type EffortTrackerProps = {
   username: string | undefined;
@@ -28,147 +30,146 @@ function EffortTracker({
   const [openActivityForm, setOpenActivityForm] = useState(false);
   const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
   const user = useAppSelector(getUser);
+  const isMiddleWidth = useMediaQuery(theme.breakpoints.down('lg'));
+  const selectedYear = useAppSelector(getSelectedYear);
   // const [openAchievementForm, setOpenAcehivementForm] = useState(false);
 
   return (
     <Grid container direction='row' spacing={3}>
       <Grid item xs={12} lg={8}>
-        <Grid container spacing={3}>
-          {/* Activity Board */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-              elevation={4}
-            >
-              {user && user.username === username ? (
-                <Title buttonFunction={() => setOpenActivityForm(true)}>
-                  {selectedCategory ? selectedCategory : 'Effort'} Tracker
-                </Title>
-              ) : (
-                <Title>
-                  {selectedCategory ? selectedCategory : 'Effort'} Tracker
-                </Title>
-              )}
+        <Paper
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          elevation={4}
+        >
+          {user && user.username === username ? (
+            <Title buttonFunction={() => setOpenActivityForm(true)}>
+              Effort Tracker
+              {selectedCategory ? ` | ${selectedCategory}` : ''}
+            </Title>
+          ) : (
+            <Title>
+              Effort Tracker
+              {selectedCategory ? ` | ${selectedCategory}` : ''}
+            </Title>
+          )}
 
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row-reverse',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* TODO - year selection: current, 2022, 2021 */}
-                <ActivityBoard category={selectedCategory} />
-                {openActivityForm ? (
-                  <ActivityAddForm
-                    open={openActivityForm}
-                    handleClose={() => setOpenActivityForm(false)}
-                    selectedCategory={selectedCategory}
-                  />
-                ) : null}
-              </Box>
-            </Paper>
-          </Grid>
-          {/* Summary of Year */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                overflowY: 'auto',
-              }}
-              elevation={4}
-            >
-              <Title>
-                Summary of Year{''}
-                {selectedCategory ? ` | ${selectedCategory}` : ''}
-              </Title>
-              <YearlySummary
-                category={selectedCategory}
-                uid={selectedUser?.uid ? selectedUser.uid : ''}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              overflow: 'hidden',
+            }}
+          >
+            <ActivityBoard category={selectedCategory} />
+            {openActivityForm ? (
+              <ActivityAddForm
+                open={openActivityForm}
+                handleClose={() => setOpenActivityForm(false)}
+                selectedCategory={selectedCategory}
               />
-            </Paper>
-          </Grid>
-          {/* Recent Activity */}
-          <Grid item xs={12}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    [theme.breakpoints.between('md', 'xl')]: {
-                      height: 300,
-                    },
-                    [theme.breakpoints.up('xl')]: {
-                      height: 400,
-                    },
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                  elevation={4}
-                >
-                  <Title>
-                    Recent Activity{' '}
-                    {selectedCategory ? ` | ${selectedCategory}` : ''}
-                  </Title>
-                  <RecentActivity
-                    category={selectedCategory}
-                    username={username}
-                  />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    [theme.breakpoints.between('md', 'xl')]: {
-                      height: 300,
-                    },
-                    [theme.breakpoints.up('xl')]: {
-                      height: 400,
-                    },
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                  elevation={4}
-                >
-                  <Title>
-                    Objectives{' '}
-                    {selectedCategory ? ` | ${selectedCategory}` : ''}
-                  </Title>
-                  <Achievements category={selectedCategory} />
-                </Paper>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+            ) : null}
+          </Box>
+          <Box p={1}>
+            <YearlySummary
+              category={selectedCategory}
+              uid={selectedUser?.uid ? selectedUser.uid : ''}
+            />
+          </Box>
+        </Paper>
       </Grid>
-      {/* Performance Chart */}
-      <Grid item xs={12} lg={4}>
+
+      <Grid item xs={12} md={6} lg={4}>
+        <Paper
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          elevation={4}
+        >
+          <Title>
+            Monthly Activity Chart (
+            {`${new Date().getMonth() + 1}/${
+              selectedYear ? selectedYear : new Date().getFullYear()
+            }`}
+            ){selectedCategory ? ` | ${selectedCategory}` : ''}
+          </Title>
+          <MonthlyActivityChart selectedCategory={selectedCategory} />
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={6} lg={8}>
+        <Paper
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          elevation={4}
+        >
+          <Title>
+            Activity Trends {selectedCategory ? ` | ${selectedCategory}` : ''}
+          </Title>
+          <ActivityTrend
+            selectedCategory={selectedCategory}
+            selectedUser={selectedUser}
+          />
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={6} lg={4}>
+        <Paper
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            [theme.breakpoints.up('lg')]: {
+              height: 393,
+            },
+            overflow: 'hidden',
+            overflowY: 'auto',
+          }}
+          elevation={4}
+        >
+          <Title>
+            Recent Activity {selectedCategory ? ` | ${selectedCategory}` : ''}
+          </Title>
+          <RecentActivity category={selectedCategory} username={username} />
+        </Paper>
+      </Grid>
+
+      {isMiddleWidth && (
+        <Grid item xs={12} md={6}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 330,
+              overflow: 'hidden',
+              overflowY: 'auto',
+            }}
+            elevation={4}
+          >
+            <Title>
+              Objectives {selectedCategory ? ` | ${selectedCategory}` : ''}
+            </Title>
+            <Achievements category={selectedCategory} />
+          </Paper>
+        </Grid>
+      )}
+
+      <Grid item xs={12}>
         <Paper
           sx={{
             p: 2,
             display: 'flex',
             position: 'relative',
             flexDirection: 'column',
-            [theme.breakpoints.between('lg', 'xl')]: {
-              height: 770,
-            },
-            [theme.breakpoints.up('xl')]: {
-              height: 870,
-            },
-            overflow: 'hidden',
-            overflowY: 'auto',
           }}
           elevation={4}
         >

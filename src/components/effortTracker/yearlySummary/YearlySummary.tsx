@@ -10,17 +10,14 @@ import {
 } from 'modules/activity';
 import {
   Grid,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Tooltip,
   Avatar,
   Button,
+  Stack,
+  Typography,
 } from '@mui/material';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
-import { ActivityData } from 'types';
 import * as activity from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
@@ -36,7 +33,7 @@ function YearlySummary(props: SummaryProps) {
   const selectedYear = useAppSelector(getSelectedYear);
   const [totalPractices, setTotalPractices] = useState<number>(0);
   const [totalDurations, setTotalDurations] = useState<number>(0);
-  const [bestPractice, setBestPractice] = useState<ActivityData | null>(null);
+  const [bestPractice, setBestPractice] = useState<number>(0);
   const [minRangeYear, setMinRangeYear] = useState<number[]>([]);
   const dispatch = useAppDispatch();
 
@@ -61,10 +58,9 @@ function YearlySummary(props: SummaryProps) {
   }, [activitySummaries, props.category]);
 
   useEffect(() => {
-    countPractices();
-    countDurations();
+    countYearlySummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities, selectedYear, props.category]);
+  }, [activities, activitySummaries, selectedYear, props.category]);
 
   useEffect(() => {
     if (props.uid) {
@@ -75,10 +71,10 @@ function YearlySummary(props: SummaryProps) {
 
   useEffect(() => {
     if (props.uid) {
-      fetchActivitySummaries();
+      fetchActivitySummaries(props.uid);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities, props.uid]);
+  }, [props.uid]);
 
   const fetchActivities = async (selectedYear: number) => {
     try {
@@ -100,12 +96,11 @@ function YearlySummary(props: SummaryProps) {
     }
   };
 
-  const fetchActivitySummaries = async () => {
+  const fetchActivitySummaries = async (uid: string) => {
     try {
-      const _activitiesSummaries = await activity.fetchAllActivitySummaries(
-        props.uid
-      );
-      dispatch(setActivitySummaryList(_activitiesSummaries));
+      dispatch(setBackdrop(true));
+      const _activitySummaries = await activity.fetchAllActivitySummaries(uid);
+      dispatch(setActivitySummaryList(_activitySummaries));
     } catch (e) {
       dispatch(
         setSnackbar({
@@ -114,43 +109,46 @@ function YearlySummary(props: SummaryProps) {
           message: 'Failed to fetch activity summary data from db. Error: ' + e,
         })
       );
+    } finally {
+      dispatch(setBackdrop(false));
     }
   };
 
-  const countPractices = () => {
+  const countYearlySummary = () => {
     let practices = 0;
-    let index = null;
-    let duration: number = 0;
-    activities.forEach((activity, idx) => {
-      if (
-        (!props.category || props.category === activity.category) &&
-        activity.duration > 0
-      ) {
-        practices++;
-        if (!duration || activity.duration > duration) {
-          index = idx;
-          duration = activity.duration;
-        }
-      }
-    });
-    setTotalPractices(practices);
-    if (index !== null && index >= 0) {
-      setBestPractice(activities[index]);
-    } else {
-      setBestPractice(null);
-    }
-  };
-
-  const countDurations = () => {
     let durations = 0;
-    activities.forEach((activity) => {
-      if (
-        (!props.category || props.category === activity.category) &&
-        activity.duration > 0
-      ) {
-        durations += activity.duration;
-      }
-    });
+    let bestPractice = 0;
+
+    if (selectedYear) {
+      activitySummaries.forEach((summary) => {
+        if (!props.category || props.category === summary.category) {
+          const data = summary.yearly.find(
+            (data) => data.year === selectedYear
+          );
+          if (data) {
+            practices += data.counts;
+            durations += data.durations;
+            bestPractice += data.bestPractice;
+          }
+        }
+      });
+    } else {
+      activities.forEach((activity, idx) => {
+        if (
+          (!props.category || props.category === activity.category) &&
+          activity.duration > 0
+        ) {
+          practices++;
+          durations += activity.duration;
+          if (!bestPractice || activity.duration > bestPractice) {
+            bestPractice = activity.duration;
+          }
+        }
+      });
+    }
+
+    setTotalPractices(practices);
+    setBestPractice(bestPractice);
     setTotalDurations(durations);
   };
 
@@ -160,76 +158,14 @@ function YearlySummary(props: SummaryProps) {
 
   return (
     <Grid container direction='row' spacing={2}>
-      <Grid item xs={12} sm={4}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <FitnessCenterIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={totalPractices ? `${totalPractices} days` : `0 days`}
-            secondary='Total Practices'
-          />
-        </ListItem>
-      </Grid>
-      <Grid item xs={12} sm={4}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <TimerIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={
-              totalDurations
-                ? `${
-                    totalDurations >= 60
-                      ? (totalDurations / 60).toFixed(1) + ' hours'
-                      : totalDurations + ' mins'
-                  }`
-                : `0 mins`
-            }
-            secondary='Total Durations'
-          />
-        </ListItem>
-      </Grid>
-      <Grid item xs={12} sm={4}>
-        {bestPractice ? (
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <StarIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <Tooltip
-              title={
-                bestPractice.date.toDate().toDateString() +
-                '\n Note: ' +
-                bestPractice.note
-              }
-              arrow
-            >
-              <ListItemText
-                primary={bestPractice.duration + ' mins'}
-                secondary='Best Practice'
-              />
-            </Tooltip>
-          </ListItem>
-        ) : (
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <StarIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={'0 mins'} secondary='Best Practice' />
-          </ListItem>
-        )}
-      </Grid>
-
       <Grid item xs={12}>
-        <Grid container direction='row' spacing={1}>
+        <Grid
+          container
+          direction='row'
+          spacing={1}
+          justifyContent='center'
+          alignItems='center'
+        >
           <Grid item>
             <Button
               value='Current'
@@ -251,6 +187,60 @@ function YearlySummary(props: SummaryProps) {
             </Grid>
           ))}
         </Grid>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Stack
+          direction='row'
+          spacing={2}
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Avatar>
+            <EventAvailableIcon />
+          </Avatar>
+          <Typography>
+            {totalPractices ? `${totalPractices} days` : `0 days`}
+            <Typography variant='guideline'>Total Practices</Typography>
+          </Typography>
+        </Stack>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Stack
+          direction='row'
+          spacing={2}
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Avatar>
+            <TimerIcon />
+          </Avatar>
+          <Typography>
+            {totalDurations
+              ? `${
+                  totalDurations >= 60
+                    ? (totalDurations / 60).toFixed(1) + ' hours'
+                    : totalDurations + ' mins'
+                }`
+              : `0 mins`}
+            <Typography variant='guideline'>Total Durations</Typography>
+          </Typography>
+        </Stack>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Stack
+          direction='row'
+          spacing={2}
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Avatar>
+            <StarIcon />
+          </Avatar>
+          <Typography>
+            {bestPractice ? bestPractice + ' mins' : '0 mins'}
+            <Typography variant='guideline'>Best Practice&nbsp;&nbsp;&nbsp;</Typography>
+          </Typography>
+        </Stack>
       </Grid>
     </Grid>
   );

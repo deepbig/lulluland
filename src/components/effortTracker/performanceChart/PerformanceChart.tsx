@@ -54,14 +54,7 @@ function PerformanceChart(props: performanceChartProps) {
             left: 24,
           }}
         >
-          <Tooltip
-            content={<CustomTooltip />}
-            contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.9)',
-              fontSize: 12,
-              borderRadius: 10,
-            }}
-            labelStyle={{ color: 'white' }}
+          <Tooltip content={<CustomTooltip />}
           />
           <Line
             isAnimationActive={false}

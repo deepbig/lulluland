@@ -83,15 +83,7 @@ function MonthlyExpenseLineChart() {
         </defs>
         <XAxis dataKey='name' />
         <YAxis tickFormatter={numFormatter} />
-        <Tooltip
-          content={<CustomTooltip />}
-          contentStyle={{
-            backgroundColor: 'rgba(0,0,0,0.9)',
-            fontSize: 12,
-            borderRadius: 10,
-          }}
-          labelStyle={{ color: 'white' }}
-        />
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Area
           type='monotone'

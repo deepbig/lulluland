@@ -129,7 +129,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
       dispatch(setPerformanceList([]));
       dispatch(setCategoryList([]));
     }
-    
+
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedUser]);
@@ -147,15 +147,17 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
 
   return (
     <>
-      <Box m={2}>
-        {performances.length < 1 ? (
+      {performances.length < 1 ? (
+        <Box m={2}>
           <Typography variant='guideline' align='center' mt={1}>
             {user && user.username === props.username
               ? "You don't have any performance history. Please add an indicator for your record!"
               : 'There is no performance history.'}
           </Typography>
-        ) : null}
-      </Box>
+        </Box>
+      ) : (
+        <Box m={1}></Box>
+      )}
       <Grid container direction='row' spacing={2}>
         {performances?.map((performance) =>
           performance?.map((subPerformance, index) =>
@@ -165,7 +167,8 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                 item
                 xs={12}
                 md={6}
-                lg={12}
+                lg={4}
+                xl={3}
                 key={subPerformance[0].subcategory + index}
               >
                 <CardWrapper

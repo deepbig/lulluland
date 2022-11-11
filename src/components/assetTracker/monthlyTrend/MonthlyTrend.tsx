@@ -70,25 +70,25 @@ function MonthlyTrend() {
       >
         <XAxis dataKey='name' />
         <YAxis tickFormatter={numFormatterWoDecimal} />
-        <Tooltip
-          content={<CustomTooltip />}
-          contentStyle={{
-            backgroundColor: 'rgba(0,0,0,0.9)',
-            fontSize: 12,
-            borderRadius: 10,
-          }}
-          labelStyle={{ color: 'white' }}
-        />
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Bar
           dataKey='expense'
           fill={red[500]}
-          label={{ fill: red[500], position: 'top', formatter: numFormatterWoDecimal }}
+          label={{
+            fill: red[500],
+            position: 'top',
+            formatter: numFormatterWoDecimal,
+          }}
         />
         <Bar
           dataKey='income'
           fill={green[500]}
-          label={{ fill: green[500], position: 'top', formatter: numFormatterWoDecimal }}
+          label={{
+            fill: green[500],
+            position: 'top',
+            formatter: numFormatterWoDecimal,
+          }}
         />
       </BarChart>
     </ResponsiveContainer>

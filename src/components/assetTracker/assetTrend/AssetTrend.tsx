@@ -208,15 +208,7 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
           >
             <XAxis dataKey='date' />
             <YAxis tickFormatter={numFormatter} />
-            <Tooltip
-              content={<CustomTooltip />}
-              contentStyle={{
-                backgroundColor: 'rgba(0,0,0,0.9)',
-                fontSize: 12,
-                borderRadius: 10,
-              }}
-              labelStyle={{ color: 'white' }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             {categories.map(
               (category, index) =>
                 !disabled.includes(category) && (
@@ -231,6 +223,7 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
                 )
             )}
             <Legend
+              layout='vertical'
               verticalAlign='bottom'
               height={36}
               align='center'
