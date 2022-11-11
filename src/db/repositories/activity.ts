@@ -155,7 +155,7 @@ export const saveActivity = async (
             }
           } else {
             // create new monthly data.
-            yearlyData[yearIndex].monthly.push({
+            yearlyData[yearIndex].monthly.unshift({
               month: month,
               bestPractice: +values.duration,
               counts: 1,
@@ -169,7 +169,7 @@ export const saveActivity = async (
             yearlyData[yearIndex].bestPractice = +values.duration;
           }
         } else {
-          yearlyData.push(newYearlySummary);
+          yearlyData.unshift(newYearlySummary);
         }
 
         transaction.update(activitySummaryDocRef, {
@@ -286,33 +286,36 @@ export const remove = async (userId: string, activity: ActivityData) => {
 export const fetchAllActivitySummaries = async (
   uid: string
 ): Promise<Array<ActivitySummaryData>> => {
-  const q = query(
-    collection(db, COLLECTION_NAME, uid, ACTIVITY_SUMMARY_SUBCOLLECTION_NAME)
-  );
+  try {
+    const q = query(
+      collection(db, COLLECTION_NAME, uid, ACTIVITY_SUMMARY_SUBCOLLECTION_NAME)
+    );
 
-  const activitySummarySnapshot = await getDocs(q);
-  const res: Array<ActivitySummaryData> = [];
+    const activitySummarySnapshot = await getDocs(q);
+    const res: Array<ActivitySummaryData> = [];
 
-  activitySummarySnapshot.docs.forEach((_data) => {
-    res.push({
-      category: _data.id,
-      ..._data.data(),
-    } as ActivitySummaryData);
-  });
+    activitySummarySnapshot.docs.forEach((_data) => {
+      res.push({
+        category: _data.id,
+        ..._data.data(),
+      } as ActivitySummaryData);
+    });
 
-  if (res.length > 0) {
-    for (let data of res) {
-      if (data.yearly?.length > 2) {
-        data.yearly.sort((a, b) => b.year - a.year);
+    if (res.length > 0) {
+      for (let data of res) {
+        if (data.yearly?.length > 1) {
+          data.yearly.sort((a, b) => b.year - a.year);
 
-        for (let yearly of data.yearly) {
-          if (yearly.monthly?.length > 2) {
-            yearly.monthly.sort((a, b) => a.month - b.month);
-          }
-        } // end of yearly loop
-      }
-    } // end of res loop
+          for (let yearly of data.yearly) {
+            if (yearly.monthly?.length > 1) {
+              yearly.monthly.sort((a, b) => b.month - a.month);
+            }
+          } // end of yearly loop
+        }
+      } // end of res loop
+    }
+    return res;
+  } catch (e) {
+    throw e;
   }
-
-  return res;
 };
