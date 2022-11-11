@@ -1,5 +1,5 @@
 import { useAppSelector } from 'hooks';
-import { getActivities } from 'modules/activity';
+import { getActivities, getSelectedYear } from 'modules/activity';
 import React, { useEffect, useState } from 'react';
 import {
   Area,
@@ -62,22 +62,29 @@ function MonthlyActivityChart({
 }) {
   const [data, setData] = useState<ActivityChartData[]>([]);
   const activities = useAppSelector(getActivities);
+  const selectedYear = useAppSelector(getSelectedYear);
 
   useEffect(() => {
-    if (activities.length > 0) {
+    const thisYear = new Date().getFullYear();
+    if (activities.length > 0 && (!selectedYear || selectedYear === thisYear)) {
       const thisMonth = new Date().getMonth();
+      const thisYear = new Date().getFullYear();
       const current = activities.filter((activity) => {
         return selectedCategory
           ? activity.date.toDate().getMonth() === thisMonth &&
+              activity.date.toDate().getFullYear() === thisYear &&
               activity.category === selectedCategory
-          : activity.date.toDate().getMonth() === thisMonth;
+          : activity.date.toDate().getMonth() === thisMonth &&
+              activity.date.toDate().getFullYear() === thisYear;
       });
       const lastMonth = thisMonth - 1;
       const previous = activities.filter((activity) => {
         return selectedCategory
           ? activity.date.toDate().getMonth() === lastMonth &&
+              activity.date.toDate().getFullYear() === thisYear &&
               activity.category === selectedCategory
-          : activity.date.toDate().getMonth() === lastMonth;
+          : activity.date.toDate().getMonth() === lastMonth &&
+              activity.date.toDate().getFullYear() === thisYear;
       });
 
       let _data = [];
@@ -117,7 +124,7 @@ function MonthlyActivityChart({
 
       setData(_data);
     }
-  }, [activities, selectedCategory]);
+  }, [activities, selectedCategory, selectedYear]);
 
   return (
     <ResponsiveContainer height={322}>

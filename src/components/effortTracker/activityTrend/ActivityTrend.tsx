@@ -83,16 +83,16 @@ function ActivityTrend({
       let newData = [] as ActivityTrendData[];
 
       while (count < 12) {
+        if (month === 0) {
+          year -= 1;
+          month = 12;
+        }
         newData.unshift({
           label: `${year}-${month}`,
           value: {},
         });
         month--;
         count++;
-      }
-      if (month === 0) {
-        year--;
-        month = 12;
       }
 
       if (selectedCategory) {

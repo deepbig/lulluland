@@ -13,6 +13,7 @@ import PerformanceAddForm from './performanceTrends/PerformanceAddForm';
 import PerformanceTrends from './performanceTrends/PerformanceTrends';
 import RecentActivity from './recentActivity/RecentActivity';
 import YearlySummary from './yearlySummary/YearlySummary';
+import { getSelectedYear } from 'modules/activity';
 
 type EffortTrackerProps = {
   username: string | undefined;
@@ -30,6 +31,7 @@ function EffortTracker({
   const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
   const user = useAppSelector(getUser);
   const isMiddleWidth = useMediaQuery(theme.breakpoints.down('lg'));
+  const selectedYear = useAppSelector(getSelectedYear);
   // const [openAchievementForm, setOpenAcehivementForm] = useState(false);
 
   return (
@@ -90,8 +92,11 @@ function EffortTracker({
           elevation={4}
         >
           <Title>
-            Monthly Activity Chart{' '}
-            {selectedCategory ? ` | ${selectedCategory}` : ''}
+            Monthly Activity Chart (
+            {`${new Date().getMonth() + 1}/${
+              selectedYear ? selectedYear : new Date().getFullYear()
+            }`}
+            ){selectedCategory ? ` | ${selectedCategory}` : ''}
           </Title>
           <MonthlyActivityChart selectedCategory={selectedCategory} />
         </Paper>
