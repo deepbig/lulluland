@@ -168,6 +168,7 @@ function EffortTracker({
           sx={{
             p: 2,
             display: 'flex',
+            position: 'relative',
             flexDirection: 'column',
           }}
           elevation={4}
