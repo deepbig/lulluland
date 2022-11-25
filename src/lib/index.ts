@@ -21,6 +21,8 @@ export const isFound = (value: string, arr: string[]) => {
   return arr?.some((right) => left === right.toLowerCase());
 };
 
+export const drawerWidth = 240;
+
 export const backgroundColors = [
   blue[500],
   purple[500],
