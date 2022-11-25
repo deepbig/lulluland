@@ -1,3 +1,4 @@
+import { Backdrop } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 function LoadingLogo() {
@@ -12,11 +13,17 @@ function LoadingLogo() {
     };
   }, []);
   return start === true ? (
-    <div className='full-screen'>
+    <Backdrop
+      sx={{
+        backgroundColor: '#212121',
+        zIndex: (theme) => theme.zIndex.drawer + 1000,
+      }}
+      open={start}
+    >
       <div className='dim-screen'>
         <img src='/Lulluland.png' alt='Logo' className='center' />
       </div>
-    </div>
+    </Backdrop>
   ) : null;
 }
 

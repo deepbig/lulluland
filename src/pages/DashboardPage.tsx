@@ -6,6 +6,7 @@ import { PageName } from 'types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
+import { drawerWidth } from 'lib';
 
 function DashboardPage() {
   const { username, type } = useParams();
@@ -31,12 +32,12 @@ function DashboardPage() {
       <Box
         component='main'
         sx={{
+          flexGrow: 1,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
           backgroundColor: (theme) =>
             theme.palette.mode === 'light'
               ? theme.palette.grey[100]
               : theme.palette.grey[900],
-          flexGrow: 1,
-          height: '100vh',
           overflow: 'auto',
         }}
       >

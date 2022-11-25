@@ -67,7 +67,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
 
   return (
     <>
-      <Toolbar />
+      <Toolbar id="back-to-top-anchor" />
       <Container maxWidth={'xl'} sx={{ mt: 2, mb: 4 }}>
         <Stack direction='column' alignItems='center' sx={{ marginBottom: 2 }}>
           {selectedUser ? (

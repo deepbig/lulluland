@@ -1,285 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MuiDrawer from '@mui/material/Drawer';
-import { styled } from '@mui/material/styles';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
-  ListSubheader,
-  ListItemText,
-  ListItem,
-  Badge,
+  AppBar,
+  Drawer,
   IconButton,
-  Divider,
   Typography,
   Toolbar,
-  Popover,
   Button,
+  useTheme,
+  useMediaQuery,
+  Fade,
+  Box,
+  Fab,
+  useScrollTrigger,
 } from '@mui/material';
-import { orange } from '@mui/material/colors';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import TrackChangesIcon from '@mui/icons-material/TrackChanges';
-import SavingsIcon from '@mui/icons-material/Savings';
-import BookIcon from '@mui/icons-material/Book';
-import WebIcon from '@mui/icons-material/Web';
-import InfoIcon from '@mui/icons-material/Info';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NavCard from '../custom/NavCard';
 import UserMenu from './UserMenu';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
+import MenuListItems from './MenuListItems';
+import { drawerWidth } from 'lib';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    right: -16,
-    top: 10,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: '0 4px',
-  },
-}));
+const ScrollTop = (props: { children: React.ReactElement }) => {
+  const { children } = props;
 
-type MenuListItemsProps = {
-  open: boolean;
-  handleClose: () => void;
-  username: string;
-};
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 100,
+  });
 
-function MenuListItems(props: MenuListItemsProps) {
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const anchor = (
+      (event.target as HTMLDivElement).ownerDocument || document
+    ).querySelector('#back-to-top-anchor');
 
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (anchor) {
+      anchor.scrollIntoView({
+        block: 'center',
+      });
+    }
   };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
 
   return (
-    <div>
-      <ListItem
-        button
-        onClick={() => {
-          navigate(`/dashboard/${props.username}/effort-tracker`);
-          props.handleClose();
-        }}
+    <Fade in={trigger}>
+      <Box
+        onClick={handleClick}
+        role='presentation'
+        sx={{ position: 'fixed', bottom: 16, right: 16 }}
       >
-        <ListItemIcon>
-          <Badge badgeContent={'✨'}>
-            <TrackChangesIcon />
-          </Badge>
-        </ListItemIcon>
-        <StyledBadge badgeContent={'new'} color='secondary'>
-
-        <ListItemText primary='Effort Tracker' />
-        </StyledBadge>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => {
-          navigate(`/dashboard/${props.username}/asset-tracker`);
-          props.handleClose();
-        }}
-      >
-        <ListItemIcon>
-          <Badge badgeContent={'💵'}>
-            <SavingsIcon />
-          </Badge>
-        </ListItemIcon>
-        <StyledBadge badgeContent={'beta'} color='secondary'>
-          <ListItemText primary='Asset Tracker' />
-        </StyledBadge>
-      </ListItem>
-      <Divider />
-      <ListSubheader component='div' id='nav-subheader'>
-        {props.open ? 'External Links' : '\xa0'}
-      </ListSubheader>
-
-      <ListItem
-        button
-        onClick={() => window.open('https://roolog.notion.site', '_blank')}
-      >
-        <ListItemIcon>
-          <BookIcon />
-        </ListItemIcon>
-        <StyledBadge badgeContent={'blog'} color='secondary'>
-          <ListItemText primary='Roolog' />
-        </StyledBadge>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() =>
-          window.open('https://deepbig.github.io/portfolio/', '_blank')
-        }
-      >
-        <ListItemIcon>
-          <WebIcon />
-        </ListItemIcon>
-        <StyledBadge badgeContent={'old'} color='secondary'>
-          <ListItemText primary='Portfolio' />
-        </StyledBadge>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() =>
-          window.open('https://www.linkedin.com/in/hongsuk/', '_blank')
-        }
-      >
-        <ListItemIcon>
-          <LinkedInIcon />
-        </ListItemIcon>
-        <ListItemText primary='LinkedIn' />
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => window.open('https://github.com/deepbig', '_blank')}
-      >
-        <ListItemIcon>
-          <GitHubIcon />
-        </ListItemIcon>
-        <ListItemText primary='GitHub' />
-      </ListItem>
-
-      {props.open ? (
-        <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
-          <Typography variant='body2'>
-            Lulluland is a tracker app for <b>calcuating your daily efforts</b>{' '}
-            and <b>evaluating your improvements</b>. <br />{' '}
-          </Typography>
-        </NavCard>
-      ) : (
-        <ListItem
-          aria-owns={open ? 'mouse-over-popover-info' : undefined}
-          aria-haspopup='true'
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
-        >
-          <ListItemIcon>
-            <InfoIcon />
-          </ListItemIcon>
-          <ListItemText primary='About' />
-          <Popover
-            id='mouse-over-popover-info'
-            sx={{ pointerEvents: 'none' }}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handlePopoverClose}
-            anchorOrigin={{
-              vertical: 'center',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'center',
-              horizontal: 'left',
-            }}
-          >
-            <NavCard title='Welcome to Lulluland!' bgColor={orange[400]}>
-              <Typography variant='body2'>
-                Lulluland is a tracker app for{' '}
-                <b>calcuating your daily efforts</b> and{' '}
-                <b>evaluating your improvements</b>. <br />{' '}
-              </Typography>
-            </NavCard>
-          </Popover>
-        </ListItem>
-      )}
-    </div>
+        {children}
+      </Box>
+    </Fade>
   );
-}
-
-const drawerWidth: number = 240;
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  '& .MuiDrawer-paper': {
-    position: 'relative',
-    // whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: 'border-box',
-    ...(!open && {
-      overflowX: 'hidden',
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      [theme.breakpoints.down('sm')]: {
-        width: theme.spacing(0),
-      },
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(7.5),
-      },
-    }),
-  },
-}));
+};
 
 export default function NavBar(props: { selectedName: string }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
-  const [start, setStart] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStart(false);
-    }, 2500);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  const theme = useTheme();
+  const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  return start !== true ? (
+  return (
     <>
-      <AppBar position='absolute' open={open}>
-        <Toolbar
-          sx={{
-            pr: '24px', // keep right padding when drawer closed
-          }}
-        >
+      <AppBar
+        position='fixed'
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
+        <Toolbar>
           <IconButton
             edge='start'
             color='inherit'
             aria-label='open drawer'
             onClick={toggleDrawer}
-            sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -290,7 +92,7 @@ export default function NavBar(props: { selectedName: string }) {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-            {props.selectedName}
+            {isSmallWidth && open ? '' : props.selectedName}
           </Typography>
 
           {user ? (
@@ -306,26 +108,58 @@ export default function NavBar(props: { selectedName: string }) {
           )}
         </Toolbar>
       </AppBar>
-      <Drawer variant='permanent' open={open}>
-        <Toolbar
+      {/* small screen drawer */}
+      <Box
+        component='nav'
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      >
+        <Drawer
+          variant='temporary'
+          open={open}
+          onClose={toggleDrawer}
+          ModalProps={{
+            keepMounted: true,
+          }}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: [1],
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
           }}
         >
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <MenuListItems
-          open={open}
-          username={user?.username ? user.username : 'deepbig'}
-          handleClose={() => setOpen(false)}
-        />
-      </Drawer>
+          <Toolbar />
+          <MenuListItems
+            open={open}
+            username={user?.username ? user.username : 'deepbig'}
+            handleClose={toggleDrawer}
+          />
+        </Drawer>
+        {/* large screen drawer */}
+        <Drawer
+          variant='permanent'
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          <Toolbar />
+          <MenuListItems
+            open={true}
+            username={user?.username ? user.username : 'deepbig'}
+            handleClose={() => setOpen(false)}
+          />
+        </Drawer>
+      </Box>
+      <ScrollTop>
+        <Fab size='small' aria-label='scroll back to top'>
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </>
-  ) : null;
+  );
 }
