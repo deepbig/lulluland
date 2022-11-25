@@ -1,113 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MuiDrawer from '@mui/material/Drawer';
-import { styled } from '@mui/material/styles';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
+  AppBar,
+  Drawer,
   IconButton,
-  Divider,
   Typography,
   Toolbar,
   Button,
   useTheme,
   useMediaQuery,
+  Fade,
+  Box,
+  Fab,
+  useScrollTrigger,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import UserMenu from './UserMenu';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
 import MenuListItems from './MenuListItems';
 import { drawerWidth } from 'lib';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
+const ScrollTop = (props: { children: React.ReactElement }) => {
+  const { children } = props;
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 100,
+  });
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  '& .MuiDrawer-paper': {
-    position: 'relative',
-    // whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: 'border-box',
-    ...(!open && {
-      overflowX: 'hidden',
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      [theme.breakpoints.down('sm')]: {
-        width: theme.spacing(0),
-      },
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(7.5),
-      },
-    }),
-  },
-}));
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const anchor = (
+      (event.target as HTMLDivElement).ownerDocument || document
+    ).querySelector('#back-to-top-anchor');
+
+    if (anchor) {
+      anchor.scrollIntoView({
+        block: 'center',
+      });
+    }
+  };
+
+  return (
+    <Fade in={trigger}>
+      <Box
+        onClick={handleClick}
+        role='presentation'
+        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+      >
+        {children}
+      </Box>
+    </Fade>
+  );
+};
 
 export default function NavBar(props: { selectedName: string }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
-  const [start, setStart] = useState(true);
   const theme = useTheme();
   const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStart(false);
-    }, 2500);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  return start !== true ? (
+  return (
     <>
-      <AppBar position='absolute' open={open}>
-        <Toolbar
-          sx={{
-            pr: '24px', // keep right padding when drawer closed
-          }}
-        >
+      <AppBar
+        position='fixed'
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
+        <Toolbar>
           <IconButton
             edge='start'
             color='inherit'
             aria-label='open drawer'
             onClick={toggleDrawer}
-            sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -134,37 +108,58 @@ export default function NavBar(props: { selectedName: string }) {
           )}
         </Toolbar>
       </AppBar>
-      {isSmallWidth ? (
-        <MuiDrawer open={open} onClose={toggleDrawer}>
-        <Toolbar />
-        <MenuListItems
+      {/* small screen drawer */}
+      <Box
+        component='nav'
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      >
+        <Drawer
+          variant='temporary'
           open={open}
-          username={user?.username ? user.username : 'deepbig'}
-          handleClose={toggleDrawer}
-        />
-      </MuiDrawer>
-      ) : (
-        <Drawer variant='permanent' open={open}>
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
+          onClose={toggleDrawer}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+        >
+          <Toolbar />
           <MenuListItems
             open={open}
+            username={user?.username ? user.username : 'deepbig'}
+            handleClose={toggleDrawer}
+          />
+        </Drawer>
+        {/* large screen drawer */}
+        <Drawer
+          variant='permanent'
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          <Toolbar />
+          <MenuListItems
+            open={true}
             username={user?.username ? user.username : 'deepbig'}
             handleClose={() => setOpen(false)}
           />
         </Drawer>
-      )}
+      </Box>
+      <ScrollTop>
+        <Fab size='small' aria-label='scroll back to top'>
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </>
-  ) : null;
+  );
 }

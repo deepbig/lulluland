@@ -25,7 +25,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -16,
     top: 10,
-    border: `2px solid ${theme.palette.background.paper}`,
     padding: '0 4px',
   },
 }));
@@ -85,7 +84,11 @@ function MenuListItems(props: MenuListItemsProps) {
         </StyledBadge>
       </ListItem>
       <Divider />
-      <ListSubheader component='div' id='nav-subheader'>
+      <ListSubheader
+        component='div'
+        id='nav-subheader'
+        sx={{ backgroundColor: 'inherit' }}
+      >
         {props.open ? 'External Links' : '\xa0'}
       </ListSubheader>
 
