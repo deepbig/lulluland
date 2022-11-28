@@ -31,7 +31,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
   const [openForm, setOpenForm] = useState<'income' | 'expenses' | null>(null);
 
   useEffect(() => {
-    if (
+    if (assetSummaries.length > 0) {
       user?.uid === selectedUser?.uid &&
       assetSummaries.length > 0
     ) {
@@ -73,7 +73,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetSummaries, selectedUser, user, dispatch]);
+  }, [assetSummaries, dispatch]);
 
   const handleMonthChanges = async (newAssetSummary: AssetData) => {
     if (user?.uid) {
