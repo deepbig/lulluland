@@ -32,9 +32,6 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
 
   useEffect(() => {
     if (assetSummaries.length > 0) {
-      user?.uid === selectedUser?.uid &&
-      assetSummaries.length > 0
-    ) {
       const assetSummary = assetSummaries[assetSummaries.length - 1];
 
       if (assetSummary.date.toDate().getMonth() === new Date().getMonth()) {
