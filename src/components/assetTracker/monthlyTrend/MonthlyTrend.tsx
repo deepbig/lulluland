@@ -59,15 +59,7 @@ function MonthlyTrend() {
 
   return (
     <ResponsiveContainer height={300}>
-      <BarChart
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
+      <BarChart data={data}>
         <XAxis dataKey='name' />
         <YAxis tickFormatter={numFormatterWoDecimal} />
         <Tooltip content={<CustomTooltip />} />
