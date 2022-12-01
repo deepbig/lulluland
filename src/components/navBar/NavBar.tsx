@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -13,6 +13,7 @@ import {
   Box,
   Fab,
   useScrollTrigger,
+  Zoom,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import UserMenu from './UserMenu';
@@ -61,9 +62,18 @@ export default function NavBar(props: { selectedName: string }) {
   const user = useAppSelector(getUser);
   const theme = useTheme();
   const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 100,
+  });
 
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const transitionDuration = {
+    enter: theme.transitions.duration.enteringScreen,
+    exit: theme.transitions.duration.leavingScreen,
   };
 
   return (
@@ -155,11 +165,29 @@ export default function NavBar(props: { selectedName: string }) {
           />
         </Drawer>
       </Box>
-      <ScrollTop>
-        <Fab size='small' aria-label='scroll back to top'>
+      <Zoom
+        in={trigger}
+        timeout={transitionDuration}
+        style={{
+          transitionDelay: `${trigger ? transitionDuration.exit : 0}ms`,
+        }}
+        unmountOnExit
+      >
+        <Fab
+          size='small'
+          aria-label='scroll back to top'
+          onClick={() => {
+            window.scrollTo(0, 0);
+          }}
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            right: 16,
+          }}
+        >
           <KeyboardArrowUpIcon />
         </Fab>
-      </ScrollTop>
+      </Zoom>
     </>
   );
 }
