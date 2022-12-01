@@ -134,6 +134,7 @@ export interface PerformanceAddFormData {
 
 export interface PerformanceChartData {
   time: string;
+  desc: string;
   count?: number;
 }
 
