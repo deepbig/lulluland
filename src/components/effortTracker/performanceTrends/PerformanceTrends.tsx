@@ -139,6 +139,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
     performances?.forEach((data) =>
       chartData.unshift({
         time: data.date?.toDate().toDateString(),
+        desc: data.note,
         count: data.performance,
       })
     );

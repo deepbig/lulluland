@@ -30,6 +30,9 @@ const CustomTooltip = ({
               {payload && payload[0] && payload[0].payload.time}
             </Typography>
             <Typography variant='body2'>
+              desc: {payload && payload[0] && payload[0].payload.desc}
+            </Typography>
+            <Typography variant='body2'>
               counts: {payload && payload[0] && payload[0].value} reps
             </Typography>
           </CardContent>
