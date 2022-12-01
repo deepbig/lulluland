@@ -103,6 +103,7 @@ export const updateCategories = async (
     await runTransaction(db, async (transaction) => {
       // create activity summaries
       for (const category of categories) {
+        // if category's summary does not exist, create it.
         if (
           !activitySummaries.find(
             (activitySummary) => activitySummary.category === category
@@ -117,6 +118,21 @@ export const updateCategories = async (
               category
             ),
             { yearly: [] }
+          );
+        }
+      }
+
+      for (const activitySummary of activitySummaries) {
+        // if category is removed, delete activity summary.
+        if (!categories.includes(activitySummary.category)) {
+          transaction.delete(
+            doc(
+              db,
+              COLLECTION_NAME,
+              uid,
+              ACTIVITY_SUMMARY_SUBCOLLECTION_NAME,
+              activitySummary.category
+            )
           );
         }
       }
