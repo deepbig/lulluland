@@ -64,19 +64,19 @@ const columns: readonly Column[] = [
     field: 'category',
     label: 'Category',
     align: 'right',
-    width: '10%',
+    width: '30%',
   },
   {
     field: 'description',
     label: 'Description',
-    width: '10%',
+    width: '30%',
     align: 'right',
   },
   {
     field: 'amount',
     label: 'Amount\u00a0(₩)',
     align: 'right',
-    width: '40%',
+    width: '10%',
     format: (value: number) => value.toLocaleString('en-US'),
   },
 ];
@@ -220,7 +220,7 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
   };
 
   return (
-    <Dialog open={open ? true : false}>
+    <Dialog open={open ? true : false} maxWidth='lg'>
       <DialogTitle sx={{ textAlign: 'center' }}>
         {open === 'income' ? 'Income' : 'Expenses'} Detail Form
         <Typography variant='body1' sx={{ textAlign: 'center' }}>
@@ -309,8 +309,8 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
           {open === 'income' ? 'Income' : 'Expenses'} Records
         </Typography>
         {updatedIncomeExpenses.length > 0 ? (
-          <Paper sx={{ width: '100%', overflow: 'ellipsis' }}>
-            <TableContainer sx={{ maxHeight: 500 }}>
+          <Paper>
+            <TableContainer sx={{ width: '100%', overflow: 'ellipsis' }}>
               <Table stickyHeader aria-label='monthly history table'>
                 <TableHead>
                   <TableRow>
