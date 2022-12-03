@@ -3,7 +3,7 @@ import Title from 'components/title/Title';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
-import { UserData } from 'types';
+import { CategoryData, UserData } from 'types';
 import Achievements from './achievements/Achievements';
 import ActivityAddForm from './activityBoard/ActivityAddForm';
 import ActivityBoard from './activityBoard/ActivityBoard';
@@ -17,7 +17,7 @@ import { getSelectedYear } from 'modules/activity';
 
 type EffortTrackerProps = {
   username: string | undefined;
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
   selectedUser: UserData | null;
 };
 
@@ -48,12 +48,12 @@ function EffortTracker({
           {user && user.username === username ? (
             <Title buttonFunction={() => setOpenActivityForm(true)}>
               Effort Tracker
-              {selectedCategory ? ` | ${selectedCategory}` : ''}
+              {selectedCategory ? ` | ${selectedCategory.category}` : ''}
             </Title>
           ) : (
             <Title>
               Effort Tracker
-              {selectedCategory ? ` | ${selectedCategory}` : ''}
+              {selectedCategory ? ` | ${selectedCategory.category}` : ''}
             </Title>
           )}
 
@@ -64,7 +64,7 @@ function EffortTracker({
               overflow: 'hidden',
             }}
           >
-            <ActivityBoard category={selectedCategory} />
+            <ActivityBoard selectedCategory={selectedCategory} />
             {openActivityForm ? (
               <ActivityAddForm
                 open={openActivityForm}
@@ -75,8 +75,8 @@ function EffortTracker({
           </Box>
           <Box p={1}>
             <YearlySummary
-              category={selectedCategory}
-              uid={selectedUser?.uid ? selectedUser.uid : ''}
+              selectedCategory={selectedCategory}
+              selectedUser={selectedUser}
             />
           </Box>
         </Paper>
@@ -96,7 +96,7 @@ function EffortTracker({
             {`${new Date().getMonth() + 1}/${
               selectedYear ? selectedYear : new Date().getFullYear()
             }`}
-            ){selectedCategory ? ` | ${selectedCategory}` : ''}
+            ){selectedCategory ? ` | ${selectedCategory.category}` : ''}
           </Title>
           <MonthlyActivityChart selectedCategory={selectedCategory} />
         </Paper>
@@ -112,7 +112,7 @@ function EffortTracker({
           elevation={4}
         >
           <Title>
-            Activity Trends {selectedCategory ? ` | ${selectedCategory}` : ''}
+            Activity Trends {selectedCategory ? ` | ${selectedCategory.category}` : ''}
           </Title>
           <ActivityTrend
             selectedCategory={selectedCategory}
@@ -136,9 +136,12 @@ function EffortTracker({
           elevation={4}
         >
           <Title>
-            Recent Activity {selectedCategory ? ` | ${selectedCategory}` : ''}
+            Recent Activity {selectedCategory ? ` | ${selectedCategory.category}` : ''}
           </Title>
-          <RecentActivity category={selectedCategory} username={username} />
+          <RecentActivity
+            selectedCategory={selectedCategory}
+            selectedUser={selectedUser}
+          />
         </Paper>
       </Grid>
 
@@ -156,7 +159,7 @@ function EffortTracker({
             elevation={4}
           >
             <Title>
-              Objectives {selectedCategory ? ` | ${selectedCategory}` : ''}
+              Objectives {selectedCategory ? ` | ${selectedCategory.category}` : ''}
             </Title>
             <Achievements category={selectedCategory} />
           </Paper>

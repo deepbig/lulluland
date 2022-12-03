@@ -5,7 +5,7 @@ import {
   setActivitySummaryList,
 } from 'modules/activity';
 import React, { useEffect, useState } from 'react';
-import { ActivityData } from 'types';
+import { ActivityData, CategoryData, UserData } from 'types';
 import {
   Box,
   Button,
@@ -26,56 +26,47 @@ import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { chipColors as colors } from 'lib';
 
 interface SummaryProps {
-  category: string;
-  username: string | undefined;
+  selectedCategory: CategoryData | null;
+  selectedUser: UserData | null;
 }
 
-function RecentActivity(props: SummaryProps) {
+function RecentActivity({ selectedCategory, selectedUser }: SummaryProps) {
   const theme = useTheme();
   const activities = useAppSelector(getActivities);
   const user = useAppSelector(getUser);
-  const [selectedActivity, setSelectedActivity] = useState<ActivityData | null>(
-    null
-  );
+  const [data, setData] = useState<ActivityData[]>([]);
   const [index, setIndex] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [confirm, setConfirm] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (activities.length > 0) {
-      if (!props.category) {
-        if (selectedCategory) {
-          setSelectedCategory('');
-        }
-        setSelectedActivity(activities[activities.length - 1 - index]);
+      if (!selectedCategory) {
+        setData([...activities]);
+        setIndex(activities.length - 1);
       } else {
-        if (props.category !== selectedCategory) {
-          setSelectedCategory(props.category);
-          setIndex(0);
-        }
-        let count = index;
-        for (let i = activities.length - 1; i >= 0; i--) {
-          if (activities[i].category === props.category && count-- === 0) {
-            setSelectedActivity(activities[i]);
-            return;
-          }
-        }
-        setSelectedActivity(null);
+        // when selectedCategory changed, reset index
+        const newData = activities.filter(
+          (activity) => activity.category === selectedCategory.category
+        );
+        setData(newData);
+        setIndex(newData.length - 1);
       }
     } else {
-      setSelectedActivity(null);
+      setData([]);
+      setIndex(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities, props.category, index]);
+  }, [activities, selectedCategory]);
 
-  const handleDelete = async () => {
-    if (selectedActivity && user) {
+  const handleDelete = async (index: number) => {
+    if (data[index] && user) {
       dispatch(setBackdrop(true));
       try {
-        await remove(user.uid, selectedActivity);
+        await remove(user.uid, data[index]);
         dispatch(
           setSnackbar({
             open: true,
@@ -83,8 +74,9 @@ function RecentActivity(props: SummaryProps) {
             message: 'Selected activity is successfully deleted.',
           })
         );
-        let newActivities = [...activities];
-        newActivities.pop();
+        let newActivities = activities.filter(
+          (activity) => activity.id !== data[index].id
+        );
         dispatch(setActivityList(newActivities));
         setIndex(0);
         try {
@@ -110,18 +102,37 @@ function RecentActivity(props: SummaryProps) {
           })
         );
       }
+      dispatch(setBackdrop(false));
+    } else {
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Invalid activity deletion request.',
+        })
+      );
     }
-    dispatch(setBackdrop(false));
     setConfirm(false);
+  };
+
+  const findColor = (category: string) => {
+    const index = selectedUser?.categories.find(
+      (c) => c.category === category
+    )?.color;
+    if (index) {
+      return colors[index];
+    } else {
+      return theme.palette.primary.dark;
+    }
   };
 
   return (
     <>
-      {selectedActivity ? (
-        <Card sx={{ backgroundColor: theme.palette.primary.dark }}>
+      {data[index] ? (
+        <Card sx={{ backgroundColor: findColor(data[index].category) }}>
           <CardHeader
             action={
-              props.username && user?.username === props.username ? (
+              selectedUser && user?.username === selectedUser.username ? (
                 <IconButton
                   aria-label='delete'
                   onClick={() => setConfirm(true)}
@@ -130,7 +141,7 @@ function RecentActivity(props: SummaryProps) {
                 </IconButton>
               ) : null
             }
-            title={selectedActivity.date.toDate().toLocaleString()}
+            title={data[index].date.toDate().toLocaleString()}
           />
           <CardContent
             sx={{
@@ -144,26 +155,28 @@ function RecentActivity(props: SummaryProps) {
             }}
           >
             <Typography variant='body1' gutterBottom>
-              category: {selectedActivity.category}
+              category: {data[index].category}
             </Typography>
             <Typography variant='body1' gutterBottom>
-              Duration: {selectedActivity.duration} mins
+              Duration: {data[index].duration} mins
             </Typography>
-            <Box sx={{
-              display: 'flex',
-              overflow: 'hidden',
-              overflowY: 'auto',
-            }}>
-            <Typography variant='body1' gutterBottom>
-              Note: {selectedActivity.note}
-            </Typography>
-              </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                overflow: 'hidden',
+                overflowY: 'auto',
+              }}
+            >
+              <Typography variant='body1' gutterBottom>
+                Note: {data[index].note}
+              </Typography>
+            </Box>
           </CardContent>
           <Box sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
             <Button
               color='inherit'
-              disabled={index === activities.length - 1}
-              onClick={() => setIndex(index + 1)}
+              disabled={index === 0}
+              onClick={() => setIndex(index - 1)}
             >
               <ArrowBackIosIcon fontSize='small' />
               Back
@@ -171,8 +184,8 @@ function RecentActivity(props: SummaryProps) {
             <Box sx={{ flex: '1 1 auto' }} />
             <Button
               color='inherit'
-              disabled={index === 0}
-              onClick={() => setIndex(index - 1)}
+              disabled={index === data.length - 1}
+              onClick={() => setIndex(index + 1)}
             >
               Next <ArrowForwardIosIcon fontSize='small' />
             </Button>
@@ -189,7 +202,7 @@ function RecentActivity(props: SummaryProps) {
         <DialogContent>Are you sure to delete this activity?</DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirm(false)}>Cancel</Button>
-          <Button onClick={handleDelete}>Yes</Button>
+          <Button onClick={() => handleDelete(index)}>Yes</Button>
         </DialogActions>
       </Dialog>
     </>

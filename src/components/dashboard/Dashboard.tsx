@@ -10,7 +10,7 @@ import {
   Grid,
   Box,
 } from '@mui/material';
-import { UserData } from 'types';
+import { CategoryData, UserData } from 'types';
 import { getUserFromDB } from 'db/repositories/user';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setBackdrop } from 'modules/backdrop';
@@ -45,7 +45,9 @@ export default function Dashboard({ username, type }: DashboardProps) {
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(
+    null
+  );
   const user = useAppSelector(getUser);
   const [categoryAddForm, setCategoryAddForm] = useState(false);
 
@@ -67,7 +69,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
 
   return (
     <>
-      <Toolbar id="back-to-top-anchor" />
+      <Toolbar />
       <Container maxWidth={'xl'} sx={{ mt: 2, mb: 4 }}>
         <Stack direction='column' alignItems='center' sx={{ marginBottom: 2 }}>
           {selectedUser ? (
@@ -103,7 +105,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
                     }}
                     label='ALL'
                     size='small'
-                    onClick={() => setSelectedCategory('')}
+                    onClick={() => setSelectedCategory(null)}
                   />
                 </Grid>
                 {selectedUser?.categories.map((category, i) => (
@@ -111,11 +113,12 @@ export default function Dashboard({ username, type }: DashboardProps) {
                     <Chip
                       sx={{
                         backgroundColor:
-                          !selectedCategory || selectedCategory === category
-                            ? chipColors[i % chipColors.length]
+                          !selectedCategory ||
+                          selectedCategory.category === category.category
+                            ? chipColors[category.color]
                             : grey[500],
                       }}
-                      label={category}
+                      label={category.category}
                       size='small'
                       onClick={() => setSelectedCategory(category)}
                     />

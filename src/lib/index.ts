@@ -1,5 +1,5 @@
-import { blue, purple, teal, orange, brown } from '@mui/material/colors';
-import { IncomeExpensesData } from 'types';
+import { green, blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { CategoryData, IncomeExpensesData } from 'types';
 
 export const months = [
   'Jan',
@@ -16,39 +16,40 @@ export const months = [
   'Dec',
 ];
 
-export const isFound = (value: string, arr: string[]) => {
+export const isCategoryExist = (value: string, arr: CategoryData[]) => {
   const left = value.toLowerCase();
-  return arr?.some((right) => left === right.toLowerCase());
+  return arr?.some((right) => left === right.category.toLowerCase());
 };
 
 export const drawerWidth = 240;
 
 export const backgroundColors = [
   blue[500],
+  orange[500],
   purple[500],
   teal[500],
-  orange[500],
   brown[500],
 ];
 export const circleColors = [
   blue[800],
+  orange[800],
   purple[800],
   teal[800],
-  orange[800],
   brown[800],
 ];
 export const avatarColors = [
   blue[200],
+  orange[200],
   purple[200],
   teal[200],
-  orange[200],
   brown[200],
 ];
 export const chipColors = [
+  green[500],
   blue[400],
+  orange[400],
   purple[400],
   teal[400],
-  orange[400],
   brown[400],
 ];
 

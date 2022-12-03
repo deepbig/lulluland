@@ -10,7 +10,8 @@ import {
   updateDoc,
   runTransaction,
 } from 'firebase/firestore';
-import { UserData, ActivitySummaryData } from 'types';
+import { UserData, ActivitySummaryData, CategoryData } from 'types';
+import { isCategoryExist } from 'lib';
 const COLLECTION_NAME = 'users';
 const ACTIVITY_SUMMARY_SUBCOLLECTION_NAME = 'activity_summaries';
 
@@ -74,7 +75,7 @@ export const getUserFromDB = async (
 export const updateUserUsernameAndCategories = async (
   uid: string,
   username: string,
-  categories: string[]
+  categories: CategoryData[]
 ): Promise<UserData | null> => {
   try {
     const docRef = doc(db, COLLECTION_NAME, uid);
@@ -94,7 +95,7 @@ export const updateUserUsernameAndCategories = async (
 
 export const updateCategories = async (
   uid: string,
-  categories: string[],
+  categories: CategoryData[],
   activitySummaries: ActivitySummaryData[]
 ) => {
   try {
@@ -106,7 +107,7 @@ export const updateCategories = async (
         // if category's summary does not exist, create it.
         if (
           !activitySummaries.find(
-            (activitySummary) => activitySummary.category === category
+            (activitySummary) => activitySummary.category === category.category
           )
         ) {
           transaction.set(
@@ -115,7 +116,7 @@ export const updateCategories = async (
               COLLECTION_NAME,
               uid,
               ACTIVITY_SUMMARY_SUBCOLLECTION_NAME,
-              category
+              category.category
             ),
             { yearly: [] }
           );
@@ -124,7 +125,7 @@ export const updateCategories = async (
 
       for (const activitySummary of activitySummaries) {
         // if category is removed, delete activity summary.
-        if (!categories.includes(activitySummary.category)) {
+        if (!isCategoryExist(activitySummary.category, categories)) {
           transaction.delete(
             doc(
               db,

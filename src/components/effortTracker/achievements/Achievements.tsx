@@ -9,6 +9,7 @@ import {
   linearProgressClasses,
 } from '@mui/material';
 import { backgroundColors } from 'lib';
+import { CategoryData } from 'types';
 
 const BorderLinearProgress = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'barColor',
@@ -63,7 +64,7 @@ const LinearProgressWithLabel = ({
 const goals = [12, 84, 102, 82];
 
 interface ObjectiveProps {
-  category: string;
+  category: CategoryData | null;
 }
 
 
@@ -77,7 +78,7 @@ function Achievements({ category } : ObjectiveProps) {
         {/* TODO - Goal collection should be in the database */}
         {performances?.map((performance) =>
           performance.map((subPerformance, index) => (
-            !category || category === subPerformance[0].category ?
+            !category || category.category === subPerformance[0].category ?
             <LinearProgressWithLabel
               title={`${subPerformance[0].subcategory} in a set (${
                 subPerformance[0].performance
