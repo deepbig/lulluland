@@ -14,12 +14,13 @@ import {
 } from '@mui/material';
 import { updateCategories } from 'db/repositories/user';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { isFound } from 'lib';
+import { isCategoryExist, chipColors as colors } from 'lib';
 import { getActivitySummaries } from 'modules/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
 import { getUser, setUser } from 'modules/user';
 import React, { useEffect, useState } from 'react';
+import { CategoryData } from 'types';
 
 interface CategoryAddFormProps {
   open: boolean;
@@ -28,13 +29,13 @@ interface CategoryAddFormProps {
 
 interface CategoryAddFormState {
   category: string;
-  categories: string[];
+  categories: CategoryData[];
 }
 
 function CategoryAddForm(props: CategoryAddFormProps) {
   const [values, setValues] = useState<CategoryAddFormState>({
     category: '',
-    categories: [],
+    categories: [] as CategoryData[],
   });
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUser);
@@ -52,7 +53,7 @@ function CategoryAddForm(props: CategoryAddFormProps) {
   };
 
   const handleAddCategory = () => {
-    if (isFound(values.category, values.categories)) {
+    if (isCategoryExist(values.category, values.categories)) {
       dispatch(
         setSnackbar({
           open: true,
@@ -61,14 +62,29 @@ function CategoryAddForm(props: CategoryAddFormProps) {
         })
       );
     } else {
+      if (values.categories.length >= colors.length - 1) {
+        dispatch(
+          setSnackbar({
+            open: true,
+            message: `Maximum number of categories reached. Current limit on categories is ${values.categories.length}.`,
+            severity: 'error',
+          })
+        );
+        return;
+      }
+
       const categories = [...values.categories];
-      categories.push(values.category);
+
+      categories.push({
+        category: values.category,
+        color: categories.length + 1,
+      });
       setValues({ ...values, categories: categories, category: '' });
     }
   };
 
   const handleDeleteCategory = (value: string) => {
-    if (!isFound(value, values.categories)) {
+    if (!isCategoryExist(value, values.categories)) {
       dispatch(
         setSnackbar({
           open: true,
@@ -78,7 +94,7 @@ function CategoryAddForm(props: CategoryAddFormProps) {
       );
     } else {
       const categories = values.categories.filter(
-        (category) => category !== value
+        (category) => category.category !== value
       );
       setValues({ ...values, categories: categories });
     }
@@ -146,28 +162,29 @@ function CategoryAddForm(props: CategoryAddFormProps) {
             <Grid item xs={12}>
               <Paper
                 variant='outlined'
-                component='ul'
                 elevation={0}
                 sx={{
                   backgroundColor: 'inherit',
                   display: 'flex',
                   flexWrap: 'wrap',
-                  listStyle: 'none',
                   padding: 1,
                 }}
               >
                 {values.categories.length > 0 ? (
                   values.categories.map((category, i) => (
-                    <li key={i}>
+                    <Grid key={i} item>
                       <Chip
-                        label={category}
-                        sx={{ margin: 0.5 }}
+                        label={category.category}
+                        sx={{
+                          margin: 0.5,
+                          backgroundColor: colors[category.color],
+                        }}
                         onDelete={() => {
-                          handleDeleteCategory(category);
+                          handleDeleteCategory(category.category);
                         }}
                         color='primary'
                       />
-                    </li>
+                    </Grid>
                   ))
                 ) : (
                   <Typography variant='guideline' align='center'>

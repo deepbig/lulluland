@@ -10,7 +10,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/effortTracker/performanceChart/PerformanceChart';
 import MainCard from 'components/custom/MainCard';
 import { styled } from '@mui/material/styles';
-import { PerformanceData, PerformanceChartData, UserData } from 'types';
+import { PerformanceData, PerformanceChartData, UserData, CategoryData, PerformanceCategoryData } from 'types';
 import { backgroundColors, circleColors, avatarColors } from 'lib';
 import { getUser } from 'modules/user';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
@@ -63,7 +63,7 @@ const CardWrapper = styled(MainCard, {
 }));
 
 export interface PerformanceTrendsProps {
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
   selectedUser: UserData | null;
   username: string | undefined;
 }
@@ -89,12 +89,12 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
       );
       unsubscribe = onSnapshot(q, (querySnapshot) => {
         const performances: Array<any> = [];
-        const newCategories: Array<any> = [];
+        const newCategories: Array<PerformanceCategoryData> = [];
 
         const categories = props.selectedUser?.categories;
         if (categories) {
           categories.forEach((category) => {
-            newCategories.push({ category: category, subcategories: [] });
+            newCategories.push({ category: category.category, subcategories: [] });
             performances.push([]);
           });
 
@@ -106,7 +106,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
           querySnapshot.docs.forEach((_data) => {
             if (category !== _data.data().category) {
               category = _data.data().category;
-              index = categories.indexOf(category);
+              index = categories.findIndex((c) => c.category = category);
               subIndex = -1;
             }
 
@@ -163,7 +163,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
         {performances?.map((performance) =>
           performance?.map((subPerformance, index) =>
             !props.selectedCategory ||
-            props.selectedCategory === subPerformance[0].category ? (
+            props.selectedCategory.category === subPerformance[0].category ? (
               <Grid
                 item
                 xs={12}

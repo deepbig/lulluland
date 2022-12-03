@@ -24,12 +24,12 @@ import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
-import { ActivityAddFormData, ActivityData } from 'types';
+import { ActivityAddFormData, ActivityData, CategoryData } from 'types';
 
 interface ActivityAddFormProps {
   open: boolean;
   handleClose: () => void;
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
 }
 
 function ActivityAddForm(props: ActivityAddFormProps) {
@@ -37,7 +37,7 @@ function ActivityAddForm(props: ActivityAddFormProps) {
   const activities = useAppSelector(getActivities);
   const selectedYear = useAppSelector(getSelectedYear);
   const [values, setValues] = useState<ActivityAddFormData>({
-    category: props.selectedCategory,
+    category: props.selectedCategory ? props.selectedCategory.category : '',
     date: currentDateTime(),
     note: '',
     duration: 0,
@@ -176,8 +176,8 @@ function ActivityAddForm(props: ActivityAddFormProps) {
                 onChange={handleSelect}
               >
                 {user?.categories?.map((category, i) => (
-                  <MenuItem key={i} value={category}>
-                    {category}
+                  <MenuItem key={i} value={category.category}>
+                    {category.category}
                   </MenuItem>
                 ))}
               </Select>

@@ -95,38 +95,204 @@ ul {
   background-color: #30363d;
 }
 
-.squares div[data-level='1'] {
-  background-color: #0e4429;
-}
-
-.squares div[data-level='2'] {
-  background-color: #006d32;
-}
-
-.squares div[data-level='3'] {
-  background-color: #26a641;
-}
-
-.squares div[data-level='4'] {
-  background-color: #39d353;
-}
-
 .explain div[data-level='0'] {
   background-color: #30363d;
 }
 
-.explain div[data-level='1'] {
+/* color = 0 */
+.squares div[data-level='1'][data-color-code='0'] {
   background-color: #0e4429;
 }
 
-.explain div[data-level='2'] {
+.squares div[data-level='2'][data-color-code='0'] {
   background-color: #006d32;
 }
 
-.explain div[data-level='3'] {
+.squares div[data-level='3'][data-color-code='0'] {
   background-color: #26a641;
 }
 
-.explain div[data-level='4'] {
+.squares div[data-level='4'][data-color-code='0'] {
   background-color: #39d353;
+}
+
+.explain div[data-level='1'][data-color-code='0'] {
+  background-color: #0e4429;
+}
+
+.explain div[data-level='2'][data-color-code='0'] {
+  background-color: #006d32;
+}
+
+.explain div[data-level='3'][data-color-code='0'] {
+  background-color: #26a641;
+}
+
+.explain div[data-level='4'][data-color-code='0'] {
+  background-color: #39d353;
+}
+
+/* color = 1, Blue (900, 700, 500, 300) */
+.squares div[data-level='1'][data-color-code='1'] {
+  background-color: #0d47a1;
+}
+
+.squares div[data-level='2'][data-color-code='1'] {
+  background-color: #1976d2;
+}
+
+.squares div[data-level='3'][data-color-code='1'] {
+  background-color: #2196f3;
+}
+
+.squares div[data-level='4'][data-color-code='1'] {
+  background-color: #64b5f6;
+}
+
+.explain div[data-level='1'][data-color-code='1'] {
+  background-color: #0d47a1;
+}
+
+.explain div[data-level='2'][data-color-code='1'] {
+  background-color: #1976d2;
+}
+
+.explain div[data-level='3'][data-color-code='1'] {
+  background-color: #2196f3;
+}
+
+.explain div[data-level='4'][data-color-code='1'] {
+  background-color: #64b5f6;
+}
+
+/* color = 2, Orange (900, 700, 500, 300) */
+.squares div[data-level='1'][data-color-code='2'] {
+  background-color: #e65100;
+}
+
+.squares div[data-level='2'][data-color-code='2'] {
+  background-color: #f57c00;
+}
+
+.squares div[data-level='3'][data-color-code='2'] {
+  background-color: #ff9800;
+}
+
+.squares div[data-level='4'][data-color-code='2'] {
+  background-color: #ffb74d;
+}
+
+.explain div[data-level='1'][data-color-code='2'] {
+  background-color: #e65100;
+}
+
+.explain div[data-level='2'][data-color-code='2'] {
+  background-color: #f57c00;
+}
+
+.explain div[data-level='3'][data-color-code='2'] {
+  background-color: #ff9800;
+}
+
+.explain div[data-level='4'][data-color-code='2'] {
+  background-color: #ffb74d;
+}
+
+/* color = 3, Purple (900, 700, 500, 300) */
+.squares div[data-level='1'][data-color-code='3'] {
+  background-color: #4a148c;
+}
+
+.squares div[data-level='2'][data-color-code='3'] {
+  background-color: #7b1fa2;
+}
+
+.squares div[data-level='3'][data-color-code='3'] {
+  background-color: #9c27b0;
+}
+
+.squares div[data-level='4'][data-color-code='3'] {
+  background-color: #ba68c8;
+}
+
+.explain div[data-level='1'][data-color-code='3'] {
+  background-color: #4a148c;
+}
+
+.explain div[data-level='2'][data-color-code='3'] {
+  background-color: #7b1fa2;
+}
+
+.explain div[data-level='3'][data-color-code='3'] {
+  background-color: #9c27b0;
+}
+
+.explain div[data-level='4'][data-color-code='3'] {
+  background-color: #ba68c8;
+}
+
+/* color = 4, Teal (900, 700, 500, 300) */
+.squares div[data-level='1'][data-color-code='4'] {
+  background-color: #004d40;
+}
+
+.squares div[data-level='2'][data-color-code='4'] {
+  background-color: #00796b;
+}
+
+.squares div[data-level='3'][data-color-code='4'] {
+  background-color: #009688;
+}
+
+.squares div[data-level='4'][data-color-code='4'] {
+  background-color: #4db6ac;
+}
+
+.explain div[data-level='1'][data-color-code='4'] {
+  background-color: #004d40;
+}
+
+.explain div[data-level='2'][data-color-code='4'] {
+  background-color: #00796b;
+}
+
+.explain div[data-level='3'][data-color-code='4'] {
+  background-color: #009688;
+}
+
+.explain div[data-level='4'][data-color-code='4'] {
+  background-color: #4db6ac;
+}
+
+/* color = 5, Brown (900, 700, 500, 300) */
+.squares div[data-level='1'][data-color-code='5'] {
+  background-color: #3e2723;
+}
+
+.squares div[data-level='2'][data-color-code='5'] {
+  background-color: #5d4037;
+}
+
+.squares div[data-level='3'][data-color-code='5'] {
+  background-color: #795548;
+}
+
+.squares div[data-level='4'][data-color-code='5'] {
+  background-color: #a1887f;
+}
+
+.explain div[data-level='1'][data-color-code='5'] {
+  background-color: #3e2723;
+}
+
+.explain div[data-level='2'][data-color-code='5'] {
+  background-color: #5d4037;
+}
+
+.explain div[data-level='3'][data-color-code='5'] {
+  background-color: #795548;
+}
+
+.explain div[data-level='4'][data-color-code='5'] {
+  background-color: #a1887f;
 }

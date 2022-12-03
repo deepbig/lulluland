@@ -11,13 +11,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { numFormatter, numWithCommas } from 'lib/index';
+import { chipColors as colors, numFormatter, numWithCommas } from 'lib/index';
 import { Card, CardContent, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
   NameType,
   ValueType,
 } from 'recharts/types/component/DefaultTooltipContent';
+import { CategoryData } from 'types';
 
 interface ActivityChartData {
   name: string;
@@ -58,7 +59,7 @@ const CustomTooltip = ({
 function MonthlyActivityChart({
   selectedCategory,
 }: {
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
 }) {
   const [data, setData] = useState<ActivityChartData[]>([]);
   const activities = useAppSelector(getActivities);
@@ -73,7 +74,7 @@ function MonthlyActivityChart({
         return selectedCategory
           ? activity.date.toDate().getMonth() === thisMonth &&
               activity.date.toDate().getFullYear() === thisYear &&
-              activity.category === selectedCategory
+              activity.category === selectedCategory.category
           : activity.date.toDate().getMonth() === thisMonth &&
               activity.date.toDate().getFullYear() === thisYear;
       });
@@ -82,7 +83,7 @@ function MonthlyActivityChart({
         return selectedCategory
           ? activity.date.toDate().getMonth() === lastMonth &&
               activity.date.toDate().getFullYear() === thisYear &&
-              activity.category === selectedCategory
+              activity.category === selectedCategory.category
           : activity.date.toDate().getMonth() === lastMonth &&
               activity.date.toDate().getFullYear() === thisYear;
       });
@@ -135,8 +136,16 @@ function MonthlyActivityChart({
             <stop offset='95%' stopColor='#808080' stopOpacity={0} />
           </linearGradient>
           <linearGradient id='colorCurrent' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='5%' stopColor='#42a5f5' stopOpacity={0.8} />
-            <stop offset='95%' stopColor='#42a5f5' stopOpacity={0} />
+            <stop
+              offset='5%'
+              stopColor={colors[selectedCategory ? selectedCategory.color : 0]}
+              stopOpacity={0.8}
+            />
+            <stop
+              offset='95%'
+              stopColor={colors[selectedCategory ? selectedCategory.color : 0]}
+              stopOpacity={0}
+            />
           </linearGradient>
         </defs>
         <XAxis dataKey='name' />
@@ -154,7 +163,7 @@ function MonthlyActivityChart({
         <Area
           type='monotone'
           dataKey='current'
-          stroke='#42a5f5'
+          stroke={colors[selectedCategory ? selectedCategory.color : 0]}
           fillOpacity={1}
           fill='url(#colorCurrent)'
           strokeWidth={2}

@@ -65,12 +65,17 @@ export type UserData = {
   age: number;
   levelOfExperience: number;
   peerRating: number;
-  categories: string[]; // this should change to object
+  categories: CategoryData[]; // this should change to object
   groups: string[];
   disabled: string[];
   removed: string[];
   title: string;
   bio: string;
+};
+
+export type CategoryData = {
+  category: string;
+  color: number; // index of color index. TODO: change to color code or name by user input.
 };
 
 export interface ActivitySummaryData {
@@ -109,7 +114,7 @@ export interface ActivityAddFormData {
   uid: string;
 }
 
-export interface CategoryData {
+export interface PerformanceCategoryData {
   category: string;
   subcategories: string[];
 }

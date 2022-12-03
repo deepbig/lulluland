@@ -4,7 +4,7 @@ import { getActivities, getSelectedYear } from 'modules/activity';
 import Box, { BoxProps } from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import styles from './ActivityBoard.module.css';
-import { ActivityData } from 'types';
+import { ActivityData, CategoryData } from 'types';
 import { months } from 'lib';
 
 const Item = forwardRef((props: BoxProps, ref) => {
@@ -23,18 +23,25 @@ const Item = forwardRef((props: BoxProps, ref) => {
 });
 
 interface ActivityBoardProps {
-  category: string;
+  selectedCategory: CategoryData | null;
 }
 
-export default function ActivityBoard(props: ActivityBoardProps) {
+export default function ActivityBoard({
+  selectedCategory,
+}: ActivityBoardProps) {
   const activities = useAppSelector(getActivities);
   const [monthList, setMonthList] = useState<any>([]);
   const selectedYear = useAppSelector(getSelectedYear);
+  const [colorCode, setColorCode] = useState(0);
 
   useEffect(() => {
     fetchMonthList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear]);
+
+  useEffect(() => {
+    setColorCode(selectedCategory ? selectedCategory.color : 0);
+  }, [selectedCategory]);
 
   const fetchMonthList = () => {
     const currentMonth = selectedYear ? 12 : new Date().getMonth() + 1;
@@ -49,6 +56,7 @@ export default function ActivityBoard(props: ActivityBoardProps) {
   };
 
   const drawBoxes = (activities: ActivityData[]) => {
+    console.log('colorCode', colorCode);
     let rows = [];
     const end = selectedYear ? new Date(selectedYear + 1, 0, 1) : new Date();
     const start = selectedYear
@@ -62,8 +70,8 @@ export default function ActivityBoard(props: ActivityBoardProps) {
     for (let d = start; d < end; d.setDate(d.getDate() + 1)) {
       while (
         activities.length > count &&
-        props.category &&
-        props.category !== activities[count].category
+        selectedCategory &&
+        selectedCategory.category !== activities[count].category
       ) {
         count++;
       }
@@ -78,8 +86,8 @@ export default function ActivityBoard(props: ActivityBoardProps) {
         let date = activities[count].date.toDate().toDateString();
         do {
           if (
-            !props.category ||
-            props.category === activities[count].category
+            !selectedCategory ||
+            selectedCategory.category === activities[count].category
           ) {
             activityCount++;
             note += activities[count].note ? `${activities[count].note}\n` : '';
@@ -110,6 +118,7 @@ export default function ActivityBoard(props: ActivityBoardProps) {
               data-placement='bottom'
               data-animation='false'
               data-level={duration / 30 <= 4 ? Math.ceil(duration / 30) : 4}
+              data-color-code={colorCode}
             />
           </Tooltip>
         );
@@ -128,6 +137,7 @@ export default function ActivityBoard(props: ActivityBoardProps) {
               data-placement='bottom'
               data-animation='false'
               data-level={0}
+              data-color-code={colorCode}
             />
           </Tooltip>
         );
@@ -152,14 +162,15 @@ export default function ActivityBoard(props: ActivityBoardProps) {
 
         <ul className={styles.squares}>{drawBoxes(activities)}</ul>
       </div>
+
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse', pt: 2, pr: 1 }}>
         More
         <ul className={styles.explain}>
-          <Item key={1000} data-level={0} />
-          <Item key={1001} data-level={1} />
-          <Item key={1002} data-level={2} />
-          <Item key={1003} data-level={3} />
-          <Item key={1004} data-level={4} />
+          <Item key={1000} data-level={0} data-color-code={colorCode} />
+          <Item key={1001} data-level={1} data-color-code={colorCode} />
+          <Item key={1002} data-level={2} data-color-code={colorCode} />
+          <Item key={1003} data-level={3} data-color-code={colorCode} />
+          <Item key={1004} data-level={4} data-color-code={colorCode} />
         </ul>
         Less
       </Box>

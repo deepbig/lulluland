@@ -20,12 +20,12 @@ import {
 } from 'db/repositories/user';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-import { isFound } from 'lib';
+import { isCategoryExist, chipColors as colors } from 'lib';
 import { auth } from 'db';
 import { useAppDispatch } from 'hooks';
 import { setBackdrop } from 'modules/backdrop';
 import { setUser } from 'modules/user';
-import { UserData } from 'types';
+import { UserData, CategoryData } from 'types';
 import { useNavigate } from 'react-router-dom';
 
 const steps = [
@@ -43,7 +43,7 @@ interface InitialForm {
   username: string;
   usernameError: string;
   category: string;
-  categories: string[];
+  categories: CategoryData[];
   isChecked: boolean;
 }
 
@@ -106,23 +106,23 @@ function InitialSteps() {
   };
 
   const handleAddCategory = () => {
-    if (isFound(values.category, values.categories)) {
+    if (isCategoryExist(values.category, values.categories)) {
       alert('You already added the selected category.');
     } else {
       const categories = [...values.categories];
-      categories.push(values.category);
+      categories.push({ category: values.category, color: categories.length + 1 });
       setValues({ ...values, categories: categories, category: '' });
     }
   };
 
   const handleDeleteCategory = (value: string) => {
-    if (!isFound(value, values.categories)) {
+    if (!isCategoryExist(value, values.categories)) {
       alert(
         'Failed to delete selected category, because the category is not on your list.'
       );
     } else {
       const categories = values.categories.filter(
-        (category) => category !== value
+        (category) => category.category !== value
       );
       setValues({ ...values, categories: categories });
     }
@@ -140,7 +140,7 @@ function InitialSteps() {
       );
       if (user) {
         dispatch(setUser(user));
-        navigate(`/dashboard/${user.username}/effort-tracker`)
+        navigate(`/dashboard/${user.username}/effort-tracker`);
       }
     }
 
@@ -231,28 +231,26 @@ function InitialSteps() {
             <Grid item xs={12}>
               <Paper variant='outlined'>
                 <Paper
-                  component='ul'
                   elevation={0}
                   sx={{
                     display: 'flex',
                     flexWrap: 'wrap',
-                    listStyle: 'none',
                     margin: 1,
                     padding: 0,
                   }}
                 >
                   {values.categories.length > 0 ? (
                     values.categories.map((category, i) => (
-                      <li key={i}>
+                      <Grid key={i} item>
                         <Chip
-                          label={category}
-                          sx={{ margin: 0.5 }}
+                          label={category.category}
+                          sx={{ margin: 0.5, backgroundColor: colors[category.color] }}
                           onDelete={() => {
-                            handleDeleteCategory(category);
+                            handleDeleteCategory(category.category);
                           }}
                           color='primary'
                         />
-                      </li>
+                      </Grid>
                     ))
                   ) : (
                     <Typography variant='guideline' align='center'>

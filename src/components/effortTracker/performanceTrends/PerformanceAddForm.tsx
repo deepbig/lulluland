@@ -21,19 +21,19 @@ import {
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
-import { PerformanceAddFormData } from 'types';
+import { CategoryData, PerformanceAddFormData } from 'types';
 
 interface PerformanceAddFormProps {
   open: boolean;
   handleClose: () => void;
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
 }
 
 function PerformanceAddForm(props: PerformanceAddFormProps) {
   const user = useAppSelector(getUser);
   const categories = useAppSelector(getCategories);
   const [values, setValues] = useState<PerformanceAddFormData>({
-    category: props.selectedCategory,
+    category: props.selectedCategory ? props.selectedCategory.category : '',
     subcategory: '',
     date: currentDateTime(),
     note: '',
@@ -111,7 +111,7 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
                 onChange={handleSelect}
               >
                 {user?.categories?.map((category, i) => (
-                  <MenuItem key={i} value={category}>
+                  <MenuItem key={i} value={category.category}>
                     {category}
                   </MenuItem>
                 ))}

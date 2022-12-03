@@ -14,7 +14,7 @@ import {
 import { chipColors as colors, numWithCommas } from 'lib/index';
 import { Card, CardContent, Divider, Stack, Typography } from '@mui/material';
 import { getUser } from 'modules/user';
-import { UserData } from 'types';
+import { CategoryData, UserData } from 'types';
 import { grey } from '@mui/material/colors';
 import {
   NameType,
@@ -66,13 +66,13 @@ function ActivityTrend({
   selectedCategory,
   selectedUser,
 }: {
-  selectedCategory: string;
+  selectedCategory: CategoryData | null;
   selectedUser: UserData | null;
 }) {
   const activitySummaries = useAppSelector(getActivitySummaries);
   const user = useAppSelector(getUser);
   const [data, setData] = useState<ActivityTrendData[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
 
   useEffect(() => {
     if (activitySummaries?.length > 0) {
@@ -96,13 +96,13 @@ function ActivityTrend({
       }
 
       if (selectedCategory) {
-        newData = generateNewData(selectedCategory, newData);
+        newData = generateNewData(selectedCategory.category, newData);
         setCategories([selectedCategory]);
       } else {
-        const categories = activitySummaries.map((summary) => summary.category);
+        const categories = user?.categories ? [...user?.categories] : [];
         // 여기서 기존 리스트가 없어짐. 다른 category를 지움.
         categories.forEach((category) => {
-          newData = generateNewData(category, newData);
+          newData = generateNewData(category.category, newData);
         });
         setCategories(categories);
       }
@@ -162,11 +162,11 @@ function ActivityTrend({
             {categories.map((category, index) => (
               <Bar
                 key={index}
-                dataKey={`value.${category}`}
-                name={category}
+                dataKey={`value.${category.category}`}
+                name={category.category}
                 stackId='a'
                 barSize={20}
-                fill={colors[index % colors.length]}
+                fill={colors[category.color]}
               />
             ))}
             <Legend />

@@ -8,26 +8,21 @@ import {
   getActivitySummaries,
   setActivitySummaryList,
 } from 'modules/activity';
-import {
-  Grid,
-  Avatar,
-  Button,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Grid, Avatar, Button, Stack, Typography } from '@mui/material';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
 import * as activity from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
+import { CategoryData, UserData } from 'types';
 
 interface SummaryProps {
-  category: string;
-  uid: string;
+  selectedCategory: CategoryData | null;
+  selectedUser: UserData | null;
 }
 
-function YearlySummary(props: SummaryProps) {
+function YearlySummary({ selectedCategory, selectedUser }: SummaryProps) {
   const activities = useAppSelector(getActivities);
   const activitySummaries = useAppSelector(getActivitySummaries);
   const selectedYear = useAppSelector(getSelectedYear);
@@ -40,7 +35,7 @@ function YearlySummary(props: SummaryProps) {
   useEffect(() => {
     let minYear = new Date().getFullYear();
     for (const data of activitySummaries) {
-      if (props.category === '' || props.category === data.category) {
+      if (!selectedCategory || selectedCategory.category === data.category) {
         if (
           data.yearly?.length > 0 &&
           data.yearly[data.yearly.length - 1].year < minYear
@@ -55,33 +50,33 @@ function YearlySummary(props: SummaryProps) {
       range.push(i);
     }
     setMinRangeYear(range);
-  }, [activitySummaries, props.category]);
+  }, [activitySummaries, selectedCategory]);
 
   useEffect(() => {
     countYearlySummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities, activitySummaries, selectedYear, props.category]);
+  }, [activities, activitySummaries, selectedYear, selectedCategory]);
 
   useEffect(() => {
-    if (props.uid) {
-      fetchActivities(selectedYear);
+    if (selectedUser?.uid) {
+      fetchActivities(selectedYear, selectedUser.uid);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYear, props.uid]);
+  }, [selectedYear, selectedUser]);
 
   useEffect(() => {
-    if (props.uid) {
-      fetchActivitySummaries(props.uid);
+    if (selectedUser?.uid) {
+      fetchActivitySummaries(selectedUser.uid);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.uid]);
+  }, [selectedUser]);
 
-  const fetchActivities = async (selectedYear: number) => {
+  const fetchActivities = async (selectedYear: number, uid: string) => {
     try {
       dispatch(setBackdrop(true));
       const _activities = selectedYear
-        ? await activity.selected(selectedYear, props.uid)
-        : await activity.current(props.uid);
+        ? await activity.selected(selectedYear, uid)
+        : await activity.current(uid);
       dispatch(setActivityList(_activities));
     } catch (e) {
       dispatch(
@@ -121,7 +116,10 @@ function YearlySummary(props: SummaryProps) {
 
     if (selectedYear) {
       activitySummaries.forEach((summary) => {
-        if (!props.category || props.category === summary.category) {
+        if (
+          !selectedCategory ||
+          selectedCategory.category === summary.category
+        ) {
           const data = summary.yearly.find(
             (data) => data.year === selectedYear
           );
@@ -133,9 +131,10 @@ function YearlySummary(props: SummaryProps) {
         }
       });
     } else {
-      activities.forEach((activity, idx) => {
+      activities.forEach((activity) => {
         if (
-          (!props.category || props.category === activity.category) &&
+          (!selectedCategory ||
+            selectedCategory.category === activity.category) &&
           activity.duration > 0
         ) {
           practices++;
@@ -238,7 +237,9 @@ function YearlySummary(props: SummaryProps) {
           </Avatar>
           <Typography>
             {bestPractice ? bestPractice + ' mins' : '0 mins'}
-            <Typography variant='guideline'>Best Practice&nbsp;&nbsp;&nbsp;</Typography>
+            <Typography variant='guideline'>
+              Best Practice&nbsp;&nbsp;&nbsp;
+            </Typography>
           </Typography>
         </Stack>
       </Grid>
