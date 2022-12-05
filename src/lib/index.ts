@@ -52,6 +52,15 @@ export const chipColors = [
   teal[400],
   brown[400],
 ];
+export const pieChartColors = [
+  '#F47A1F',
+  '#FDBB2F',
+  '#377B2B',
+  '#7AC142',
+  '#007CC3',
+  '#00529B',
+  '#999999',
+];
 
 export const currentDateTime = () => {
   const dateObj = new Date();
