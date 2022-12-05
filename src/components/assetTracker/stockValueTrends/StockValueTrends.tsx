@@ -7,7 +7,6 @@ import { StockCountryTypes, StockData, StockHistoryData } from 'types';
 import { green, red } from '@mui/material/colors';
 import { getStockHistories } from 'modules/stockHistory';
 import StockPieChart from './StockPieChart';
-import StockHistoryPieChart from './StockHistoryPieChart';
 
 type profitLossType = {
   value: number | string;
