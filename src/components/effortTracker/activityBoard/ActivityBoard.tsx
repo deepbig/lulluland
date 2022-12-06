@@ -56,7 +56,6 @@ export default function ActivityBoard({
   };
 
   const drawBoxes = (activities: ActivityData[]) => {
-    console.log('colorCode', colorCode);
     let rows = [];
     const end = selectedYear ? new Date(selectedYear + 1, 0, 1) : new Date();
     const start = selectedYear

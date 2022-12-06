@@ -42,7 +42,10 @@ export const pieChartActiveShape = (props: any) => {
         textAnchor='middle'
         fill={fill}
         fontSize={20}
-        style={{ textShadow:'-1px 0 #121212, 0 1px #121212, 1px 0 #121212, 0 -1px #121212' }}
+        style={{
+          textShadow:
+            '-1px 0 #121212, 0 1px #121212, 1px 0 #121212, 0 -1px #121212',
+        }}
       >
         {payload.name}
       </text>

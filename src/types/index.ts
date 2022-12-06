@@ -197,6 +197,11 @@ export interface StockHistoryData {
   currency: number;
 }
 
+export enum StockOrderByData {
+  SCALE = 'Scale',
+  PROFIT = 'Profit',
+}
+
 export interface SnackbarData {
   open: boolean;
   severity: 'success' | 'info' | 'warning' | 'error';

@@ -89,9 +89,9 @@ const StockPieChart = () => {
     </ResponsiveContainer>
   ) : (
     <Stack direction='column' alignItems='center' sx={{ m: 2 }}>
-        <Typography variant='guideline' align='center'>
-            Please add stocks to see the pie chart.
-        </Typography>
+      <Typography variant='guideline' align='center'>
+        Please add stocks to see the pie chart.
+      </Typography>
     </Stack>
   );
 };

@@ -99,7 +99,7 @@ function ActivityTrend({
         newData = generateNewData(selectedCategory.category, newData);
         setCategories([selectedCategory]);
       } else {
-        const categories = user?.categories ? [...user?.categories] : [];
+        const categories = selectedUser?.categories ? [...selectedUser.categories] : [];
         // 여기서 기존 리스트가 없어짐. 다른 category를 지움.
         categories.forEach((category) => {
           newData = generateNewData(category.category, newData);

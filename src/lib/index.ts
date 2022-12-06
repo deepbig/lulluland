@@ -1,4 +1,4 @@
-import { green, blue, purple, teal, orange, brown } from '@mui/material/colors';
+import { green, blue, purple, teal, orange, brown, red } from '@mui/material/colors';
 import { CategoryData, IncomeExpensesData } from 'types';
 
 export const months = [
@@ -62,6 +62,14 @@ export const pieChartColors = [
   '#999999',
 ];
 
+export const selectStockColor = (value: number) => {
+  if (value > 0) {
+    return green[500];
+  } else {
+    return red[500];
+  }
+};
+
 export const currentDateTime = () => {
   const dateObj = new Date();
   return `${dateObj.getFullYear()}-${dateObj.getMonth() < 9 ? '0' : ''}${
@@ -90,6 +98,7 @@ export const givenMonthYearFormat = (date: string) => {
 
 export const numFormatter = (num: number) => {
   // return len > 3 ? `${value / 1000}${units[len/3]}` : value;
+  num = Math.abs(num);
   if (num >= 1000000000) {
     return parseFloat((num / 1000000000).toFixed(2)) + ' B';
   }

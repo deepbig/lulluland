@@ -1,12 +1,12 @@
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { useAppSelector } from 'hooks';
-import { numWithCommas } from 'lib';
+import { numWithCommas, selectStockColor } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useEffect, useState } from 'react';
 import { StockCountryTypes, StockData, StockHistoryData } from 'types';
-import { green, red } from '@mui/material/colors';
 import { getStockHistories } from 'modules/stockHistory';
 import StockPieChart from './StockPieChart';
+import StockHistoryPieChart from './StockHistoryPieChart';
 
 type profitLossType = {
   value: number | string;
@@ -89,14 +89,6 @@ function StockValueTrends() {
     return { value, percent } as profitLossType;
   };
 
-  const selectStockColor = (value: number) => {
-    if (value > 0) {
-      return green[500];
-    } else {
-      return red[500];
-    }
-  };
-
   return (
     <>
       {assetSummaries.length > 0 ? (
@@ -123,7 +115,7 @@ function StockValueTrends() {
                 actualProfitLoss.percent
               }%)`}
             </Typography>
-            <StockPieChart />
+            <StockHistoryPieChart />
           </Grid>
         </Grid>
       ) : null}
