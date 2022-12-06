@@ -1,67 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from 'recharts';
-import { chipColors as colors, numFormatter } from 'lib/index';
+import { PieChart, Pie, ResponsiveContainer, Cell } from 'recharts';
+import { chipColors as colors } from 'lib/index';
 import { useAppSelector } from 'hooks';
 import { getAssetSummaries, getTotalIncomeExpense } from 'modules/asset';
 import { AssetTypes } from 'types';
+import { pieChartActiveShape } from 'components/custom/CustomPieChart';
 
 interface AssetPieChartType {
   name: string;
   value: number;
 }
-
-const renderActiveShape = (props: any) => {
-  const {
-    cx,
-    cy,
-    innerRadius,
-    outerRadius,
-    startAngle,
-    endAngle,
-    fill,
-    payload,
-    percent,
-  } = props;
-
-  return (
-    <g>
-      <Sector
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        fill={fill}
-      />
-      <Sector
-        cx={cx}
-        cy={cy}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        innerRadius={outerRadius + 6}
-        outerRadius={outerRadius + 10}
-        fill={fill}
-      />
-      <text
-        x={cx}
-        y={cy}
-        dy={-18}
-        textAnchor='middle'
-        fill={fill}
-        fontSize={20}
-      >
-        {payload.name}
-      </text>
-      <text x={cx} y={cy} dy={5} textAnchor='middle' fill='#FFF'>
-        {'₩ ' + numFormatter(payload.value)}
-      </text>
-      <text x={cx} y={cy} dy={25} textAnchor='middle' fill='#999'>
-        {`(Rate ${(percent * 100).toFixed(0)}%)`}
-      </text>
-    </g>
-  );
-};
 
 /**
  * 자산 pie chart (자산, 순자산 filter, 자산 타입별 filter)
@@ -111,7 +59,7 @@ function AssetPieChart() {
       <PieChart>
         <Pie
           activeIndex={activeIndex}
-          activeShape={renderActiveShape}
+          activeShape={pieChartActiveShape}
           data={data}
           cx='50%'
           cy='50%'
