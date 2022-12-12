@@ -112,7 +112,7 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
               >
                 {user?.categories?.map((category, i) => (
                   <MenuItem key={i} value={category.category}>
-                    {category}
+                    {category.category}
                   </MenuItem>
                 ))}
               </Select>
