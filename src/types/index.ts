@@ -160,6 +160,12 @@ export interface IncomeExpensesData {
   amount: number;
 }
 
+export interface IncomeExpenseDetailData {
+  category: string; 
+  amount: number;
+  details?: IncomeExpensesData[];
+}
+
 export interface SubAssetData {
   [AssetTypes.CASH]: number;
   [AssetTypes.FIXED_INCOME]: number;

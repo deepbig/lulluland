@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { pieChartActiveShape } from 'components/custom/CustomPieChart';
 import { pieChartColors as colors } from 'lib';
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 interface StockPieChartType {
   name: string;
@@ -33,30 +33,29 @@ const StockPieChart = () => {
       }));
 
       const _data = [];
-      for (let i = 0; i < _assetSummaryStocks.length; i++) {
-        if (i < 6) {
+      let index = 0;
+      for (const assetSummaryStock of _assetSummaryStocks) {
+        if (index < 6) {
           _data.push({
-            name: _assetSummaryStocks[i].companyName,
+            name: assetSummaryStock.companyName,
             value:
-              _assetSummaryStocks[i].currentPrice *
-              _assetSummaryStocks[i].shares *
-              _assetSummaryStocks[i].currency,
+              assetSummaryStock.currentPrice *
+              assetSummaryStock.shares *
+              assetSummaryStock.currency,
+          });
+        } else if (index === 6) {
+          _data.push({
+            name: 'Etc.',
+            value:
+              assetSummaryStock.currentPrice *
+              assetSummaryStock.shares *
+              assetSummaryStock.currency,
           });
         } else {
-          if (!_data[6]) {
-            _data.push({
-              name: 'Etc.',
-              value:
-                _assetSummaryStocks[i].currentPrice *
-                _assetSummaryStocks[i].shares *
-                _assetSummaryStocks[i].currency,
-            });
-          } else {
-            _data[6].value +=
-              _assetSummaryStocks[i].currentPrice *
-              _assetSummaryStocks[i].shares *
-              _assetSummaryStocks[i].currency;
-          }
+          _data[6].value +=
+            assetSummaryStock.currentPrice *
+            assetSummaryStock.shares *
+            assetSummaryStock.currency;
         }
       }
       setData(_data);
@@ -88,10 +87,12 @@ const StockPieChart = () => {
       </PieChart>
     </ResponsiveContainer>
   ) : (
-    <Stack direction='column' alignItems='center' sx={{ m: 2 }}>
-      <Typography variant='guideline' align='center'>
-        Please add stocks to see the pie chart.
-      </Typography>
+    <Stack direction='column' alignItems='center'>
+      <Box sx={{ display: 'flex', alignItems: 'center', height: 300 }}>
+        <Typography variant='guideline' align='center'>
+          Please add stocks to see the pie chart.
+        </Typography>
+      </Box>
     </Stack>
   );
 };

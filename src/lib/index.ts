@@ -1,5 +1,5 @@
 import { green, blue, purple, teal, orange, brown, red } from '@mui/material/colors';
-import { CategoryData, IncomeExpensesData } from 'types';
+import { CategoryData, IncomeExpenseDetailData, IncomeExpensesData } from 'types';
 
 export const months = [
   'Jan',
@@ -16,7 +16,7 @@ export const months = [
   'Dec',
 ];
 
-export const isCategoryExist = (value: string, arr: CategoryData[]) => {
+export const isCategoryExist = (value: string, arr: CategoryData[] | IncomeExpenseDetailData[]) => {
   const left = value.toLowerCase();
   return arr?.some((right) => left === right.category.toLowerCase());
 };
@@ -95,6 +95,14 @@ export const givenMonthYearFormat = (date: string) => {
   const month = (1 + dateObj.getMonth()).toString().padStart(2, '0');
   return `${month}/${year}`;
 };
+
+export const getPreviousMonthYear = () => {
+  const currentDate = new Date();
+  const previousDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+  const year = previousDate.getFullYear();
+  const month = (1 + previousDate.getMonth()).toString().padStart(2, '0');
+  return `${month}/${year}`;
+}
 
 export const numFormatter = (num: number) => {
   // return len > 3 ? `${value / 1000}${units[len/3]}` : value;
