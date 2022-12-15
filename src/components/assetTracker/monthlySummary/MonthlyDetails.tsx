@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAppSelector } from 'hooks';
-import { selectStockColor } from 'lib';
+import { numFormatter, selectStockColor } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useState, useEffect } from 'react';
 import { IncomeExpenseDetailData } from 'types';
@@ -160,7 +160,7 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
 
     return (
       <Typography sx={{ color: selectStockColor(diff) }}>
-        {diff > 0 ? 'Less' : 'More'} than average by ₩ {Math.abs(diff)}
+        {diff > 0 ? 'Less' : 'More'} than avg. by ₩ {numFormatter(Math.abs(diff))}
       </Typography>
     );
   };
@@ -190,7 +190,13 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
                 sx={{ backgroundColor: 'inherit' }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                  <Typography
+                    sx={{
+                      width: '33%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
                     {detail.category}
                   </Typography>
                   {showSummaryResults(detail, 'income')}
@@ -225,7 +231,13 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
                 sx={{ backgroundColor: 'inherit' }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                  <Typography
+                    sx={{
+                      width: '33%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
                     {detail.category}
                   </Typography>
                   {showSummaryResults(detail, 'expense')}

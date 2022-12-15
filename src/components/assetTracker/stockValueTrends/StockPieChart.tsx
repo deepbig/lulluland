@@ -33,8 +33,9 @@ const StockPieChart = () => {
       }));
 
       const _data = [];
-      let index = 0;
+      let index = -1;
       for (const assetSummaryStock of _assetSummaryStocks) {
+        index++;
         if (index < 6) {
           _data.push({
             name: assetSummaryStock.companyName,
