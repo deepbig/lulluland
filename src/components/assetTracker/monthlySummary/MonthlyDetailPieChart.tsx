@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { IncomeExpenseDetailData } from 'types';
 import { pieChartColors as colors } from 'lib';
+import { Box, Stack, Typography } from '@mui/material';
 
 interface MonthlyDetailPieChartData {
   name: string;
@@ -37,13 +38,14 @@ function MonthlyDetailPieChart({ details }: MonthlyDetailPieChartProps) {
       }
     }
     setData(_data);
+    setActiveIndex(0);
   }, [details]);
 
   const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index);
   };
-  return (
-    <ResponsiveContainer height={250}>
+  return data.length > 0 ? (
+    <ResponsiveContainer minWidth={250} height={250}>
       <PieChart>
         <Pie
           activeIndex={activeIndex}
@@ -62,6 +64,14 @@ function MonthlyDetailPieChart({ details }: MonthlyDetailPieChartProps) {
         </Pie>
       </PieChart>
     </ResponsiveContainer>
+  ) : (
+    <Stack direction='column' alignItems='center'>
+      <Box sx={{ display: 'flex', alignItems: 'center', height: 250 }}>
+        <Typography variant='guideline' align='center'>
+          No Data Available
+        </Typography>
+      </Box>
+    </Stack>
   );
 }
 

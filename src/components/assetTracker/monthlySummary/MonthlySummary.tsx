@@ -161,7 +161,10 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
           </Typography>
         </Grid>
       </Box>
-      <Button onClick={() => setOpenDetails(true)}>
+      <Button
+        onClick={() => setOpenDetails(true)}
+        disabled={!assetSummaries.length}
+      >
         <Stack direction='row' alignItems='center' spacing={1}>
           <Typography variant='body2'>View All</Typography>
           <ArrowForwardIcon />

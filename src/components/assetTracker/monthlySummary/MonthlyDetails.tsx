@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
+  Link,
   List,
   ListItem,
   ListItemText,
@@ -22,6 +24,11 @@ import React, { useState, useEffect } from 'react';
 import { IncomeExpenseDetailData } from 'types';
 import MonthlyDetailPieChart from './MonthlyDetailPieChart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Stack } from '@mui/system';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { setBackdrop } from 'modules/backdrop';
+import { setSnackbar } from 'modules/snackbar';
 
 interface MonthlyDetailsProps {
   open: boolean;
@@ -160,9 +167,35 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
 
     return (
       <Typography sx={{ color: selectStockColor(diff) }}>
-        {diff > 0 ? 'Less' : 'More'} than avg. by ₩ {numFormatter(Math.abs(diff))}
+        {diff > 0 ? 'Less' : 'More'} than avg. by ₩{' '}
+        {numFormatter(Math.abs(diff))}
       </Typography>
     );
+  };
+
+  const handleMonthChange = (isNext: boolean) => {
+    try {
+      setBackdrop(true);
+      const index = assetSummaries.findIndex(
+        (asset) => asset.id === selectedMonthYear
+      );
+      if (
+        index < 0 ||
+        (isNext && index === assetSummaries.length - 1) ||
+        (!isNext && index === 0)
+      ) {
+        return;
+      }
+      setSelectedMonthYear(assetSummaries[index + (isNext ? 1 : -1)].id);
+    } catch (e) {
+      setSnackbar({
+        open: true,
+        message: 'Failed to change month of asset summary.',
+        severity: 'error',
+      });
+    } finally {
+      setBackdrop(false);
+    }
   };
 
   return (
@@ -170,11 +203,33 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
       open={open}
       onClose={handleClose}
       fullScreen={isSmallWidth}
+      fullWidth
       maxWidth='lg'
     >
       <DialogTitle sx={{ textAlign: 'center' }}>Monthly Details</DialogTitle>
+      {/* TODO: year month list */}
+      <Stack direction='row' alignItems='center' justifyContent='center'>
+        <IconButton
+          disabled={selectedMonthYear === assetSummaries[0].id}
+          onClick={() => handleMonthChange(false)}
+        >
+          <ArrowLeftIcon />
+        </IconButton>
+        <Link component='button' color='inherit'>
+          <Typography sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+            {selectedMonthYear}
+          </Typography>
+        </Link>
+        <IconButton
+          disabled={
+            selectedMonthYear === assetSummaries[assetSummaries.length - 1].id
+          }
+          onClick={() => handleMonthChange(true)}
+        >
+          <ArrowRightIcon />
+        </IconButton>
+      </Stack>
       <DialogContent>
-        {/* TODO: previous and current pie chart (side by side. diff in middle) */}
         <Grid container direction='row' justifyContent='center' spacing={3}>
           <Grid item xs={12} md={6}>
             <Typography variant='h6' align='center' gutterBottom>
