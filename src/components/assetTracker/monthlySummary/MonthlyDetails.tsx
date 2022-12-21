@@ -1,7 +1,4 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Button,
   Dialog,
   DialogActions,
@@ -10,21 +7,16 @@ import {
   Grid,
   IconButton,
   Link,
-  List,
-  ListItem,
-  ListItemText,
   Typography,
   useMediaQuery,
   useTheme,
   Stack,
 } from '@mui/material';
 import { useAppSelector } from 'hooks';
-import { numFormatter, selectStockColor } from 'lib';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useState, useEffect } from 'react';
 import { IncomeExpenseDetailData } from 'types';
 import MonthlyDetailPieChart from './MonthlyDetailPieChart';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { setBackdrop } from 'modules/backdrop';
@@ -48,7 +40,6 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
   const [selectedMonthYear, setSelectedMonthYear] = useState('');
   const [incomeAvg, setIncomeAvg] = useState<IncomeExpenseDetailData[]>([]);
   const [expenseAvg, setExpenseAvg] = useState<IncomeExpenseDetailData[]>([]);
-  const [expanded, setExpanded] = React.useState<string | false>(false);
 
   // creating selected month's income/expense details
   useEffect(() => {
@@ -101,7 +92,7 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
     setExpenseDetails(_expenseDetails);
   }, [assetSummaries, selectedMonthYear]);
 
-  // Calcluating average values of recent 6 months by category.
+  // Calcluating average values of recent 6 months by category except current month.
   useEffect(() => {
     if (assetSummaries.length <= 1) {
       return;
@@ -109,6 +100,7 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
 
     const _incomeAvg = [] as IncomeExpenseDetailData[];
     const _expenseAvg = [] as IncomeExpenseDetailData[];
+
     for (
       let i = assetSummaries.length - 2;
       i >= 0 && i >= assetSummaries.length - 7;
@@ -145,33 +137,14 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
       }
     }
 
+    // if assetSummaries.length is less than 7, then divide by assetSummaries.length - 1
+    const base = assetSummaries.length - 1 > 6 ? 6 : assetSummaries.length - 1;
+    _incomeAvg.map((item) => (item.amount /= base));
+    _expenseAvg.map((item) => (item.amount /= base));
+
     setIncomeAvg(_incomeAvg);
     setExpenseAvg(_expenseAvg);
   }, [assetSummaries]);
-
-  const handleExpendChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
-    };
-
-  const showSummaryResults = (
-    detail: IncomeExpenseDetailData,
-    type: 'income' | 'expense'
-  ) => {
-    const avg =
-      type === 'income'
-        ? incomeAvg.find((item) => item.category === detail.category)
-        : expenseAvg.find((item) => item.category === detail.category);
-    const base = assetSummaries.length > 6 ? 6 : assetSummaries.length;
-    const diff = (avg ? avg.amount : 0 / base) - detail.amount;
-
-    return (
-      <Typography sx={{ color: selectStockColor(diff) }}>
-        {diff > 0 ? 'Less' : 'More'} than avg. by ₩{' '}
-        {numFormatter(Math.abs(diff))}
-      </Typography>
-    );
-  };
 
   const handleMonthChange = (isNext: boolean) => {
     try {
@@ -235,82 +208,22 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
             <Typography variant='h6' align='center' gutterBottom>
               Income Details
             </Typography>
-            <MonthlyDetailPieChart details={incomeDetails} />
-
-            {incomeDetails.map((detail, index) => (
-              <Accordion
-                key={index}
-                expanded={expanded === `expense_${detail.category}`}
-                onChange={handleExpendChange(`expense_${detail.category}`)}
-                sx={{ backgroundColor: 'inherit' }}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography
-                    sx={{
-                      width: '33%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {detail.category}
-                  </Typography>
-                  {showSummaryResults(detail, 'income')}
-                </AccordionSummary>
-                <AccordionDetails>
-                  <List>
-                    {detail.details?.map((item, index) => (
-                      <ListItem key={index}>
-                        <ListItemText
-                          primary={`${item.description} : ${item.amount}`}
-                          secondary={item.date.toDate().toLocaleString()}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            ))}
+            <MonthlyDetailPieChart
+              details={incomeDetails}
+              averages={incomeAvg}
+              type='income'
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
             <Typography variant='h6' align='center' gutterBottom>
               Expense Details
             </Typography>
-            <MonthlyDetailPieChart details={expenseDetails} />
-
-            {expenseDetails.map((detail, index) => (
-              <Accordion
-                key={index}
-                expanded={expanded === `expense_${detail.category}`}
-                onChange={handleExpendChange(`expense_${detail.category}`)}
-                sx={{ backgroundColor: 'inherit' }}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography
-                    sx={{
-                      width: '33%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {detail.category}
-                  </Typography>
-                  {showSummaryResults(detail, 'expense')}
-                </AccordionSummary>
-                <AccordionDetails>
-                  <List>
-                    {detail.details?.map((item, index) => (
-                      <ListItem key={index}>
-                        <ListItemText
-                          primary={`${item.description} : ${item.amount}`}
-                          secondary={item.date.toDate().toLocaleString()}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            ))}
+            <MonthlyDetailPieChart
+              details={expenseDetails}
+              averages={expenseAvg}
+              type='expense'
+            />
           </Grid>
         </Grid>
       </DialogContent>
