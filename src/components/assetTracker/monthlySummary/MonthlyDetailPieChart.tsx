@@ -151,7 +151,9 @@ function MonthlyDetailPieChart({
               {detail.details?.map((item, index) => (
                 <ListItem key={index}>
                   <ListItemText
-                    primary={`${item.description} : ${item.amount}`}
+                    primary={`${item.description} : ${numWithCommas(
+                      item.amount
+                    )}`}
                     secondary={item.date.toDate().toLocaleString()}
                   />
                 </ListItem>
