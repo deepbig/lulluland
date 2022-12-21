@@ -16,6 +16,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Stack,
 } from '@mui/material';
 import { useAppSelector } from 'hooks';
 import { numFormatter, selectStockColor } from 'lib';
@@ -24,7 +25,6 @@ import React, { useState, useEffect } from 'react';
 import { IncomeExpenseDetailData } from 'types';
 import MonthlyDetailPieChart from './MonthlyDetailPieChart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Stack } from '@mui/system';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { setBackdrop } from 'modules/backdrop';
