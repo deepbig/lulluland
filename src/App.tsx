@@ -114,7 +114,7 @@ function App() {
         <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/initial' element={<InitialPage />} />
-        <Route path='/404' element={<NotFoundPage />} />
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1000 }}

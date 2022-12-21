@@ -107,29 +107,27 @@ const StockHistoryPieChart = () => {
               stockHistory.shares *
               stockHistory.currency,
           });
-        } else {
-          if (!_data[6]) {
-            _data.push({
-              name: 'Etc.',
-              value:
-                stockHistory.sellPrice *
-                stockHistory.shares *
-                stockHistory.currency,
-              profit:
-                (stockHistory.sellPrice - stockHistory.buyPrice) *
-                stockHistory.shares *
-                stockHistory.currency,
-            });
-          } else {
-            _data[6].value +=
+        } else if (i === 6) {
+          _data.push({
+            name: 'Etc.',
+            value:
               stockHistory.sellPrice *
               stockHistory.shares *
-              stockHistory.currency;
-            _data[6].profit +=
+              stockHistory.currency,
+            profit:
               (stockHistory.sellPrice - stockHistory.buyPrice) *
               stockHistory.shares *
-              stockHistory.currency;
-          }
+              stockHistory.currency,
+          });
+        } else {
+          _data[6].value +=
+            stockHistory.sellPrice *
+            stockHistory.shares *
+            stockHistory.currency;
+          _data[6].profit +=
+            (stockHistory.sellPrice - stockHistory.buyPrice) *
+            stockHistory.shares *
+            stockHistory.currency;
         }
       }
       setData(_data);

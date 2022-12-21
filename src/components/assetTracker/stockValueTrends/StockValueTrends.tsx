@@ -91,7 +91,7 @@ function StockValueTrends() {
 
   return (
     <>
-      {assetSummaries.length > 0 ? (
+      {assetSummaries.length > 0 && (
         <Grid
           container
           direction='row'
@@ -118,9 +118,9 @@ function StockValueTrends() {
             <StockHistoryPieChart />
           </Grid>
         </Grid>
-      ) : null}
+      )}
       <Grid container direction='row' spacing={2}>
-        {stocks.length > 0 ? (
+        {stocks.length > 0 &&
           stocks.map((stock) => (
             <Grid key={stock.symbol} item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Card>
@@ -174,10 +174,7 @@ function StockValueTrends() {
                 </CardContent>
               </Card>
             </Grid>
-          ))
-        ) : (
-          <Typography>There is no stock to display.</Typography>
-        )}
+          ))}
       </Grid>
     </>
   );

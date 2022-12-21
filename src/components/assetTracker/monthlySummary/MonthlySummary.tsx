@@ -1,4 +1,12 @@
-import { Divider, Grid, Box, Typography, IconButton } from '@mui/material';
+import {
+  Divider,
+  Grid,
+  Box,
+  Typography,
+  IconButton,
+  Stack,
+  Button,
+} from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   getAssetSummaries,
@@ -13,6 +21,8 @@ import MonthlyHistory from './MonthlyHistory';
 import { calculateMonthlyProfitLoss } from 'lib';
 import { updateAssetSummary } from 'db/repositories/asset';
 import { setSnackbar } from 'modules/snackbar';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MonthlyDetails from './MonthlyDetails';
 
 type MonthlySummaryProps = {
   selectedUser: UserData | null;
@@ -29,6 +39,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
   const totalIncomeExpense = useAppSelector(getTotalIncomeExpense);
   const dispatch = useAppDispatch();
   const [openForm, setOpenForm] = useState<'income' | 'expenses' | null>(null);
+  const [openDetails, setOpenDetails] = useState(false);
 
   useEffect(() => {
     if (assetSummaries.length > 0) {
@@ -104,7 +115,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
 
   return (
     <>
-      <Box display='flex' alignItems='center' height={300}>
+      <Box display='flex' alignItems='center' height={264}>
         <Grid container spacing={0} justifyContent='flex-end'>
           {/* Income */}
           <Grid item xs={12}>
@@ -150,11 +161,26 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
           </Typography>
         </Grid>
       </Box>
+      <Button
+        onClick={() => setOpenDetails(true)}
+        disabled={!assetSummaries.length}
+      >
+        <Stack direction='row' alignItems='center' spacing={1}>
+          <Typography variant='body2'>View All</Typography>
+          <ArrowForwardIcon />
+        </Stack>
+      </Button>
       {openForm && (
         <MonthlyHistory
           open={openForm}
           handleClose={() => setOpenForm(null)}
           data={assetSummaries[assetSummaries.length - 1]}
+        />
+      )}
+      {openDetails && (
+        <MonthlyDetails
+          open={openDetails}
+          handleClose={() => setOpenDetails(false)}
         />
       )}
     </>
