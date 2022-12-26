@@ -9,7 +9,7 @@
     "appAssociation": "AUTO",
     "rewrites": [
       {
-        "source": "/",
+        "source": "/**",
         "destination": "/index.html"
       }
     ]
