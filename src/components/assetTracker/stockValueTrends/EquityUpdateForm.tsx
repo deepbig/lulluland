@@ -72,8 +72,9 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
         const updatedAssets = { ...assetSummary.assets };
 
         // 2.1. cash 업데이트
-        updatedAssets[AssetTypes.CASH] +=
-          stockHistory.shares * stockHistory.sellPrice * stockHistory.currency;
+        updatedAssets[AssetTypes.CASH] += Math.round(
+          stockHistory.shares * stockHistory.sellPrice * stockHistory.currency
+        );
         // 2.2. equity 정리 (다 팔았으면 삭제, 남았으면 share 수 변경)
         // 2.3. Equity는 currentPrice로 계산해야 함.
         // 2.4. stocks에서도 빼야 함.
@@ -117,7 +118,7 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
             1,
             assetSummary
           );
-          
+
           props.handleClose();
 
           dispatch(setAssetSummaryList(updatedAssetSummaries));
@@ -128,7 +129,6 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
               severity: 'success',
             })
           );
-
         } else {
           dispatch(
             setSnackbar({

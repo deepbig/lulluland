@@ -38,7 +38,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
   const user = useAppSelector(getUser);
   const totalIncomeExpense = useAppSelector(getTotalIncomeExpense);
   const dispatch = useAppDispatch();
-  const [openForm, setOpenForm] = useState<'income' | 'expenses' | null>(null);
+  const [openForm, setOpenForm] = useState<'incomes' | 'expenses' | null>(null);
   const [openDetails, setOpenDetails] = useState(false);
 
   useEffect(() => {
@@ -100,7 +100,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
     }
   };
 
-  const handleFormOpen = (type: 'income' | 'expenses') => {
+  const handleFormOpen = (type: 'incomes' | 'expenses') => {
     if (
       assetSummaries[assetSummaries.length - 1].date.toDate().getMonth() ===
       new Date().getMonth()
@@ -122,7 +122,7 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
             <Box display='flex'>
               <Typography variant='h6'>Income</Typography>
               {user && selectedUser && user.uid === selectedUser.uid && (
-                <IconButton onClick={() => handleFormOpen('income')}>
+                <IconButton onClick={() => handleFormOpen('incomes')}>
                   <EditIcon />
                 </IconButton>
               )}
@@ -171,16 +171,13 @@ function MonthlySummary({ selectedUser }: MonthlySummaryProps) {
         </Stack>
       </Button>
       {openForm && (
-        <MonthlyHistory
-          open={openForm}
-          handleClose={() => setOpenForm(null)}
-          data={assetSummaries[assetSummaries.length - 1]}
-        />
+        <MonthlyHistory open={openForm} handleClose={() => setOpenForm(null)} />
       )}
       {openDetails && (
         <MonthlyDetails
           open={openDetails}
           handleClose={() => setOpenDetails(false)}
+          selectedUser={selectedUser}
         />
       )}
     </>

@@ -15,7 +15,7 @@ import {
 import { useAppSelector } from 'hooks';
 import { getAssetSummaries } from 'modules/asset';
 import React, { useState, useEffect } from 'react';
-import { IncomeExpenseDetailData } from 'types';
+import { IncomeExpenseDetailData, UserData } from 'types';
 import MonthlyDetailPieChart from './MonthlyDetailPieChart';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -25,9 +25,14 @@ import { setSnackbar } from 'modules/snackbar';
 interface MonthlyDetailsProps {
   open: boolean;
   handleClose: () => void;
+  selectedUser: UserData | null;
 }
 
-function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
+function MonthlyDetails({
+  open,
+  handleClose,
+  selectedUser,
+}: MonthlyDetailsProps) {
   const theme = useTheme();
   const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
   const assetSummaries = useAppSelector(getAssetSummaries);
@@ -211,7 +216,8 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
             <MonthlyDetailPieChart
               details={incomeDetails}
               averages={incomeAvg}
-              type='income'
+              type='incomes'
+              selectedUser={selectedUser}
             />
           </Grid>
 
@@ -222,7 +228,8 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
             <MonthlyDetailPieChart
               details={expenseDetails}
               averages={expenseAvg}
-              type='expense'
+              type='expenses'
+              selectedUser={selectedUser}
             />
           </Grid>
         </Grid>
@@ -230,7 +237,7 @@ function MonthlyDetails({ open, handleClose }: MonthlyDetailsProps) {
 
       <DialogActions>
         <Button onClick={handleClose} variant='contained'>
-          Cancel
+          Close
         </Button>
       </DialogActions>
     </Dialog>

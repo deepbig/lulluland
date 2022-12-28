@@ -16,6 +16,8 @@ import {
   TextField,
   Typography,
   Autocomplete,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { calculateMonthlyProfitLoss, givenMonthYearFormat } from 'lib';
@@ -70,6 +72,8 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
   const [stockAddValues, setStockAddValues] = useState({
     ...defaultStockValue,
   });
+  const theme = useTheme();
+  const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     if (assetSummaries.length > 0) {
@@ -233,7 +237,7 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
 
   return (
     <>
-      <Dialog open={props.open}>
+      <Dialog open={props.open} fullScreen={isSmallWidth}>
         <DialogTitle sx={{ textAlign: 'center' }}>
           Asset Update Form
           <Typography variant='body1' sx={{ textAlign: 'center' }}>
