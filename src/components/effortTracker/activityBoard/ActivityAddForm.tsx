@@ -195,6 +195,9 @@ function ActivityAddForm(props: ActivityAddFormProps) {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                step: 1,
+              }}
             />
             <TextField
               margin='dense'

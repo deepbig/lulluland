@@ -157,6 +157,9 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                step: 1,
+              }}
             />
             <TextField
               margin='dense'

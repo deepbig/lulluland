@@ -374,6 +374,9 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    inputProps={{
+                      step: 1,
+                    }}
                   />
 
                   <FormControl fullWidth variant='standard' sx={{ mt: 1 }}>
