@@ -1,5 +1,17 @@
-import { green, blue, purple, teal, orange, brown, red } from '@mui/material/colors';
-import { CategoryData, IncomeExpenseDetailData, IncomeExpensesData } from 'types';
+import {
+  green,
+  blue,
+  purple,
+  teal,
+  orange,
+  brown,
+  red,
+} from '@mui/material/colors';
+import {
+  CategoryData,
+  IncomeExpenseDetailData,
+  IncomeExpensesData,
+} from 'types';
 
 export const months = [
   'Jan',
@@ -16,7 +28,10 @@ export const months = [
   'Dec',
 ];
 
-export const isCategoryExist = (value: string, arr: CategoryData[] | IncomeExpenseDetailData[]) => {
+export const isCategoryExist = (
+  value: string,
+  arr: CategoryData[] | IncomeExpenseDetailData[]
+) => {
   const left = value.toLowerCase();
   return arr?.some((right) => left === right.category.toLowerCase());
 };
@@ -78,7 +93,22 @@ export const currentDateTime = () => {
     dateObj.getHours() < 10 ? '0' : ''
   }${dateObj.getHours()}:${
     dateObj.getMinutes() < 10 ? '0' : ''
-  }${dateObj.getMinutes()}`;
+  }${dateObj.getMinutes()}:${
+    dateObj.getSeconds() < 10 ? '0' : ''
+  }${dateObj.getSeconds()}`;
+};
+
+export const selectedDateTime = (year: number, month: number) => {
+  const dateObj = new Date(year, month - 1, 1);
+  return `${dateObj.getFullYear()}-${dateObj.getMonth() < 9 ? '0' : ''}${
+    dateObj.getMonth() + 1
+  }-${dateObj.getDate() < 10 ? '0' : ''}${dateObj.getDate()}T${
+    dateObj.getHours() < 10 ? '0' : ''
+  }${dateObj.getHours()}:${
+    dateObj.getMinutes() < 10 ? '0' : ''
+  }${dateObj.getMinutes()}:${
+    dateObj.getSeconds() < 10 ? '0' : ''
+  }${dateObj.getSeconds()}`;
 };
 
 export const givenDateFormat = (date: string) => {
@@ -98,11 +128,13 @@ export const givenMonthYearFormat = (date: string) => {
 
 export const getPreviousMonthYear = () => {
   const currentDate = new Date();
-  const previousDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+  const previousDate = new Date(
+    currentDate.setMonth(currentDate.getMonth() - 1)
+  );
   const year = previousDate.getFullYear();
   const month = (1 + previousDate.getMonth()).toString().padStart(2, '0');
   return `${month}/${year}`;
-}
+};
 
 export const numFormatter = (num: number) => {
   // return len > 3 ? `${value / 1000}${units[len/3]}` : value;

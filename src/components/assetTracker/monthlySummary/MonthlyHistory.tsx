@@ -11,10 +11,12 @@ import {
   Input,
   InputAdornment,
   InputLabel,
+  Link,
   MenuItem,
   Paper,
   Select,
   SelectChangeEvent,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -23,27 +25,31 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { currentDateTime, givenMonthYearFormat } from 'lib';
+import {
+  calculateMonthlyProfitLoss,
+  currentDateTime,
+  selectedDateTime,
+} from 'lib';
 import { getAssetSummaries, setAssetSummaryList } from 'modules/asset';
 import { setSnackbar } from 'modules/snackbar';
-import React, { useState } from 'react';
-import {
-  AssetData,
-  ExpenseTypes,
-  IncomeExpensesData,
-  IncomeTypes,
-} from 'types';
+import React, { useEffect, useState } from 'react';
+import { ExpenseTypes, IncomeExpensesData, IncomeTypes } from 'types';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import SaveIcon from '@mui/icons-material/Save';
-// import ClearIcon from '@mui/icons-material/Clear';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
-import { updateAssetSummary } from 'db/repositories/asset';
+import {
+  updateAssetSummaries,
+  updateAssetSummary,
+} from 'db/repositories/asset';
 import { Timestamp } from 'firebase/firestore';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 interface Column {
   field: 'date' | 'category' | 'description' | 'amount';
@@ -82,23 +88,17 @@ const columns: readonly Column[] = [
 ];
 
 interface MonthlyHistoryProps {
-  open: 'income' | 'expenses' | null;
+  open: 'incomes' | 'expenses' | null;
   handleClose: () => void;
-  data: AssetData;
 }
 
-function MonthlyHistory(props: MonthlyHistoryProps) {
-  const { open, handleClose, data } = props;
+function MonthlyHistory({ open, handleClose }: MonthlyHistoryProps) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUser);
   const assetSummaries = useAppSelector(getAssetSummaries);
   const [updatedIncomeExpenses, setUpdatedIncomeExpenses] = useState<
     IncomeExpensesData[]
-  >(
-    data[open === 'income' ? 'incomes' : 'expenses']
-      ? [...data[open === 'income' ? 'incomes' : 'expenses']]
-      : []
-  );
+  >([]);
   const defaultNewData = {
     date: currentDateTime(),
     description: '',
@@ -109,11 +109,39 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
     ...defaultNewData,
   });
   const categories = Object.values(
-    open === 'income' ? IncomeTypes : ExpenseTypes
+    open === 'incomes' ? IncomeTypes : ExpenseTypes
   );
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  // const [isEditing, setIsEditing] = useState(false);
+  const [selectedMonthYear, setSelectedMonthYear] = useState('');
+  const theme = useTheme();
+  const isSmallWidth = useMediaQuery(theme.breakpoints.down('md'));
+  const [isCurrentMonth, setIsCurrentMonth] = useState(true);
+
+  useEffect(() => {
+    if (assetSummaries.length <= 0) {
+      return;
+    }
+
+    const assetSummary = selectedMonthYear
+      ? assetSummaries.find((asset) => asset.id === selectedMonthYear)
+      : assetSummaries[assetSummaries.length - 1];
+
+    if (!assetSummary) {
+      return;
+    }
+
+    if (!selectedMonthYear) {
+      setSelectedMonthYear(assetSummary.id);
+      return;
+    }
+
+    if (open) {
+      setUpdatedIncomeExpenses(
+        assetSummary[open] ? [...assetSummary[open]] : []
+      );
+    }
+  }, [assetSummaries, open, selectedMonthYear]);
 
   const handleAdd = () => {
     const _newData = {
@@ -130,11 +158,23 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
         return 0;
       }
     });
-
-    // Timestamp.fromDate(new Date())
-
     setUpdatedIncomeExpenses(newIncomeExpenses);
-    setNewData({ ...defaultNewData });
+
+    const currentMonthYear = new Date().toISOString().slice(0, 7);
+    if (selectedMonthYear !== currentMonthYear) {
+      const yearMonth = selectedMonthYear.split('-');
+      if (Number.isNaN(yearMonth[0]) || Number.isNaN(yearMonth[1])) {
+        throw new Error('Invalid month year format');
+      }
+
+      setNewData({
+        ...defaultNewData,
+        date: selectedDateTime(parseInt(yearMonth[0]), parseInt(yearMonth[1])),
+      });
+    } else {
+      setNewData({ ...defaultNewData });
+    }
+
     dispatch(
       setSnackbar({
         open: true,
@@ -145,13 +185,14 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
   };
 
   const handleSave = async () => {
-    if (user?.uid) {
+    if (user?.uid && open) {
       try {
         dispatch(setBackdrop(true));
         const newAssetSummaries = [...assetSummaries];
+
         const res = await updateAssetSummary(user.uid, {
           ...newAssetSummaries[newAssetSummaries.length - 1],
-          [open === 'income' ? 'incomes' : 'expenses']: updatedIncomeExpenses,
+          [open]: updatedIncomeExpenses,
         });
         if (res) {
           newAssetSummaries.splice(newAssetSummaries.length - 1, 1, res);
@@ -179,6 +220,64 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
       } finally {
         dispatch(setBackdrop(false));
       }
+    }
+  };
+
+  const handleHistorySave = async () => {
+    if (!user?.uid || !open) {
+      return;
+    }
+
+    const assetSummary = assetSummaries.find(
+      (asset) => asset.id === selectedMonthYear
+    );
+    if (!assetSummary) {
+      return;
+    }
+
+    try {
+      dispatch(setBackdrop(true));
+
+      const cashChanges = calculateMonthlyProfitLoss(
+        updatedIncomeExpenses,
+        assetSummary[open]
+      );
+      const updatedAssetSummaries = await updateAssetSummaries(
+        user.uid,
+        selectedMonthYear,
+        open,
+        updatedIncomeExpenses,
+        cashChanges
+      );
+
+      if (assetSummaries) {
+        const updatedSummaries = assetSummaries.map((summary) => {
+          const updatedSummary = updatedAssetSummaries.find(
+            (updated) => updated.id === summary.id
+          );
+          return updatedSummary ? updatedSummary : summary;
+        });
+        dispatch(setAssetSummaryList(updatedSummaries));
+      }
+
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'success',
+          message: 'Records are successfully saved.',
+        })
+      );
+      handleClose();
+    } catch (e) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          message: `Failed to update records caused by error: ${e}`,
+          severity: 'error',
+        })
+      );
+    } finally {
+      dispatch(setBackdrop(false));
     }
   };
 
@@ -212,6 +311,24 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.id === 'date') {
+      const currentYearMonth = selectedMonthYear.split('-');
+      const updatedYearMonth = e.target.value.split('-');
+      if (
+        currentYearMonth[1] !== updatedYearMonth[1] ||
+        currentYearMonth[0] !== updatedYearMonth[0]
+      ) {
+        dispatch(
+          setSnackbar({
+            open: true,
+            message: 'You cannot add item to another month.',
+            severity: 'error',
+          })
+        );
+        return;
+      }
+    }
+
     setNewData({
       ...newData,
       [e.target.id]:
@@ -219,20 +336,108 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
     });
   };
 
+  const handleMonthChange = (isNext: boolean) => {
+    if (!open) {
+      return;
+    }
+
+    try {
+      dispatch(setBackdrop(true));
+      const index = assetSummaries.findIndex(
+        (asset) => asset.id === selectedMonthYear
+      );
+
+      const currentAssetSummary = assetSummaries[index];
+
+      if (
+        JSON.stringify(updatedIncomeExpenses) !==
+        JSON.stringify(currentAssetSummary[open])
+      ) {
+        setSnackbar({
+          open: true,
+          message: `Please save your current month data before you change month.`,
+          severity: 'error',
+        });
+        return;
+      }
+
+      if (
+        index < 0 ||
+        (isNext && index === assetSummaries.length - 1) ||
+        (!isNext && index === 0)
+      ) {
+        return;
+      }
+
+      // if month not current month, change month to first day of the selected month.
+      const currentMonthYear = new Date().toISOString().slice(0, 7);
+      const newAssetSummary = assetSummaries[index + (isNext ? 1 : -1)];
+
+      if (newAssetSummary.id !== currentMonthYear) {
+        const yearMonth = newAssetSummary.id.split('-');
+        if (Number.isNaN(yearMonth[0]) || Number.isNaN(yearMonth[1])) {
+          throw new Error('Invalid month year format');
+        }
+
+        setNewData({
+          ...defaultNewData,
+          date: selectedDateTime(
+            parseInt(yearMonth[0]),
+            parseInt(yearMonth[1])
+          ),
+        });
+        setIsCurrentMonth(false);
+      } else {
+        setNewData({ ...defaultNewData });
+        setIsCurrentMonth(true);
+      }
+      setSelectedMonthYear(newAssetSummary.id);
+    } catch (e) {
+      setSnackbar({
+        open: true,
+        message: `Failed to change month of asset summary. Error: ${e}`,
+        severity: 'error',
+      });
+    } finally {
+      dispatch(setBackdrop(false));
+    }
+  };
+
   return (
-    <Dialog open={open ? true : false} maxWidth='lg'>
+    <Dialog
+      open={open ? true : false}
+      fullScreen={isSmallWidth}
+      fullWidth
+      maxWidth='lg'
+    >
       <DialogTitle sx={{ textAlign: 'center' }}>
-        {open === 'income' ? 'Income' : 'Expenses'} Detail Form
-        <Typography variant='body1' sx={{ textAlign: 'center' }}>
-          {givenMonthYearFormat(
-            data.date ? data.date.toDate().toString() : null
-          )}
-        </Typography>
+        {open === 'incomes' ? 'Income' : 'Expenses'} Detail Form
       </DialogTitle>
+      <Stack direction='row' alignItems='center' justifyContent='center'>
+        <IconButton
+          disabled={selectedMonthYear === assetSummaries[0].id}
+          onClick={() => handleMonthChange(false)}
+        >
+          <ArrowLeftIcon />
+        </IconButton>
+        <Link component='button' color='inherit'>
+          <Typography sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+            {selectedMonthYear}
+          </Typography>
+        </Link>
+        <IconButton
+          disabled={
+            selectedMonthYear === assetSummaries[assetSummaries.length - 1].id
+          }
+          onClick={() => handleMonthChange(true)}
+        >
+          <ArrowRightIcon />
+        </IconButton>
+      </Stack>
       <DialogContent>
         {/* 추가 필드 - 날짜, 타입, 노트, 금액, 추가 버튼 */}
         <Typography variant='h6'>
-          {open === 'income' ? 'Income' : 'Expenses'} Add Form
+          {open === 'incomes' ? 'Income' : 'Expenses'} Add Form
         </Typography>
         <form
           id='income-expenses-add-form'
@@ -270,6 +475,9 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
             InputLabelProps={{
               shrink: true,
             }}
+            inputProps={{
+              step: 1,
+            }}
           />
           <TextField
             margin='dense'
@@ -306,7 +514,7 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
         </Button>
         {/* 리스트 출력 - 날짜, 타입, 노트(아이콘), 금액, 수정 버튼 */}
         <Typography variant='h6' mt={2}>
-          {open === 'income' ? 'Income' : 'Expenses'} Records
+          {open === 'incomes' ? 'Income' : 'Expenses'} Records
         </Typography>
         {updatedIncomeExpenses.length > 0 ? (
           <Paper>
@@ -381,10 +589,12 @@ function MonthlyHistory(props: MonthlyHistoryProps) {
             </Typography>
           </Box>
         )}
-        {/* 추가, 수정 버튼은 현재 month만 가능하도록 */}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSave} variant='contained'>
+        <Button
+          onClick={isCurrentMonth ? handleSave : handleHistorySave}
+          variant='contained'
+        >
           Save
         </Button>
         <Button onClick={handleClose} variant='contained'>
