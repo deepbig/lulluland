@@ -78,14 +78,19 @@ function MonthlyActivityChart({
           : activity.date.toDate().getMonth() === thisMonth &&
               activity.date.toDate().getFullYear() === thisYear;
       });
-      const lastMonth = thisMonth - 1;
+      let lastMonth = thisMonth - 1;
+      let lastYear = thisYear;
+      if (thisMonth === 0) {
+        lastMonth = 11;
+        lastYear--;
+      }
       const previous = activities.filter((activity) => {
         return selectedCategory
           ? activity.date.toDate().getMonth() === lastMonth &&
-              activity.date.toDate().getFullYear() === thisYear &&
+              activity.date.toDate().getFullYear() === lastYear &&
               activity.category === selectedCategory.category
           : activity.date.toDate().getMonth() === lastMonth &&
-              activity.date.toDate().getFullYear() === thisYear;
+              activity.date.toDate().getFullYear() === lastYear;
       });
 
       let _data = [];
