@@ -19,6 +19,7 @@ import {
   IncomeExpensesData,
   StockHistoryData,
 } from 'types';
+import { currentDateToId } from 'lib';
 const SUBCOLLECTION_ASSET_SUMMARIES = 'asset_summaries';
 const SUBCOLLECTION_STOCK_HISTORIES = 'stock_histories';
 const COLLECTION_NAME = 'users';
@@ -86,7 +87,7 @@ export const updateAssetSummary = async (
       expenses: values.expenses,
     };
     if (!values.id) {
-      const id = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+      const id = currentDateToId();
       await setDoc(
         doc(db, COLLECTION_NAME, uid, SUBCOLLECTION_ASSET_SUMMARIES, id),
         { ...updatedValues }

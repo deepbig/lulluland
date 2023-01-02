@@ -85,6 +85,13 @@ export const selectStockColor = (value: number) => {
   }
 };
 
+export const currentDateToId = () => {
+  const dateObj = new Date();
+  return `${dateObj.getFullYear()}-${dateObj.getMonth() < 9 ? '0' : ''}${
+    dateObj.getMonth() + 1
+  }`;
+};
+
 export const currentDateTime = () => {
   const dateObj = new Date();
   return `${dateObj.getFullYear()}-${dateObj.getMonth() < 9 ? '0' : ''}${

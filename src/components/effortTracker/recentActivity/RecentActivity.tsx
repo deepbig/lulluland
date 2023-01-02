@@ -192,7 +192,7 @@ function RecentActivity({ selectedCategory, selectedUser }: SummaryProps) {
           </Box>
         </Card>
       ) : (
-        <Box m='auto'>
+        <Box m='auto' p={3}>
           <Typography variant='guideline' align='center'>
             There are no recent Activity. Please add one!
           </Typography>
