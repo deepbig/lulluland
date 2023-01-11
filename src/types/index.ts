@@ -137,12 +137,6 @@ export interface PerformanceAddFormData {
   performance: number;
 }
 
-export interface PerformanceChartData {
-  time: string;
-  desc: string;
-  count?: number;
-}
-
 // monthly asset summary data type
 export interface AssetData {
   id: string;

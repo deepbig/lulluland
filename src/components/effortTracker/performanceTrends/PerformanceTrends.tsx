@@ -4,19 +4,24 @@ import {
   setCategoryList,
   getPerformances,
   setPerformanceList,
+  getPerformanceChartData,
+  setPerformanceChartData,
 } from 'modules/performance';
 import { Grid, Typography, Avatar, Box } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/effortTracker/performanceChart/PerformanceChart';
 import MainCard from 'components/custom/MainCard';
 import { styled } from '@mui/material/styles';
-import { PerformanceData, PerformanceChartData, UserData, CategoryData, PerformanceCategoryData } from 'types';
+import {
+  PerformanceData,
+  UserData,
+  CategoryData,
+  PerformanceCategoryData,
+} from 'types';
 import { backgroundColors, circleColors, avatarColors } from 'lib';
 import { getUser } from 'modules/user';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import db from 'db';
-const COLLECTION_NAME = 'users';
-const SUBCOLLECTION_NAME = 'performances';
+import { fetchAllPerformances } from 'db/repositories/performance';
+import { setSnackbar } from 'modules/snackbar';
 
 const CardWrapper = styled(MainCard, {
   shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'baColor',
@@ -68,90 +73,99 @@ export interface PerformanceTrendsProps {
   username: string | undefined;
 }
 
-function PerformanceTrends(props: PerformanceTrendsProps) {
+function PerformanceTrends({
+  selectedCategory,
+  selectedUser,
+  username,
+}: PerformanceTrendsProps) {
   const performances = useAppSelector(getPerformances);
+  const performanceChartData = useAppSelector(getPerformanceChartData);
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     let unsubscribe;
-    if (props.selectedUser && props.selectedUser.categories.length > 0) {
-      const q = query(
-        collection(
-          db,
-          COLLECTION_NAME,
-          props.selectedUser.uid,
-          SUBCOLLECTION_NAME
-        ),
-        orderBy('category'),
-        orderBy('subcategory'),
-        orderBy('date', 'desc')
-      );
-      unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const performances: Array<any> = [];
-        const newCategories: Array<PerformanceCategoryData> = [];
+    if (selectedUser && selectedUser.categories.length > 0) {
+      const performanceChartData: Array<any> = [];
+      const newCategories: Array<PerformanceCategoryData> = [];
 
-        const categories = props.selectedUser?.categories;
-        if (categories) {
-          categories.forEach((category) => {
-            newCategories.push({ category: category.category, subcategories: [] });
-            performances.push([]);
+      const categories = selectedUser.categories;
+      if (categories) {
+        categories.forEach((category) => {
+          newCategories.push({
+            category: category.category,
+            subcategories: [],
           });
+          performanceChartData.push([]);
+        });
 
-          let category = '';
-          let index = -1;
-          let subcategory = '';
-          let subIndex = -1;
+        let category = '';
+        let index = -1;
+        let subcategory = '';
+        // subIndex needed to be switch to findIndex
+        let subIndex = -1;
 
-          querySnapshot.docs.forEach((_data) => {
-            if (category !== _data.data().category) {
-              category = _data.data().category;
-              index = categories.findIndex((c) => c.category = category);
-              subIndex = -1;
-            }
+        performances.forEach((performance) => {
+          // if category switched, add new array.
+          if (category !== performance.category) {
+            category = performance.category;
+            index = categories.findIndex((c) => c.category === category);
+            subIndex = -1;
+          }
 
-            if (subcategory !== _data.data().subcategory || subIndex === -1) {
-              subcategory = _data.data().subcategory;
-              subIndex++;
-              newCategories[index].subcategories.push(subcategory);
-              performances[index].push([]);
-            }
-            performances[index][subIndex].push({
-              id: _data.id,
-              ..._data.data(),
-            });
-          });
-          dispatch(setPerformanceList(performances));
-          dispatch(setCategoryList(newCategories));
-        }
-      });
+          // if subcategory switched, add new array on the category array.
+          if (subcategory !== performance.subcategory || subIndex === -1) {
+            subcategory = performance.subcategory;
+            subIndex++;
+            newCategories[index].subcategories.push(subcategory);
+            performanceChartData[index].push([]);
+          }
+          performanceChartData[index][subIndex].push({
+            ...performance,
+            date: performance.date?.toDate().toDateString(),
+          } as PerformanceData);
+        });
+        dispatch(setPerformanceChartData(performanceChartData));
+        dispatch(setCategoryList(newCategories));
+      }
     } else {
-      dispatch(setPerformanceList([]));
+      dispatch(setPerformanceChartData([]));
       dispatch(setCategoryList([]));
     }
 
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.selectedUser]);
+  }, [performances]);
 
-  const createChartData = (performances: PerformanceData[]) => {
-    let chartData: PerformanceChartData[] = [];
-    performances?.forEach((data) =>
-      chartData.unshift({
-        time: data.date?.toDate().toDateString(),
-        desc: data.note,
-        count: data.performance,
-      })
-    );
-    return chartData;
+  useEffect(() => {
+    if (selectedUser?.uid) {
+      fetchAndSetAllPerformances(selectedUser.uid);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedUser]);
+
+  // 처음 렌더링 시 호출. performance가 변경된 경우 위의 값 호출
+  const fetchAndSetAllPerformances = async (uid: string) => {
+    try {
+      const _performances = await fetchAllPerformances(uid);
+      dispatch(setPerformanceList(_performances));
+    } catch (e) {
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Failed to fecth performances from db. Error: ' + e,
+        })
+      );
+    }
   };
 
   return (
     <>
-      {performances.length < 1 ? (
+      {performanceChartData.length < 1 ? (
         <Box m={2}>
           <Typography variant='guideline' align='center' mt={1}>
-            {user && user.username === props.username
+            {user && user.username === username
               ? "You don't have any performance history. Please add an indicator for your record!"
               : 'There is no performance history.'}
           </Typography>
@@ -160,17 +174,17 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
         <Box m={1}></Box>
       )}
       <Grid container direction='row' spacing={2}>
-        {performances?.map((performance) =>
+        {performanceChartData?.map((performance) =>
           performance?.map((subPerformance, index) =>
-            !props.selectedCategory ||
-            props.selectedCategory.category === subPerformance[0].category ? (
+            !selectedCategory ||
+            selectedCategory.category === subPerformance[0]?.category ? (
               <Grid
                 item
                 xs={12}
                 md={6}
                 lg={4}
                 xl={3}
-                key={subPerformance[0].subcategory + index}
+                key={subPerformance[0]?.subcategory + index}
               >
                 <CardWrapper
                   bgColor={backgroundColors[index % backgroundColors.length]}
@@ -181,7 +195,11 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                       <Grid container alignItems='center'>
                         <Grid item xs={12}>
                           <Typography component='h3' variant='h6'>
-                            💪{subPerformance[0]?.subcategory}
+                            💪
+                            {
+                              subPerformance[subPerformance.length - 1]
+                                ?.subcategory
+                            }
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
@@ -192,7 +210,11 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                               mr: 1,
                             }}
                           >
-                            {subPerformance[0]?.performance} reps
+                            {
+                              subPerformance[subPerformance.length - 1]
+                                ?.performance
+                            }{' '}
+                            reps
                           </Typography>
                         </Grid>
                         <Grid item>
@@ -206,9 +228,9 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                             }}
                           >
                             {(
-                              (subPerformance[0]?.performance /
-                                subPerformance[subPerformance.length - 1]
-                                  ?.performance -
+                              (subPerformance[subPerformance.length - 1]
+                                ?.performance /
+                                subPerformance[0]?.performance -
                                 1) *
                               100
                             ).toFixed(1)}
@@ -232,9 +254,9 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                               fontSize='inherit'
                               sx={{
                                 transform: `rotate(${
-                                  subPerformance[0]?.performance >
                                   subPerformance[subPerformance.length - 1]
-                                    ?.performance
+                                    ?.performance >
+                                  subPerformance[0]?.performance
                                     ? '-45deg'
                                     : '45deg'
                                 })`,
@@ -244,10 +266,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography>
-                            from{' '}
-                            {subPerformance[subPerformance.length - 1].date
-                              ?.toDate()
-                              .toDateString()}
+                            from {subPerformance[0]?.date}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -259,9 +278,7 @@ function PerformanceTrends(props: PerformanceTrendsProps) {
                           height: 150,
                         }}
                       >
-                        <PerformanceChart
-                          data={createChartData(subPerformance)}
-                        />
+                        <PerformanceChart data={subPerformance} />
                       </Box>
                     </Grid>
                   </Grid>

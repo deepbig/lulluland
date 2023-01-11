@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { useAppSelector } from 'hooks';
-import { getPerformances } from 'modules/performance';
+import { getPerformanceChartData } from 'modules/performance';
 import {
   Grid,
   LinearProgress,
@@ -67,28 +67,33 @@ interface ObjectiveProps {
   category: CategoryData | null;
 }
 
-
-function Achievements({ category } : ObjectiveProps) {
+function Achievements({ category }: ObjectiveProps) {
   // goals from performance.
-  const performances = useAppSelector(getPerformances);
+  const performanceChartData = useAppSelector(getPerformanceChartData);
 
   return (
     <div>
       <List sx={{ p: 0, m: 0 }}>
         {/* TODO - Goal collection should be in the database */}
-        {performances?.map((performance) =>
-          performance.map((subPerformance, index) => (
-            !category || category.category === subPerformance[0].category ?
-            <LinearProgressWithLabel
-              title={`${subPerformance[0].subcategory} in a set (${
-                subPerformance[0].performance
-              } / ${goals[index % 4]} reps)`}
-              value={(subPerformance[0].performance / goals[index % 4]) * 100}
-              barColor={backgroundColors[index % 5]}
-              key={subPerformance[0].subcategory + index}
-            />
-            : null
-          ))
+        {performanceChartData?.map((performance) =>
+          performance.map((subPerformance, index) =>
+            !category || category.category === subPerformance[0]?.category ? (
+              <LinearProgressWithLabel
+                title={`${
+                  subPerformance[subPerformance.length - 1]?.subcategory
+                } in a set (${
+                  subPerformance[subPerformance.length - 1]?.performance
+                } / ${goals[index % 4]} reps)`}
+                value={
+                  (subPerformance[subPerformance.length - 1]?.performance /
+                    goals[index % 4]) *
+                  100
+                }
+                barColor={backgroundColors[index % 5]}
+                key={subPerformance[0]?.subcategory + index}
+              />
+            ) : null
+          )
         )}
       </List>
     </div>
