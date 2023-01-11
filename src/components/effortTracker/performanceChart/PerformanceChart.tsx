@@ -11,10 +11,10 @@ import {
 } from 'recharts/types/component/DefaultTooltipContent';
 import { Card, CardContent, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { PerformanceChartData } from 'types';
+import { PerformanceData } from 'types';
 
 interface performanceChartProps {
-  data: PerformanceChartData[];
+  data: PerformanceData[];
 }
 
 const CustomTooltip = ({
@@ -27,10 +27,10 @@ const CustomTooltip = ({
         <Card sx={{ backgroundColor: grey[800], border: 'none' }}>
           <CardContent style={{ padding: 7 }}>
             <Typography variant='body2'>
-              {payload && payload[0] && payload[0].payload.time}
+              {payload && payload[0] && payload[0].payload.date}
             </Typography>
             <Typography variant='body2'>
-              desc: {payload && payload[0] && payload[0].payload.desc}
+              desc: {payload && payload[0] && payload[0].payload.note}
             </Typography>
             <Typography variant='body2'>
               counts: {payload && payload[0] && payload[0].value} reps
@@ -62,7 +62,7 @@ function PerformanceChart(props: performanceChartProps) {
           <Line
             isAnimationActive={false}
             type='monotone'
-            dataKey='count'
+            dataKey='performance'
             stroke='white'
             strokeWidth={3}
             dot={false}

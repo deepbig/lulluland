@@ -15,13 +15,12 @@ import {
 import { savePerformance } from 'db/repositories/performance';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { currentDateTime } from 'lib';
-import {
-  getCategories,
-} from 'modules/performance';
+import { getCategories, setPerformanceList } from 'modules/performance';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
 import { CategoryData, PerformanceAddFormData } from 'types';
+import { setSnackbar } from 'modules/snackbar';
 
 interface PerformanceAddFormProps {
   open: boolean;
@@ -55,12 +54,17 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
         ...values,
         uid: user.uid,
       };
-      await savePerformance(addValues);
+      const _performances = await savePerformance(addValues);
+      dispatch(setPerformanceList(_performances));
 
       props.handleClose();
     } catch (e) {
-      alert(
-        'Creating Performance was not successful due to database error: ' + e
+      dispatch(
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Creating Performance was not successful due to database error: ' + e,
+        })
       );
     } finally {
       dispatch(setBackdrop(false));
