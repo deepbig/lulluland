@@ -77,6 +77,7 @@ function CategoryAddForm(props: CategoryAddFormProps) {
 
       categories.push({
         category: values.category,
+        subcategories: [],
         color: categories.length + 1,
       });
       setValues({ ...values, categories: categories, category: '' });
@@ -198,15 +199,15 @@ function CategoryAddForm(props: CategoryAddFormProps) {
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button variant='contained' onClick={props.handleClose}>
+          Cancel
+        </Button>
         <Button
           variant='contained'
           onClick={handleSave}
           disabled={values.categories.length === 0}
         >
           Save
-        </Button>
-        <Button variant='contained' onClick={props.handleClose}>
-          Cancel
         </Button>
       </DialogActions>
     </Dialog>

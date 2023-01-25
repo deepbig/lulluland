@@ -5,7 +5,7 @@ import {
   setActivitySummaryList,
 } from 'modules/activity';
 import React, { useEffect, useState } from 'react';
-import { ActivityData, CategoryData, UserData } from 'types';
+import { ActivityData, CategoryData } from 'types';
 import {
   Box,
   Button,
@@ -23,20 +23,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { setSnackbar } from 'modules/snackbar';
 import { fetchAllActivitySummaries, remove } from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
-import { getUser } from 'modules/user';
+import { getSelectedUser, getUser } from 'modules/user';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { chipColors as colors } from 'lib';
 
 interface SummaryProps {
   selectedCategory: CategoryData | null;
-  selectedUser: UserData | null;
 }
 
-function RecentActivity({ selectedCategory, selectedUser }: SummaryProps) {
+function RecentActivity({ selectedCategory }: SummaryProps) {
   const theme = useTheme();
   const activities = useAppSelector(getActivities);
   const user = useAppSelector(getUser);
+  const selectedUser = useAppSelector(getSelectedUser);
   const [data, setData] = useState<ActivityData[]>([]);
   const [index, setIndex] = useState(0);
   const [confirm, setConfirm] = useState(false);

@@ -11,16 +11,20 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
+  IconButton,
+  Box,
 } from '@mui/material';
 import { savePerformance } from 'db/repositories/performance';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { currentDateTime } from 'lib';
-import { getCategories, setPerformanceList } from 'modules/performance';
+import { setPerformanceList } from 'modules/performance';
 import { setBackdrop } from 'modules/backdrop';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
 import { CategoryData, PerformanceAddFormData } from 'types';
 import { setSnackbar } from 'modules/snackbar';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SubcategoryAddForm from './SubcategoryAddForm';
 
 interface PerformanceAddFormProps {
   open: boolean;
@@ -30,7 +34,6 @@ interface PerformanceAddFormProps {
 
 function PerformanceAddForm(props: PerformanceAddFormProps) {
   const user = useAppSelector(getUser);
-  const categories = useAppSelector(getCategories);
   const [values, setValues] = useState<PerformanceAddFormData>({
     category: props.selectedCategory ? props.selectedCategory.category : '',
     subcategory: '',
@@ -41,6 +44,7 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
   });
   const [categoryIndex, setCategoryIndex] = useState(0);
   const dispatch = useAppDispatch();
+  const [openSubcategoryAddForm, setOpenSubcategoryAddForm] = useState(false);
 
   const handleSubmit = async () => {
     try {
@@ -63,7 +67,9 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
         setSnackbar({
           open: true,
           severity: 'error',
-          message: 'Creating Performance was not successful due to database error: ' + e,
+          message:
+            'Creating Performance was not successful due to database error: ' +
+            e,
         })
       );
     } finally {
@@ -79,10 +85,11 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
   };
 
   const handleSelect = (event: SelectChangeEvent) => {
-    const index = categories.findIndex(
-      (data) => data?.category === event.target.value
+    const index = user?.categories?.findIndex(
+      (data) => data.category === event.target.value
     );
-    if (index >= 0) {
+
+    if (index !== undefined && index >= 0) {
       setCategoryIndex(index);
       setValues({ ...values, category: event.target.value });
     } else {
@@ -123,29 +130,37 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
             </FormControl>
 
             {values.category ? (
-              <Autocomplete
-                freeSolo
-                id='subcategory-combo-box'
-                onInputChange={(event, subcategory: string) => {
-                  setValues({ ...values, subcategory: subcategory });
-                }}
-                options={
-                  categories[categoryIndex]?.subcategories
-                    ? categories[categoryIndex].subcategories
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label='Subcategory'
-                    disabled={!values.category}
-                    variant='standard'
-                    sx={{ mb: 1 }}
-                    fullWidth
-                    required
-                  />
-                )}
-              />
+              <>
+                <Autocomplete
+                  disablePortal
+                  id='subcategory-combo-box'
+                  onInputChange={(event, subcategory: string) => {
+                    setValues({ ...values, subcategory: subcategory });
+                  }}
+                  options={
+                    user?.categories[categoryIndex]?.subcategories
+                      ? user.categories[categoryIndex].subcategories.map(
+                          (data) => data.name
+                        )
+                      : []
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label='Subcategory'
+                      disabled={!values.category}
+                      variant='standard'
+                      fullWidth
+                      required
+                    />
+                  )}
+                />
+                <Box display='flex' justifyContent='center'>
+                  <IconButton onClick={() => setOpenSubcategoryAddForm(true)}>
+                    <AddCircleIcon />
+                  </IconButton>
+                </Box>
+              </>
             ) : null}
 
             <TextField
@@ -188,14 +203,21 @@ function PerformanceAddForm(props: PerformanceAddFormProps) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button type='submit' form='Performance-add-form' variant='contained'>
-            Add
-          </Button>
           <Button onClick={props.handleClose} variant='contained'>
             Cancel
           </Button>
+          <Button type='submit' form='Performance-add-form' variant='contained'>
+            Add
+          </Button>
         </DialogActions>
       </Dialog>
+      {openSubcategoryAddForm && (
+        <SubcategoryAddForm
+          open={openSubcategoryAddForm}
+          handleClose={() => setOpenSubcategoryAddForm(false)}
+          selectedCategory={values.category}
+        />
+      )}
     </>
   );
 }

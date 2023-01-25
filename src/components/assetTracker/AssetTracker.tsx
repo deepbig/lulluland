@@ -1,7 +1,6 @@
 import { Box, Grid, IconButton, Paper, Typography } from '@mui/material';
 import Title from 'components/title/Title';
 import React, { useEffect, useState } from 'react';
-import { UserData } from 'types';
 import AssetChart from './assetPieChart/AssetPieChart';
 import AssetTrend from './assetTrend/AssetTrend';
 import MonthlyExpenseLineChart from './monthlyExpenseChart/MonthlyExpenseLineChart';
@@ -14,22 +13,18 @@ import { setAssetSummaryList } from 'modules/asset';
 import { setBackdrop } from 'modules/backdrop';
 import AssetUpdateForm from './assetPieChart/AssetUpdateForm';
 import EditIcon from '@mui/icons-material/Edit';
-import { getUser } from 'modules/user';
+import { getSelectedUser, getUser } from 'modules/user';
 import { givenMonthYearFormat } from 'lib';
 import EquityUpdateForm from './stockValueTrends/EquityUpdateForm';
 import { setStockHistoryList } from 'modules/stockHistory';
 import { setSnackbar } from 'modules/snackbar';
 
-type AssetTrackerProps = {
-  username: string | undefined;
-  selectedUser: UserData | null;
-};
-
-function AssetTracker({ username, selectedUser }: AssetTrackerProps) {
+function AssetTracker() {
   const dispatch = useAppDispatch();
   const [openAssetEditForm, setOpenAssetEditForm] = useState(false);
   const [openEquityUpdateForm, setOpenEquityUpdateForm] = useState(false);
   const user = useAppSelector(getUser);
+  const selectedUser = useAppSelector(getSelectedUser);
   const currentMonthYear = givenMonthYearFormat(new Date().toString());
 
   useEffect(() => {

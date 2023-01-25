@@ -10,7 +10,7 @@ import {
   Grid,
   Box,
 } from '@mui/material';
-import { CategoryData, UserData } from 'types';
+import { CategoryData } from 'types';
 import { getUserFromDB } from 'db/repositories/user';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setBackdrop } from 'modules/backdrop';
@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { chipColors } from 'lib';
 import EffortTracker from 'components/effortTracker/EffortTracker';
 import AssetTracker from 'components/assetTracker/AssetTracker';
-import { getUser } from 'modules/user';
+import { getSelectedUser, getUser, setSelectedUser } from 'modules/user';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { grey, green } from '@mui/material/colors';
 import CategoryAddForm from 'components/effortTracker/categoryAddForm/CategoryAddForm';
@@ -42,9 +42,9 @@ type DashboardProps = {
 };
 
 export default function Dashboard({ username, type }: DashboardProps) {
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const selectedUser = useAppSelector(getSelectedUser);
   const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(
     null
   );
@@ -56,7 +56,7 @@ export default function Dashboard({ username, type }: DashboardProps) {
       dispatch(setBackdrop(true));
       const fetchedUser = await getUserFromDB(username ? username : 'deepbig');
       if (fetchedUser) {
-        setSelectedUser(fetchedUser);
+        dispatch(setSelectedUser(fetchedUser));
         dispatch(setBackdrop(false));
       } else {
         navigate('/404');
@@ -143,12 +143,9 @@ export default function Dashboard({ username, type }: DashboardProps) {
           <EffortTracker
             username={username}
             selectedCategory={selectedCategory}
-            selectedUser={selectedUser}
           />
         ) : null}
-        {type === 'asset-tracker' ? (
-          <AssetTracker username={username} selectedUser={selectedUser} />
-        ) : null}
+        {type === 'asset-tracker' ? <AssetTracker /> : null}
 
         {categoryAddForm && (
           <CategoryAddForm

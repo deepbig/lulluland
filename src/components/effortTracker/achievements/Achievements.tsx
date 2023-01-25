@@ -9,7 +9,8 @@ import {
   linearProgressClasses,
 } from '@mui/material';
 import { backgroundColors } from 'lib';
-import { CategoryData } from 'types';
+import { CategoryData, PerformanceData } from 'types';
+import { getSelectedUser } from 'modules/user';
 
 const BorderLinearProgress = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'barColor',
@@ -61,15 +62,36 @@ const LinearProgressWithLabel = ({
   );
 };
 
-const goals = [12, 84, 102, 82];
-
 interface ObjectiveProps {
-  category: CategoryData | null;
+  selectedCategory: CategoryData | null;
 }
 
-function Achievements({ category }: ObjectiveProps) {
+function Achievements({ selectedCategory }: ObjectiveProps) {
   // goals from performance.
+  const selectedUser = useAppSelector(getSelectedUser);
   const performanceChartData = useAppSelector(getPerformanceChartData);
+
+  const renderAchievementsChart = (subPerformance: PerformanceData) => {
+    const categoryData = selectedUser?.categories?.find(
+      (category) => category.category === subPerformance.category
+    );
+    const subcategoryData = categoryData?.subcategories.find(
+      (subcategory) => subcategory.name === subPerformance.subcategory
+    );
+
+    return (
+      categoryData &&
+      subcategoryData &&
+      subcategoryData.goal && (
+        <LinearProgressWithLabel
+          title={`${subcategoryData.name} in a set (${subPerformance?.performance} / ${subcategoryData.goal} reps)`}
+          value={(subPerformance?.performance / subcategoryData.goal) * 100}
+          barColor={backgroundColors[categoryData.color]}
+          key={`${categoryData.category}_${subcategoryData.name}`}
+        />
+      )
+    );
+  };
 
   return (
     <div>
@@ -77,22 +99,13 @@ function Achievements({ category }: ObjectiveProps) {
         {/* TODO - Goal collection should be in the database */}
         {performanceChartData?.map((performance) =>
           performance.map((subPerformance, index) =>
-            !category || category.category === subPerformance[0]?.category ? (
-              <LinearProgressWithLabel
-                title={`${
-                  subPerformance[subPerformance.length - 1]?.subcategory
-                } in a set (${
-                  subPerformance[subPerformance.length - 1]?.performance
-                } / ${goals[index % 4]} reps)`}
-                value={
-                  (subPerformance[subPerformance.length - 1]?.performance /
-                    goals[index % 4]) *
-                  100
-                }
-                barColor={backgroundColors[index % 5]}
-                key={subPerformance[0]?.subcategory + index}
-              />
-            ) : null
+            subPerformance[0]?.category &&
+            (!selectedCategory ||
+              selectedCategory.category === subPerformance[0].category)
+              ? renderAchievementsChart(
+                  subPerformance[subPerformance.length - 1]
+                )
+              : null
           )
         )}
       </List>

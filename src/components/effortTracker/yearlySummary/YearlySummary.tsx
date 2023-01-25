@@ -15,14 +15,14 @@ import StarIcon from '@mui/icons-material/Star';
 import * as activity from 'db/repositories/activity';
 import { setBackdrop } from 'modules/backdrop';
 import { setSnackbar } from 'modules/snackbar';
-import { CategoryData, UserData } from 'types';
+import { CategoryData } from 'types';
+import { getSelectedUser } from 'modules/user';
 
 interface SummaryProps {
   selectedCategory: CategoryData | null;
-  selectedUser: UserData | null;
 }
 
-function YearlySummary({ selectedCategory, selectedUser }: SummaryProps) {
+function YearlySummary({ selectedCategory }: SummaryProps) {
   const activities = useAppSelector(getActivities);
   const activitySummaries = useAppSelector(getActivitySummaries);
   const selectedYear = useAppSelector(getSelectedYear);
@@ -31,6 +31,7 @@ function YearlySummary({ selectedCategory, selectedUser }: SummaryProps) {
   const [bestPractice, setBestPractice] = useState<number>(0);
   const [minRangeYear, setMinRangeYear] = useState<number[]>([]);
   const dispatch = useAppDispatch();
+  const selectedUser = useAppSelector(getSelectedUser);
 
   useEffect(() => {
     let minYear = new Date().getFullYear();

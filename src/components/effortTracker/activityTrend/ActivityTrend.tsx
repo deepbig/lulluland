@@ -13,8 +13,8 @@ import {
 } from 'recharts';
 import { chipColors as colors, numWithCommas } from 'lib/index';
 import { Card, CardContent, Divider, Stack, Typography } from '@mui/material';
-import { getUser } from 'modules/user';
-import { CategoryData, UserData } from 'types';
+import { getSelectedUser, getUser } from 'modules/user';
+import { CategoryData } from 'types';
 import { grey } from '@mui/material/colors';
 import {
   NameType,
@@ -64,13 +64,12 @@ const CustomTooltip = ({
 
 function ActivityTrend({
   selectedCategory,
-  selectedUser,
 }: {
   selectedCategory: CategoryData | null;
-  selectedUser: UserData | null;
 }) {
   const activitySummaries = useAppSelector(getActivitySummaries);
   const user = useAppSelector(getUser);
+  const selectedUser = useAppSelector(getSelectedUser);
   const [data, setData] = useState<ActivityTrendData[]>([]);
   const [categories, setCategories] = useState<CategoryData[]>([]);
 

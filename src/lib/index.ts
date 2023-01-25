@@ -39,6 +39,7 @@ export const isCategoryExist = (
 export const drawerWidth = 240;
 
 export const backgroundColors = [
+  green[500],
   blue[500],
   orange[500],
   purple[500],
@@ -46,6 +47,7 @@ export const backgroundColors = [
   brown[500],
 ];
 export const circleColors = [
+  green[800],
   blue[800],
   orange[800],
   purple[800],
@@ -53,6 +55,7 @@ export const circleColors = [
   brown[800],
 ];
 export const avatarColors = [
+  green[200],
   blue[200],
   orange[200],
   purple[200],

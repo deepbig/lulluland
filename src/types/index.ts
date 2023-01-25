@@ -75,8 +75,16 @@ export type UserData = {
 
 export type CategoryData = {
   category: string;
+  subcategories: SubcategoryData[];
   color: number; // index of color index. TODO: change to color code or name by user input.
 };
+
+export interface SubcategoryData {
+  name: string;
+  icon: any;
+  goal?: number; // goal of the subcategory
+  unit: string; // time, count, reps etc
+}
 
 export interface ActivitySummaryData {
   category: string;
@@ -112,11 +120,6 @@ export interface ActivityAddFormData {
   duration: number;
   note: string;
   uid: string;
-}
-
-export interface PerformanceCategoryData {
-  category: string;
-  subcategories: string[];
 }
 
 export interface PerformanceData {

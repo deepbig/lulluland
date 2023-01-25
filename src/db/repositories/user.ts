@@ -144,7 +144,20 @@ export const updateCategories = async (
       });
     });
   } catch (e) {
-    // need to handle error case.
+    throw e;
+  }
+};
+
+export const addSubcategories = async (
+  uid: string,
+  categories: CategoryData[]
+) => {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, uid);
+    await updateDoc(docRef, {
+      categories: categories,
+    });
+  } catch (e) {
     throw e;
   }
 };

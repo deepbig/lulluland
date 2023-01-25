@@ -3,7 +3,7 @@ import Title from 'components/title/Title';
 import { useAppSelector } from 'hooks';
 import { getUser } from 'modules/user';
 import React, { useState } from 'react';
-import { CategoryData, UserData } from 'types';
+import { CategoryData } from 'types';
 import Achievements from './achievements/Achievements';
 import ActivityAddForm from './activityBoard/ActivityAddForm';
 import ActivityBoard from './activityBoard/ActivityBoard';
@@ -18,14 +18,9 @@ import { getSelectedYear } from 'modules/activity';
 type EffortTrackerProps = {
   username: string | undefined;
   selectedCategory: CategoryData | null;
-  selectedUser: UserData | null;
 };
 
-function EffortTracker({
-  username,
-  selectedCategory,
-  selectedUser,
-}: EffortTrackerProps) {
+function EffortTracker({ username, selectedCategory }: EffortTrackerProps) {
   const theme = useTheme();
   const [openActivityForm, setOpenActivityForm] = useState(false);
   const [openPerformanceForm, setOpenPerformanceForm] = useState(false);
@@ -74,10 +69,7 @@ function EffortTracker({
             ) : null}
           </Box>
           <Box p={1}>
-            <YearlySummary
-              selectedCategory={selectedCategory}
-              selectedUser={selectedUser}
-            />
+            <YearlySummary selectedCategory={selectedCategory} />
           </Box>
         </Paper>
       </Grid>
@@ -112,12 +104,10 @@ function EffortTracker({
           elevation={4}
         >
           <Title>
-            Activity Trends {selectedCategory ? ` | ${selectedCategory.category}` : ''}
+            Activity Trends{' '}
+            {selectedCategory ? ` | ${selectedCategory.category}` : ''}
           </Title>
-          <ActivityTrend
-            selectedCategory={selectedCategory}
-            selectedUser={selectedUser}
-          />
+          <ActivityTrend selectedCategory={selectedCategory} />
         </Paper>
       </Grid>
 
@@ -136,12 +126,10 @@ function EffortTracker({
           elevation={4}
         >
           <Title>
-            Recent Activity {selectedCategory ? ` | ${selectedCategory.category}` : ''}
+            Recent Activity{' '}
+            {selectedCategory ? ` | ${selectedCategory.category}` : ''}
           </Title>
-          <RecentActivity
-            selectedCategory={selectedCategory}
-            selectedUser={selectedUser}
-          />
+          <RecentActivity selectedCategory={selectedCategory} />
         </Paper>
       </Grid>
 
@@ -159,9 +147,10 @@ function EffortTracker({
             elevation={4}
           >
             <Title>
-              Objectives {selectedCategory ? ` | ${selectedCategory.category}` : ''}
+              Objectives{' '}
+              {selectedCategory ? ` | ${selectedCategory.category}` : ''}
             </Title>
-            <Achievements category={selectedCategory} />
+            <Achievements selectedCategory={selectedCategory} />
           </Paper>
         </Grid>
       )}
@@ -185,7 +174,6 @@ function EffortTracker({
           )}
           <PerformanceTrends
             selectedCategory={selectedCategory}
-            selectedUser={selectedUser ? selectedUser : null}
             username={username}
           />
           {openPerformanceForm ? (

@@ -384,11 +384,11 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button type='submit' form='asset-update-form' variant='contained'>
-            Update
-          </Button>
           <Button onClick={props.handleClose} variant='contained'>
             Cancel
+          </Button>
+          <Button type='submit' form='asset-update-form' variant='contained'>
+            Update
           </Button>
         </DialogActions>
       </Dialog>
@@ -410,15 +410,15 @@ function AssetUpdateForm(props: AssetUpdateFormProps) {
           />
         </DialogContent>
         <DialogActions>
+          <Button onClick={handleClickStockClose} variant='contained'>
+            Cancel
+          </Button>
           <Button
             onClick={handleClickStockAdd}
             disabled={stockAddValues?.symbol ? false : true}
             variant='contained'
           >
             Create
-          </Button>
-          <Button onClick={handleClickStockClose} variant='contained'>
-            Cancel
           </Button>
         </DialogActions>
       </Dialog>

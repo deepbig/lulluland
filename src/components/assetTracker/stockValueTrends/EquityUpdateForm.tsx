@@ -450,6 +450,9 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
           )}
         </DialogContent>
         <DialogActions>
+          <Button onClick={props.handleClose} variant='contained'>
+            Cancel
+          </Button>
           {option === 1 && (
             <Button
               type='submit'
@@ -470,9 +473,6 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
               Update
             </Button>
           )}
-          <Button onClick={props.handleClose} variant='contained'>
-            Cancel
-          </Button>
         </DialogActions>
       </Dialog>
     </>
