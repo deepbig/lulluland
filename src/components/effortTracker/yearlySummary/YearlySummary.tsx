@@ -199,7 +199,7 @@ function YearlySummary({ selectedCategory }: SummaryProps) {
             <EventAvailableIcon />
           </Avatar>
           <Typography>
-            {totalPractices ? `${totalPractices} days` : `0 days`}
+            {totalPractices ? `${totalPractices} practices` : `0 practices`}
             <Typography variant='guideline'>Total Practices</Typography>
           </Typography>
         </Stack>
