@@ -11,7 +11,10 @@ import {
   SelectChangeEvent,
   InputLabel,
 } from '@mui/material';
-import { saveActivity, fetchAllActivitySummaries } from 'db/repositories/activity';
+import {
+  saveActivity,
+  fetchAllActivitySummaries,
+} from 'db/repositories/activity';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { currentDateTime } from 'lib';
 import {
@@ -222,11 +225,11 @@ function ActivityAddForm(props: ActivityAddFormProps) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button type='submit' form='activity-add-form' variant='contained'>
-            Add
-          </Button>
           <Button onClick={props.handleClose} variant='contained'>
             Cancel
+          </Button>
+          <Button type='submit' form='activity-add-form' variant='contained'>
+            Add
           </Button>
         </DialogActions>
       </Dialog>

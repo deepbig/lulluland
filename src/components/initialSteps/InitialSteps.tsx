@@ -110,7 +110,11 @@ function InitialSteps() {
       alert('You already added the selected category.');
     } else {
       const categories = [...values.categories];
-      categories.push({ category: values.category, color: categories.length + 1 });
+      categories.push({
+        category: values.category,
+        subcategories: [],
+        color: categories.length + 1,
+      });
       setValues({ ...values, categories: categories, category: '' });
     }
   };
@@ -244,7 +248,10 @@ function InitialSteps() {
                       <Grid key={i} item>
                         <Chip
                           label={category.category}
-                          sx={{ margin: 0.5, backgroundColor: colors[category.color] }}
+                          sx={{
+                            margin: 0.5,
+                            backgroundColor: colors[category.color],
+                          }}
                           onDelete={() => {
                             handleDeleteCategory(category.category);
                           }}

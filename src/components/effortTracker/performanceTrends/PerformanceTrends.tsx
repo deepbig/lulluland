@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from 'hooks';
 import {
-  setCategoryList,
   getPerformances,
   setPerformanceList,
   getPerformanceChartData,
@@ -12,14 +11,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PerformanceChart from 'components/effortTracker/performanceChart/PerformanceChart';
 import MainCard from 'components/custom/MainCard';
 import { styled } from '@mui/material/styles';
-import {
-  PerformanceData,
-  UserData,
-  CategoryData,
-  PerformanceCategoryData,
-} from 'types';
+import { PerformanceData, CategoryData } from 'types';
 import { backgroundColors, circleColors, avatarColors } from 'lib';
-import { getUser } from 'modules/user';
+import { getSelectedUser, getUser } from 'modules/user';
 import { fetchAllPerformances } from 'db/repositories/performance';
 import { setSnackbar } from 'modules/snackbar';
 
@@ -69,71 +63,66 @@ const CardWrapper = styled(MainCard, {
 
 export interface PerformanceTrendsProps {
   selectedCategory: CategoryData | null;
-  selectedUser: UserData | null;
   username: string | undefined;
 }
 
 function PerformanceTrends({
   selectedCategory,
-  selectedUser,
   username,
 }: PerformanceTrendsProps) {
   const performances = useAppSelector(getPerformances);
   const performanceChartData = useAppSelector(getPerformanceChartData);
   const user = useAppSelector(getUser);
+  const selectedUser = useAppSelector(getSelectedUser);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    let unsubscribe;
     if (selectedUser && selectedUser.categories.length > 0) {
       const performanceChartData: Array<any> = [];
-      const newCategories: Array<PerformanceCategoryData> = [];
 
-      const categories = selectedUser.categories;
-      if (categories) {
-        categories.forEach((category) => {
-          newCategories.push({
-            category: category.category,
-            subcategories: [],
-          });
-          performanceChartData.push([]);
+      let i = 0;
+      selectedUser.categories.forEach((category) => {
+        performanceChartData.push([]);
+        category.subcategories?.forEach((subcategory) => {
+          performanceChartData[i].push([]);
         });
+        i++;
+      });
 
-        let category = '';
-        let index = -1;
-        let subcategory = '';
-        // subIndex needed to be switch to findIndex
-        let subIndex = -1;
+      let category = '';
+      let index = -1;
+      let subcategory = '';
+      // subIndex needed to be switch to findIndex
+      let subIndex = -1;
 
-        performances.forEach((performance) => {
-          // if category switched, add new array.
-          if (category !== performance.category) {
-            category = performance.category;
-            index = categories.findIndex((c) => c.category === category);
-            subIndex = -1;
-          }
+      performances.forEach((performance) => {
+        // if category switched, add new array.
+        if (category !== performance.category) {
+          category = performance.category;
+          index = selectedUser.categories.findIndex(
+            (c) => c.category === category
+          );
+          subIndex = selectedUser.categories[index].subcategories?.findIndex(
+            (s) => s.name === performance.subcategory
+          );
+        }
 
-          // if subcategory switched, add new array on the category array.
-          if (subcategory !== performance.subcategory || subIndex === -1) {
-            subcategory = performance.subcategory;
-            subIndex++;
-            newCategories[index].subcategories.push(subcategory);
-            performanceChartData[index].push([]);
-          }
-          performanceChartData[index][subIndex].push({
-            ...performance,
-            date: performance.date?.toDate().toDateString(),
-          } as PerformanceData);
-        });
-        dispatch(setPerformanceChartData(performanceChartData));
-        dispatch(setCategoryList(newCategories));
-      }
+        // if subcategory switched, add new array on the category array.
+        if (subcategory !== performance.subcategory || subIndex === -1) {
+          subcategory = performance.subcategory;
+          subIndex++;
+          performanceChartData[index].push([]);
+        }
+        performanceChartData[index][subIndex]?.push({
+          ...performance,
+          date: performance.date?.toDate().toDateString(),
+        } as PerformanceData);
+      });
+      dispatch(setPerformanceChartData(performanceChartData));
     } else {
       dispatch(setPerformanceChartData([]));
-      dispatch(setCategoryList([]));
     }
 
-    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [performances]);
 
@@ -160,6 +149,104 @@ function PerformanceTrends({
     }
   };
 
+  const renderSubcategoryCard = (subPerformance: PerformanceData[]) => {
+    const categoryData = selectedUser?.categories?.find(
+      (category) => category.category === subPerformance[0]?.category
+    );
+    const subcategoryData = categoryData?.subcategories.find(
+      (subcategory) => subcategory.name === subPerformance[0]?.subcategory
+    );
+
+    return (
+      categoryData &&
+      subcategoryData && (
+        <CardWrapper
+          bgColor={backgroundColors[categoryData.color]}
+          baColor={circleColors[categoryData.color]}
+        >
+          <Grid container alignItems='center'>
+            <Grid item xs={6}>
+              <Grid container alignItems='center'>
+                <Grid item xs={12}>
+                  <Typography component='h3' variant='h6'>
+                    {`${subcategoryData.icon} ${subcategoryData.name}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      fontSize: '2rem',
+                      fontWeight: 500,
+                      mr: 1,
+                    }}
+                  >
+                    {`${
+                      subPerformance[subPerformance.length - 1]?.performance
+                    } ${subcategoryData.unit}`}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography
+                    sx={{
+                      fontSize: '1.5rem',
+                      fontWeight: 500,
+                      mr: 1,
+                      mt: 0.75,
+                      mb: 0.75,
+                    }}
+                  >
+                    {(
+                      (subPerformance[subPerformance.length - 1]?.performance /
+                        subPerformance[0]?.performance -
+                        1) *
+                      100
+                    ).toFixed(1)}
+                    %
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Avatar
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      backgroundColor: avatarColors[categoryData.color],
+                      color: backgroundColors[categoryData.color],
+                    }}
+                  >
+                    <ArrowForwardIcon
+                      fontSize='inherit'
+                      sx={{
+                        transform: `rotate(${
+                          subPerformance[subPerformance.length - 1]
+                            ?.performance > subPerformance[0]?.performance
+                            ? '-45deg'
+                            : '45deg'
+                        })`,
+                      }}
+                    />
+                  </Avatar>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>from {subPerformance[0]?.date}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  height: 150,
+                }}
+              >
+                <PerformanceChart data={subPerformance} />
+              </Box>
+            </Grid>
+          </Grid>
+        </CardWrapper>
+      )
+    );
+  };
+
   return (
     <>
       {performanceChartData.length < 1 ? (
@@ -176,113 +263,18 @@ function PerformanceTrends({
       <Grid container direction='row' spacing={2}>
         {performanceChartData?.map((performance) =>
           performance?.map((subPerformance, index) =>
-            !selectedCategory ||
-            selectedCategory.category === subPerformance[0]?.category ? (
+            subPerformance[0]?.category &&
+            (!selectedCategory ||
+              selectedCategory.category === subPerformance[0]?.category) ? (
               <Grid
                 item
                 xs={12}
                 md={6}
                 lg={4}
                 xl={3}
-                key={subPerformance[0]?.subcategory + index}
+                key={subPerformance[0].subcategory + index}
               >
-                <CardWrapper
-                  bgColor={backgroundColors[index % backgroundColors.length]}
-                  baColor={circleColors[index % circleColors.length]}
-                >
-                  <Grid container alignItems='center'>
-                    <Grid item xs={6}>
-                      <Grid container alignItems='center'>
-                        <Grid item xs={12}>
-                          <Typography component='h3' variant='h6'>
-                            💪
-                            {
-                              subPerformance[subPerformance.length - 1]
-                                ?.subcategory
-                            }
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography
-                            sx={{
-                              fontSize: '2rem',
-                              fontWeight: 500,
-                              mr: 1,
-                            }}
-                          >
-                            {
-                              subPerformance[subPerformance.length - 1]
-                                ?.performance
-                            }{' '}
-                            reps
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Typography
-                            sx={{
-                              fontSize: '1.5rem',
-                              fontWeight: 500,
-                              mr: 1,
-                              mt: 0.75,
-                              mb: 0.75,
-                            }}
-                          >
-                            {(
-                              (subPerformance[subPerformance.length - 1]
-                                ?.performance /
-                                subPerformance[0]?.performance -
-                                1) *
-                              100
-                            ).toFixed(1)}
-                            %
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Avatar
-                            sx={{
-                              width: 24,
-                              height: 24,
-                              backgroundColor:
-                                avatarColors[index % avatarColors.length],
-                              color:
-                                backgroundColors[
-                                  index % backgroundColors.length
-                                ],
-                            }}
-                          >
-                            <ArrowForwardIcon
-                              fontSize='inherit'
-                              sx={{
-                                transform: `rotate(${
-                                  subPerformance[subPerformance.length - 1]
-                                    ?.performance >
-                                  subPerformance[0]?.performance
-                                    ? '-45deg'
-                                    : '45deg'
-                                })`,
-                              }}
-                            />
-                          </Avatar>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography>
-                            from {subPerformance[0]?.date}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          height: 150,
-                        }}
-                      >
-                        <PerformanceChart data={subPerformance} />
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </CardWrapper>
+                {renderSubcategoryCard(subPerformance)}
               </Grid>
             ) : null
           )

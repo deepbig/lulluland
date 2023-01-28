@@ -79,10 +79,10 @@ function UserMenu() {
             severity: 'error',
             message: 'Something went wrong. Please try again.',
           })
-          );
-        }
-        setLoading(false);
+        );
       }
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -145,7 +145,6 @@ function UserMenu() {
                       multiline
                       maxRows={15}
                       sx={{ margin: '8px 0px' }}
-
                     />
                   </>
                 ) : (
@@ -169,6 +168,9 @@ function UserMenu() {
               <Box display='flex' justifyContent='center'>
                 {openProfileForm ? (
                   <>
+                    <Button variant='outlined' onClick={handleCancel}>
+                      Cancel
+                    </Button>
                     <LoadingButton
                       variant='outlined'
                       loading={loading}
@@ -177,9 +179,6 @@ function UserMenu() {
                     >
                       Save
                     </LoadingButton>
-                    <Button variant='outlined' onClick={handleCancel}>
-                      Cancel
-                    </Button>
                   </>
                 ) : (
                   <>

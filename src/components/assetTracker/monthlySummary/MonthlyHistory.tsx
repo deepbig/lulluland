@@ -591,14 +591,14 @@ function MonthlyHistory({ open, handleClose }: MonthlyHistoryProps) {
         )}
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleClose} variant='contained'>
+          Cancel
+        </Button>
         <Button
           onClick={isCurrentMonth ? handleSave : handleHistorySave}
           variant='contained'
         >
           Save
-        </Button>
-        <Button onClick={handleClose} variant='contained'>
-          Cancel
         </Button>
       </DialogActions>
     </Dialog>

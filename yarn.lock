@@ -1187,6 +1187,16 @@
   dependencies:
     "@date-io/core" "^2.14.0"
 
+"@emoji-mart/data@^1.1.1":
+  "integrity" "sha512-yn1LiT9QA0GHN+Xkv0ZkZYS0+SyopNItMEi7z/f9Se8yA5TMjlcq0jisseqeO0MdG/x8P5Pgqluzi6rOr5HUkw=="
+  "resolved" "https://registry.npmjs.org/@emoji-mart/data/-/data-1.1.1.tgz"
+  "version" "1.1.1"
+
+"@emoji-mart/react@^1.1.1":
+  "integrity" "sha512-NMlFNeWgv1//uPsvLxvGQoIerPuVdXwK/EUek8OOkJ6wVOWPUizRBJU0hDqWZCOROVpfBgCemaC3m6jDOXi03g=="
+  "resolved" "https://registry.npmjs.org/@emoji-mart/react/-/react-1.1.1.tgz"
+  "version" "1.1.1"
+
 "@emotion/babel-plugin@^11.7.1":
   "integrity" "sha512-Pr/7HGH6H6yKgnVFNEj2MVlreu3ADqftqjqwUvDy/OJzKFgxKeTQ+eeUf20FOTuHVkDON2iNa25rAXVYtWJCjw=="
   "resolved" "https://registry.npmjs.org/@emotion/babel-plugin/-/babel-plugin-11.9.2.tgz"
@@ -5316,6 +5326,11 @@
   "integrity" "sha512-A8OG5SR/ij3SsJdWDJdkkSYUjQdCUx6APQXem0SaEePBSRg4eymGYwBkKo1Y6DU+af/Jn2dBQqDBvjnr9Vi8nQ=="
   "resolved" "https://registry.npmjs.org/emittery/-/emittery-0.7.2.tgz"
   "version" "0.7.2"
+
+"emoji-mart@^5.2", "emoji-mart@^5.4.0":
+  "integrity" "sha512-xrRrUmMqZG64oRxmUZcf8zSMUGQtIUYUL3aZD5iMkqAve+I9wMNh3OVOXL7NW9fEm48L2LI3BUPpj/DUIAJrVg=="
+  "resolved" "https://registry.npmjs.org/emoji-mart/-/emoji-mart-5.4.0.tgz"
+  "version" "5.4.0"
 
 "emoji-regex@^7.0.1":
   "integrity" "sha512-CwBLREIQ7LvYFB0WyRvwhq5N5qPhc6PMjD6bYggFlI5YyDgl+0vxq5VHbMOFqLg7hfWzmu8T5Z1QofhmTIhItA=="
@@ -10401,7 +10416,7 @@
     "prop-types" "^15.6.2"
     "react-lifecycles-compat" "^3.0.4"
 
-"react@*", "react@^15.0.0 || ^16.0.0 || ^17.0.0", "react@^16.0.0 || ^17.0.0", "react@^16.3.0 || ^17.0.0", "react@^16.8.3 || ^17", "react@^16.9.0 || ^17.0.0 || 18.0.0-beta", "react@^17.0.0 || ^18.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@>= 16", "react@>=15.0.0", "react@>=16.3.0", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
+"react@*", "react@^15.0.0 || ^16.0.0 || ^17.0.0", "react@^16.0.0 || ^17.0.0", "react@^16.3.0 || ^17.0.0", "react@^16.8 || ^17 || ^18", "react@^16.8.3 || ^17", "react@^16.9.0 || ^17.0.0 || 18.0.0-beta", "react@^17.0.0 || ^18.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@>= 16", "react@>=15.0.0", "react@>=16.3.0", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
