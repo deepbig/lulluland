@@ -110,6 +110,7 @@ export default function ActivityBoard({
             placement='top'
             followCursor
             arrow
+            enterTouchDelay={100}
           >
             <Item
               key={++index}
