@@ -65,14 +65,6 @@ function AssetTracker() {
         </Paper>
       </Grid>
 
-      {/* Monthly Summary */}
-      <Grid item xs={12} md={6} lg={4}>
-        <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Monthly Summary ({currentMonthYear})</Title>
-          <MonthlySummary selectedUser={selectedUser} />
-        </Paper>
-      </Grid>
-
       {/* Asset Chart */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
@@ -96,11 +88,11 @@ function AssetTracker() {
         )}
       </Grid>
 
-      {/* Monthly Expense Chart */}
+      {/* Monthly Summary */}
       <Grid item xs={12} md={6} lg={4}>
         <Paper sx={{ p: 2 }} elevation={4}>
-          <Title>Expense Chart ({currentMonthYear})</Title>
-          <MonthlyExpenseLineChart />
+          <Title>Monthly Summary ({currentMonthYear})</Title>
+          <MonthlySummary selectedUser={selectedUser} />
         </Paper>
       </Grid>
 
@@ -109,6 +101,14 @@ function AssetTracker() {
         <Paper sx={{ p: 2 }} elevation={4}>
           <Title>Monthly Trends</Title>
           <MonthlyTrend />
+        </Paper>
+      </Grid>
+
+      {/* Monthly Expense Chart */}
+      <Grid item xs={12} md={6} lg={4}>
+        <Paper sx={{ p: 2 }} elevation={4}>
+          <Title>Expense Chart ({currentMonthYear})</Title>
+          <MonthlyExpenseLineChart />
         </Paper>
       </Grid>
 
