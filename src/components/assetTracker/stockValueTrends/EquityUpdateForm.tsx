@@ -352,32 +352,6 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
               />
             </form>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={props.handleClose} variant='contained'>
-            Cancel
-          </Button>
-          {option === 1 && (
-            <Button
-              type='submit'
-              form='stock-history-form'
-              disabled={stockHistory.companyName ? false : true}
-              variant='contained'
-            >
-              Create
-            </Button>
-          )}
-          {option === 2 && (
-            <Button
-              type='submit'
-              form='equity-update-form'
-              disabled={data ? false : true}
-              variant='contained'
-            >
-              Update
-            </Button>
-          )}
-
           {option === 2 && (
             <form
               id='stock-history-form'
@@ -473,6 +447,32 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
                 </>
               )}
             </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={props.handleClose} variant='contained'>
+            Cancel
+          </Button>
+          {option === 1 && (
+            <Button
+              type='submit'
+              form='equity-update-form'
+              disabled={data ? false : true}
+              variant='contained'
+            >
+              Update
+            </Button>
+          )}
+
+          {option === 2 && (
+            <Button
+              type='submit'
+              form='stock-history-form'
+              disabled={stockHistory.companyName ? false : true}
+              variant='contained'
+            >
+              Create
+            </Button>
           )}
         </DialogActions>
       </Dialog>
