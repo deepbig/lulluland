@@ -200,6 +200,12 @@ const initialState: StockState = {
       country: StockCountryTypes.KOR,
       type: StockTypes.STOCK,
     },
+    {
+      symbol: '455030',
+      label: 'KODEX 미국달러SOFR금리액티브(합성)',
+      country: StockCountryTypes.KOR,
+      type: StockTypes.STOCK,
+    },
   ],
 };
 
