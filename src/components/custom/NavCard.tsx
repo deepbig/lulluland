@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { styled } from '@mui/material/styles';
 import { Card, CardContent, Typography } from '@mui/material';
 
@@ -30,5 +30,6 @@ const NavCard = forwardRef((props: any, ref) => {
     </CardStyle>
   );
 });
+NavCard.displayName = "NavCard";
 
 export default NavCard;

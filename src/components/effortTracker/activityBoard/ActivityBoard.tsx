@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import { useAppSelector } from 'hooks';
 import { getActivities, getSelectedYear } from 'modules/activity';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -21,6 +21,7 @@ const Item = forwardRef((props: BoxProps, ref) => {
     />
   );
 });
+Item.displayName = "Item";
 
 interface ActivityBoardProps {
   selectedCategory: CategoryData | null;

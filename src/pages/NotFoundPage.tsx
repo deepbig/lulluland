@@ -18,7 +18,7 @@ function NotFoundPage() {
         }}
       >
         <MainFormLayout>
-          <Typography>Sorry, we couldn't find that page</Typography>
+          <Typography>Sorry, we couldn&#039;t find that page</Typography>
         </MainFormLayout>
       </Box>
     </Box>

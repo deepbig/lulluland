@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { Card, CardContent, CardHeader, Divider } from '@mui/material';
 
 const headerSX = {
@@ -27,5 +27,6 @@ const MainCard = forwardRef((props: any, ref) => {
     </Card>
   );
 });
+MainCard.displayName = "MainCard";
 
 export default MainCard;
