@@ -1,13 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CategoryData, PerformanceData } from 'types';
 import { RootState } from './index';
-import {
-  CategoryData,
-  PerformanceData,
-} from 'types';
 
 export interface PerformanceState {
   performanceList: PerformanceData[];
-  performanceChartData: Array<Array<PerformanceData[]>>; // categoryArray[ performanceArray[ ...values ] ]
+  performanceChartData: Array<Array<PerformanceData[]>>;
   categoryList: CategoryData[];
 }
 
@@ -30,10 +27,7 @@ export const performanceSlice = createSlice({
     ) => {
       state.performanceChartData = action.payload;
     },
-    setCategoryList: (
-      state,
-      action: PayloadAction<CategoryData[]>
-    ) => {
+    setCategoryList: (state, action: PayloadAction<CategoryData[]>) => {
       state.categoryList = action.payload;
     },
     reset: () => initialState,

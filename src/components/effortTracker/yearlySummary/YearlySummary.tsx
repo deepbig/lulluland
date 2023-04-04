@@ -55,21 +55,18 @@ function YearlySummary({ selectedCategory }: SummaryProps) {
 
   useEffect(() => {
     countYearlySummary();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activities, activitySummaries, selectedYear, selectedCategory]);
 
   useEffect(() => {
     if (selectedUser?.uid) {
       fetchActivities(selectedYear, selectedUser.uid);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedUser]);
 
   useEffect(() => {
     if (selectedUser?.uid) {
       fetchActivitySummaries(selectedUser.uid);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]);
 
   const fetchActivities = async (selectedYear: number, uid: string) => {

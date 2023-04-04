@@ -325,7 +325,7 @@ function EquityUpdateForm(props: EquityUpdateFormProps) {
               justifyContent='center'
             >
               <Button variant='outlined' onClick={() => setOption(1)}>
-                Today's Price
+                Today&#039;s Price
               </Button>
               <Button variant='outlined' onClick={() => setOption(2)}>
                 Stock History

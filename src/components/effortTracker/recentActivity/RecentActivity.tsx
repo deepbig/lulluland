@@ -59,7 +59,6 @@ function RecentActivity({ selectedCategory }: SummaryProps) {
       setData([]);
       setIndex(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activities, selectedCategory]);
 
   const handleDelete = async (index: number) => {

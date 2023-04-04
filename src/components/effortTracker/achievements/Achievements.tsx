@@ -1,3 +1,4 @@
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import { useAppSelector } from 'hooks';
 import { getPerformanceChartData } from 'modules/performance';

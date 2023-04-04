@@ -147,6 +147,7 @@ function AssetTrend({ selectedUser }: AssetTrendProps) {
 
   // @ts-ignore
   const renderCustomizedLegend = (props) => {
+    /* eslint-disable react/prop-types */
     const { payload } = props;
     return (
       <div className='customized-legend'>

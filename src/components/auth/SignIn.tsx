@@ -146,7 +146,7 @@ function SignIn() {
 
         {values.resetPassword ? (
           <Typography variant='body1' paddingBottom={2}>
-            Enter your email, and we'll send you instructions on how to reset
+            Enter your email, and we&#039;ll send you instructions on how to reset
             your password.
           </Typography>
         ) : null}
@@ -208,9 +208,9 @@ function SignIn() {
           {values.isEmailSent ? (
             <Grid item xs={12}>
               <Alert severity='success'>
-                If there's a Lulluland account connected to this email address,
-                we'll email you password reset instructions.
-                <br /> If you don't receive the email, please try again and make
+                If there&#039;s a Lulluland account connected to this email address,
+                we&#039;ll email you password reset instructions.
+                <br /> If you don&#039;t receive the email, please try again and make
                 sure you enter the email address associated with your Lulluland
                 account.
               </Alert>
@@ -251,7 +251,7 @@ function SignIn() {
                     onClick={handleResetPassword}
                     disabled
                   >
-                    Can't sign in?
+                    Can&#039;t sign in?
                   </Link>
                 </Box>
               </Grid>

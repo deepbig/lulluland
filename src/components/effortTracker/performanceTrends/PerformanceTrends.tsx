@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from 'hooks';
 import {
   getPerformances,
@@ -122,15 +122,12 @@ function PerformanceTrends({
     } else {
       dispatch(setPerformanceChartData([]));
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [performances]);
 
   useEffect(() => {
     if (selectedUser?.uid) {
       fetchAndSetAllPerformances(selectedUser.uid);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]);
 
   // 처음 렌더링 시 호출. performance가 변경된 경우 위의 값 호출
