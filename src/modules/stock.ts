@@ -206,6 +206,24 @@ const initialState: StockState = {
       country: StockCountryTypes.KOR,
       type: StockTypes.STOCK,
     },
+    {
+      symbol: 'PDD.O',
+      label: 'PDD Holdings Inc - ADR',
+      country: StockCountryTypes.USA,
+      type: StockTypes.STOCK,
+    },
+    {
+      symbol: 'BABA.K',
+      label: 'Alibaba Group Holding Ltd - ADR',
+      country: StockCountryTypes.USA,
+      type: StockTypes.STOCK,
+    },
+    {
+      symbol: 'LLY',
+      label: 'Eli Lilly And Co',
+      country: StockCountryTypes.USA,
+      type: StockTypes.STOCK,
+    },
   ],
 };
 
