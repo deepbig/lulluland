@@ -105,16 +105,12 @@ function MenuListItems(props: MenuListItemsProps) {
       </ListItem>
       <ListItem
         button
-        onClick={() =>
-          window.open('https://deepbig.github.io/portfolio/', '_blank')
-        }
+        onClick={() => window.open('https://medium.com/@deepbig', '_blank')}
       >
         <ListItemIcon>
           <WebIcon />
         </ListItemIcon>
-        <StyledBadge badgeContent={'old'} color='secondary'>
-          <ListItemText primary='Portfolio' />
-        </StyledBadge>
+        <ListItemText primary='Medium' />
       </ListItem>
       <ListItem
         button
